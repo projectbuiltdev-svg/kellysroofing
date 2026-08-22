@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from 'react';
+import { useEffect, useState, type FormEvent } from 'react';
 import {
   ArrowDownRight,
   ArrowRight,
@@ -15,12 +15,14 @@ import {
   Sparkles,
   X,
 } from 'lucide-react';
+import { Link, useLocation } from 'wouter';
 import logoPath from '@assets/kellys-logo-cropped.png';
 import rooflinePath from '@assets/generated_images/kellys-roofline.jpg';
 import roofTilesPath from '@assets/unsplash/roof-tiles.jpg';
 import roofFramingPath from '@assets/unsplash/roof-framing.jpg';
 import roofingTeamPath from '@assets/unsplash/roofing-team.jpg';
 import rooferFixingRoofHeroPath from '@assets/unsplash/roofer-fixing-roof-hero.jpg';
+import interiorRenovationPath from '@assets/unsplash/interior-renovation.jpg';
 
 type Service = {
   number: string;
@@ -62,9 +64,18 @@ const services: Service[] = [
     intro: 'The considered work that brings a property back together after the roof is secure.',
     detail: 'Ceilings, plastering, drylining, carpentry and interior finishing handled as part of one joined-up scope.',
     icon: Sparkles,
-    image: roofingTeamPath,
+    image: interiorRenovationPath,
   },
 ];
+
+const serviceSlugs: Record<string, string> = {
+  'Roof repairs': 'roof-repairs',
+  'Roof replacement': 'roof-replacement',
+  'Flat roofing': 'flat-roofing',
+  'Interiors & building': 'interiors-building',
+};
+
+const serviceNavItems = services.map((service) => [service.title, `/services/${serviceSlugs[service.title]}`] as const);
 
 const projectNotes = [
   ['01', 'Weather-tight first', 'We deal with the source of the problem, not just the visible mark on the ceiling.'],
@@ -76,7 +87,85 @@ function scrollToContact() {
   document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' });
 }
 
+function ServicePage({ service }: { service: Service }) {
+  return (
+    <main className="grain min-h-[100dvh] overflow-hidden bg-white text-[#10233f]">
+      <header className="relative z-40 border-b border-[#10233f]/10 bg-white">
+        <div className="mx-auto flex max-w-[1380px] items-center justify-between px-5 py-4 sm:px-8 lg:px-12">
+          <Link href="/" className="flex items-center" data-testid="link-service-logo">
+            <img src={logoPath} alt="Kellys Roofing and Interiors" className="h-auto w-[220px] max-w-[55vw] object-contain" />
+          </Link>
+          <nav className="hidden items-center gap-5 lg:flex" aria-label="Main navigation">
+            {serviceNavItems.map(([label, href]) => (
+              <Link key={href} href={href} className="nav-link text-[11px] font-semibold tracking-[.02em] text-[#10233f]/75 transition-colors hover:text-[#10233f]" data-testid={`link-service-nav-${serviceSlugs[label]}`}>
+                {label}
+              </Link>
+            ))}
+            <Link href="/#approach" className="nav-link text-[11px] font-semibold tracking-[.02em] text-[#10233f]/75 transition-colors hover:text-[#10233f]">How we work</Link>
+            <Link href="/#contact" className="rounded-full bg-[#1f365e] px-4 py-2.5 text-[11px] font-bold text-white transition hover:bg-[#111315]">Request a quote</Link>
+          </nav>
+          <details className="relative lg:hidden">
+            <summary className="list-none rounded-full border border-[#10233f]/20 bg-white p-2.5 text-[#10233f]" aria-label="Open mobile menu"><Menu size={21} /></summary>
+            <div className="absolute right-0 top-12 z-50 w-72 rounded-xl border border-[#10233f]/10 bg-white p-3 shadow-2xl">
+              {serviceNavItems.map(([label, href]) => (
+                <Link key={href} href={href} className="flex items-center justify-between border-b border-[#10233f]/10 px-3 py-3.5 text-sm font-semibold last:border-0">
+                  {label}<ArrowRight size={15} className="text-[#1f365e]" />
+                </Link>
+              ))}
+              <Link href="/#contact" className="flex items-center justify-between px-3 py-3.5 text-sm font-semibold">Request a quote<ArrowRight size={15} className="text-[#1f365e]" /></Link>
+            </div>
+          </details>
+        </div>
+      </header>
+      <section className="relative isolate overflow-hidden bg-[#f8f6f0] px-5 py-16 sm:px-8 lg:px-12 lg:py-24">
+        <div className="mx-auto grid max-w-[1380px] items-center gap-12 lg:grid-cols-[.9fr_1.1fr] lg:gap-20">
+          <div>
+            <Link href="/#services" className="section-kicker inline-flex items-center gap-2 text-[#1f365e] hover:underline"><ArrowRight size={14} className="rotate-180" /> All services</Link>
+            <p className="mono mt-10 text-[11px] font-bold text-[#1f365e]">{service.number} / DUBLIN</p>
+            <h1 className="display-title mt-5 text-[clamp(3.4rem,8vw,7rem)] font-semibold text-[#10233f]">{service.title}</h1>
+            <p className="mt-7 max-w-[520px] text-lg leading-8 text-[#536075]">{service.intro}</p>
+            <Link href="/#contact" className="group mt-9 inline-flex items-center gap-3 rounded-full bg-[#1f365e] px-5 py-3 text-sm font-bold text-white transition hover:bg-[#111315]">
+              Talk through your project <ArrowRight size={15} className="transition-transform group-hover:translate-x-1" />
+            </Link>
+          </div>
+          <div className="relative h-[360px] overflow-hidden rounded-lg border border-[#10233f]/10 sm:h-[500px]">
+            <img src={service.image} alt={`${service.title} work by Kellys Roofing and Interiors`} className="h-full w-full object-cover" />
+            <div className="absolute inset-0 bg-[#10233f]/20 mix-blend-multiply" />
+          </div>
+        </div>
+      </section>
+      <section className="page-grid bg-white px-5 py-20 sm:px-8 lg:px-12 lg:py-28">
+        <div className="mx-auto grid max-w-[1380px] gap-12 lg:grid-cols-[.75fr_1.25fr] lg:gap-24">
+          <div>
+            <p className="section-kicker">What is involved</p>
+            <h2 className="display-title mt-5 text-[clamp(2.8rem,5vw,4.8rem)] font-semibold">A clear scope.<br /><span className="text-[#1f365e]">A proper finish.</span></h2>
+          </div>
+          <div className="border-y border-[#aab9bc]">
+            {['A practical first conversation about the property and what needs attention.', 'Straightforward advice on the right materials, sequence and level of work.', 'Careful preparation, clean working habits and a considered handover.'].map((item, index) => (
+              <div key={item} className="grid grid-cols-[50px_1fr] gap-5 border-b border-[#aab9bc] py-7 last:border-0 sm:grid-cols-[80px_1fr]">
+                <span className="mono text-[11px] font-bold text-[#1f365e]">0{index + 1}</span>
+                <p className="max-w-[600px] text-base leading-7 text-[#536075]">{item}</p>
+              </div>
+            ))}
+            <p className="border-t border-[#aab9bc] py-7 text-base leading-7 text-[#10233f]">{service.detail}</p>
+          </div>
+        </div>
+      </section>
+      <section className="bg-[#1f365e] px-5 py-20 text-white sm:px-8 lg:px-12 lg:py-24">
+        <div className="mx-auto flex max-w-[1380px] flex-col justify-between gap-8 sm:flex-row sm:items-end">
+          <div>
+            <p className="section-kicker text-white/65">Ready to take the next step?</p>
+            <h2 className="display-title mt-5 max-w-[680px] text-[clamp(2.8rem,5vw,5rem)] font-semibold">Tell us what the property needs.</h2>
+          </div>
+          <Link href="/#contact" className="group inline-flex w-fit items-center gap-3 rounded-full bg-white px-5 py-3 text-sm font-bold text-[#10233f] transition hover:bg-[#dbe3e4]">Request a quote <ArrowRight size={15} className="transition-transform group-hover:translate-x-1" /></Link>
+        </div>
+      </section>
+    </main>
+  );
+}
+
 function App() {
+  const [location] = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
   const [openService, setOpenService] = useState<string | null>(null);
   const [submitted, setSubmitted] = useState(false);
@@ -88,6 +177,23 @@ function App() {
 
   const closeMenu = () => setMenuOpen(false);
 
+  const activeService = services.find((service) => `/services/${serviceSlugs[service.title]}` === location);
+
+  useEffect(() => {
+    const pageTitle = activeService ? `${activeService.title} Dublin | Kellys Roofing` : 'Kellys Roofing & Interiors | Dublin';
+    const description = activeService ? `${activeService.intro} Kellys Roofing & Interiors serves homes and properties across Dublin.` : 'Kellys Roofing & Interiors provides roofing, building and interior work across Dublin.';
+    document.title = pageTitle;
+    let meta = document.querySelector('meta[name="description"]');
+    if (!meta) {
+      meta = document.createElement('meta');
+      meta.setAttribute('name', 'description');
+      document.head.appendChild(meta);
+    }
+    meta.setAttribute('content', description);
+  }, [activeService]);
+
+  if (activeService) return <ServicePage service={activeService} />;
+
   return (
     <main className="grain min-h-[100dvh] overflow-hidden bg-background text-foreground">
       <header className="absolute inset-x-0 top-0 z-40">
@@ -96,15 +202,13 @@ function App() {
             <img src={logoPath} alt="Kellys Roofing and Interiors" className="h-auto w-[260px] max-w-[55vw] object-contain" />
           </a>
           <nav className="hidden items-center gap-8 lg:flex" aria-label="Main navigation">
-            {[
-              ['Services', '#services'],
-              ['How we work', '#approach'],
-              ['About Kellys', '#about'],
-            ].map(([label, href]) => (
-              <a key={href} href={href} className="nav-link text-[12px] font-semibold tracking-[.04em] text-[#10233f]/75 transition-colors hover:text-[#10233f]" data-testid={`link-nav-${label.toLowerCase().replaceAll(' ', '-')}`}>
+            {serviceNavItems.map(([label, href]) => (
+              <Link key={href} href={href} className="nav-link text-[11px] font-semibold tracking-[.02em] text-[#10233f]/75 transition-colors hover:text-[#10233f]" data-testid={`link-nav-${serviceSlugs[label]}`}>
                 {label}
-              </a>
+              </Link>
             ))}
+            <a href="#approach" className="nav-link text-[11px] font-semibold tracking-[.02em] text-[#10233f]/75 transition-colors hover:text-[#10233f]">How we work</a>
+            <a href="#about" className="nav-link text-[11px] font-semibold tracking-[.02em] text-[#10233f]/75 transition-colors hover:text-[#10233f]">About Kellys</a>
             <button onClick={scrollToContact} className="group inline-flex items-center gap-2 rounded-full border border-[#10233f]/20 bg-white/65 px-4 py-2.5 text-[12px] font-bold text-[#10233f] backdrop-blur-sm transition hover:border-[#1f365e] hover:bg-[#1f365e] hover:text-white" data-testid="button-nav-quote">
               Request a quote <ArrowRight size={14} className="transition-transform group-hover:translate-x-0.5" />
             </button>
@@ -115,16 +219,20 @@ function App() {
         </div>
         {menuOpen && (
            <div className="mx-4 rounded-xl border border-[#10233f]/10 bg-[#fbfaf6]/95 p-3 shadow-2xl backdrop-blur-md lg:hidden" data-testid="mobile-menu">
-            {[
-              ['Services', '#services'],
-              ['How we work', '#approach'],
-              ['About Kellys', '#about'],
-              ['Request a quote', '#contact'],
-            ].map(([label, href]) => (
+             {serviceNavItems.map(([label, href]) => (
+               <Link key={href} href={href} onClick={closeMenu} className="flex items-center justify-between border-b border-[#10233f]/10 px-3 py-3.5 text-sm font-semibold text-[#10233f]" data-testid={`link-mobile-${serviceSlugs[label]}`}>
+                 {label}<ArrowRight size={15} className="text-[#1f365e]" />
+               </Link>
+             ))}
+             {[
+               ['How we work', '#approach'],
+               ['About Kellys', '#about'],
+               ['Request a quote', '#contact'],
+             ].map(([label, href]) => (
                <a key={href} href={href} onClick={closeMenu} className="flex items-center justify-between border-b border-[#10233f]/10 px-3 py-3.5 text-sm font-semibold text-[#10233f] last:border-0" data-testid={`link-mobile-${label.toLowerCase().replaceAll(' ', '-')}`}>
                  {label}<ArrowRight size={15} className="text-[#1f365e]" />
-              </a>
-            ))}
+               </a>
+             ))}
           </div>
         )}
       </header>
