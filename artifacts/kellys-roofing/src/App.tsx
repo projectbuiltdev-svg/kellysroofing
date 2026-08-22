@@ -28,6 +28,7 @@ type Service = {
   intro: string;
   detail: string;
   icon: typeof House;
+  image: string;
 };
 
 const services: Service[] = [
@@ -37,6 +38,7 @@ const services: Service[] = [
     intro: 'A clear, practical response to leaks, storm damage and the small signs that should not be ignored.',
     detail: 'We inspect the issue, explain what needs doing and carry out focused repairs across Dublin homes and managed properties.',
     icon: ShieldCheck,
+    image: rooferAtWorkPath,
   },
   {
     number: '02',
@@ -44,6 +46,7 @@ const services: Service[] = [
     intro: 'Built-up protection for roofs that have reached the end of their useful life.',
     detail: 'From strip and renew work to new slate or tile coverings, we plan the job around the building and the people using it.',
     icon: House,
+    image: roofTilesPath,
   },
   {
     number: '03',
@@ -51,6 +54,7 @@ const services: Service[] = [
     intro: 'Durable flat-roof solutions for extensions, garages, commercial units and more.',
     detail: 'We help select a suitable system, pay close attention to falls and detailing, and leave the site properly finished.',
     icon: Ruler,
+    image: roofFramingPath,
   },
   {
     number: '04',
@@ -58,6 +62,7 @@ const services: Service[] = [
     intro: 'The considered work that brings a property back together after the roof is secure.',
     detail: 'Ceilings, plastering, drylining, carpentry and interior finishing handled as part of one joined-up scope.',
     icon: Sparkles,
+    image: roofingTeamPath,
   },
 ];
 
@@ -129,6 +134,11 @@ function App() {
          <img src={rooflinePath} alt="" className="absolute inset-0 -z-20 h-full w-full object-cover object-center opacity-25 mix-blend-multiply" />
          <div className="absolute inset-0 -z-10 bg-[linear-gradient(to_bottom,rgba(255,255,255,.35),transparent_34%,rgba(255,255,255,.97))]" />
          <div className="absolute bottom-0 left-0 right-0 -z-10 h-32 bg-gradient-to-t from-white to-transparent" />
+         <div className="absolute right-0 top-0 -z-10 hidden h-full w-[47%] overflow-hidden lg:block">
+           <img src={rooferAtWorkPath} alt="Roofer carrying out work on a property" className="h-full w-full object-cover object-center opacity-80 mix-blend-multiply" />
+           <div className="absolute inset-0 bg-gradient-to-r from-white via-white/45 to-transparent" />
+           <div className="absolute inset-0 bg-gradient-to-t from-white/80 via-transparent to-white/10" />
+         </div>
         <div className="mx-auto flex min-h-[720px] max-w-[1380px] flex-col justify-end px-5 pb-14 pt-32 sm:min-h-[780px] sm:px-8 sm:pb-20 lg:px-12">
           <div className="max-w-[800px]">
             <p className="section-kicker reveal text-[#1f365e]">Roofing · building · interiors / Dublin</p>
@@ -180,11 +190,14 @@ function App() {
               const Icon = service.icon;
               const isOpen = openService === service.number;
               return (
-                <article key={service.number} className="service-card rounded-lg border border-[#c9c5bb] bg-[#f8f6f0] p-6 sm:p-8" data-testid={`card-service-${service.number}`}>
+                  <article key={service.number} className="group service-card rounded-lg border border-[#c9c5bb] bg-[#f8f6f0] p-6 sm:p-8" data-testid={`card-service-${service.number}`}>
                   <div className="flex items-start justify-between">
                     <span className="mono text-[11px] font-bold text-[#1f365e]">{service.number}</span>
                     <Icon size={22} strokeWidth={1.5} className="text-[#10233f]" />
                   </div>
+                   <div className="mt-7 h-36 overflow-hidden rounded-md border border-[#10233f]/10">
+                     <img src={service.image} alt={`${service.title} project work`} className="h-full w-full object-cover transition duration-500 group-hover:scale-105" />
+                   </div>
                   <h3 className="display mt-12 text-3xl font-semibold tracking-[-.035em] text-[#10233f]">{service.title}</h3>
                   <p className="mt-3 max-w-[470px] text-sm leading-6 text-[#536075]">{service.intro}</p>
                   <div className={`service-detail ${isOpen ? 'open' : ''}`}>
