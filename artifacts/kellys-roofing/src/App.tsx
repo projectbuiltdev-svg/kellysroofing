@@ -267,12 +267,16 @@ function App() {
 
        <section className="page-grid bg-white px-5 pb-20 text-[#10233f] sm:px-8 lg:px-12">
          <div className="mx-auto grid max-w-[1380px] grid-cols-1 gap-8 border-t border-[#10233f]/15 pt-10 sm:grid-cols-3 sm:gap-0">
-          {[
-            ['01', 'Roof over your head', 'Responsive thinking for the jobs you cannot afford to leave to chance.'],
-            ['02', 'One joined-up team', 'The outside and the inside, considered as one property — not separate call-outs.'],
-            ['03', 'Dublin, properly local', 'Familiar with the homes, weather and practical realities of working across the city.'],
-          ].map(([number, title, text], index) => (
+           {[
+             ['01', 'Roof over your head', 'Responsive thinking for the jobs you cannot afford to leave to chance.', roofTilesPath, 'Roof tiles prepared for a Dublin home'],
+             ['02', 'One joined-up team', 'The outside and the inside, considered as one property — not separate call-outs.', interiorRenovationPath, 'Interior renovation work underway in a home'],
+             ['03', 'Dublin, properly local', 'Familiar with the homes, weather and practical realities of working across the city.', rooflinePath, 'Residential roofline in Dublin'],
+           ].map(([number, title, text, image, alt], index) => (
             <div key={number} className={`reveal delay-${index + 1} border-white/15 sm:px-8 sm:first:pl-0 sm:not-first:border-l`}>
+               <div className="relative mb-6 h-36 overflow-hidden rounded-md border border-[#10233f]/10">
+                 <img src={image} alt={alt} className="h-full w-full object-cover transition duration-500 hover:scale-105" />
+                 <div className="absolute inset-0 bg-[#10233f]/20 mix-blend-multiply" />
+               </div>
               <span className="mono text-[11px] text-[#1f365e]">{number}</span>
               <h2 className="display mt-5 text-xl font-semibold">{title}</h2>
                <p className="mt-3 max-w-[270px] text-sm leading-6 text-[#536075]">{text}</p>
