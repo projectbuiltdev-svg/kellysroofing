@@ -135,7 +135,7 @@ function App() {
          <div className="absolute inset-0 -z-10 bg-[linear-gradient(to_bottom,rgba(255,255,255,.35),transparent_34%,rgba(255,255,255,.97))]" />
          <div className="absolute bottom-0 left-0 right-0 -z-10 h-32 bg-gradient-to-t from-white to-transparent" />
          <div className="absolute right-0 top-0 -z-10 hidden h-full w-[47%] overflow-hidden lg:block">
-           <img src={rooferAtWorkPath} alt="Roofer carrying out work on a property" className="h-full w-full object-cover object-center opacity-80 mix-blend-multiply" />
+           <img src={roofFramingPath} alt="Roofer carrying out work on a property" className="h-full w-full object-cover object-center opacity-80 mix-blend-multiply" />
            <div className="absolute inset-0 bg-gradient-to-r from-white via-white/45 to-transparent" />
            <div className="absolute inset-0 bg-gradient-to-t from-white/80 via-transparent to-white/10" />
          </div>
