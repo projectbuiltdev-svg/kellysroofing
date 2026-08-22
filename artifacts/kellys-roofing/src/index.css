@@ -40,7 +40,7 @@
   --foreground: 219 38% 16%;
   --border: 35 20% 82%;
   --input: 35 20% 82%;
-  --ring: 17 72% 50%;
+  --ring: 219 52% 25%;
   --card: 0 0% 100%;
   --card-foreground: 219 38% 16%;
   --card-border: 35 20% 85%;
@@ -53,8 +53,8 @@
   --secondary-foreground: 219 38% 16%;
   --muted: 38 25% 90%;
   --muted-foreground: 218 15% 44%;
-  --accent: 17 72% 50%;
-  --accent-foreground: 39 34% 98%;
+  --accent: 219 52% 25%;
+  --accent-foreground: 0 0% 100%;
   --destructive: 0 65% 48%;
   --destructive-foreground: 39 34% 98%;
   --app-font-sans: 'Source Sans 3', sans-serif;
@@ -69,7 +69,7 @@
   --foreground: 39 34% 98%;
   --border: 218 26% 25%;
   --input: 218 26% 25%;
-  --ring: 17 72% 50%;
+  --ring: 219 52% 25%;
   --card: 219 39% 15%;
   --card-foreground: 39 34% 98%;
   --card-border: 218 26% 25%;
@@ -82,8 +82,8 @@
   --secondary-foreground: 39 34% 98%;
   --muted: 218 26% 22%;
   --muted-foreground: 218 16% 67%;
-  --accent: 17 72% 50%;
-  --accent-foreground: 39 34% 98%;
+  --accent: 219 52% 25%;
+  --accent-foreground: 0 0% 100%;
   --destructive: 0 62% 55%;
   --destructive-foreground: 39 34% 98%;
   --app-font-sans: 'Source Sans 3', sans-serif;
