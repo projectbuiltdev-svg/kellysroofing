@@ -197,8 +197,9 @@ function App() {
                     <span className="mono text-[11px] font-bold text-[#1f365e]">{service.number}</span>
                     <Icon size={22} strokeWidth={1.5} className="text-[#10233f]" />
                   </div>
-                   <div className="mt-7 h-36 overflow-hidden rounded-md border border-[#10233f]/10">
+                   <div className="relative mt-7 h-36 overflow-hidden rounded-md border border-[#10233f]/10">
                      <img src={service.image} alt={`${service.title} project work`} className="h-full w-full object-cover transition duration-500 group-hover:scale-105" />
+                     <div className="absolute inset-0 bg-[#10233f]/35 mix-blend-multiply" />
                    </div>
                   <h3 className="display mt-12 text-3xl font-semibold tracking-[-.035em] text-[#10233f]">{service.title}</h3>
                   <p className="mt-3 max-w-[470px] text-sm leading-6 text-[#536075]">{service.intro}</p>
@@ -215,14 +216,17 @@ function App() {
            <div className="mt-5 grid grid-cols-1 gap-3 md:grid-cols-12">
              <figure className="project-card group relative min-h-[250px] overflow-hidden rounded-lg md:col-span-5">
                <img src={roofTilesPath} alt="Roof tiles prepared for a residential roofing project" className="absolute inset-0 h-full w-full object-cover" />
+               <div className="absolute inset-0 bg-[#10233f]/35 mix-blend-multiply" />
                <figcaption className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#10233f]/85 to-transparent px-5 pb-5 pt-16 text-sm font-semibold text-white">Materials that suit the building.</figcaption>
              </figure>
              <figure className="project-card group relative min-h-[250px] overflow-hidden rounded-lg md:col-span-4">
                <img src={roofFramingPath} alt="Roof framing work underway on a property" className="absolute inset-0 h-full w-full object-cover" />
+               <div className="absolute inset-0 bg-[#10233f]/35 mix-blend-multiply" />
                <figcaption className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#10233f]/85 to-transparent px-5 pb-5 pt-16 text-sm font-semibold text-white">Careful work beneath the surface.</figcaption>
              </figure>
              <figure className="project-card group relative min-h-[250px] overflow-hidden rounded-lg md:col-span-3">
                <img src={rooferAtWorkPath} alt="Roofer working at height on a construction site" className="absolute inset-0 h-full w-full object-cover" />
+               <div className="absolute inset-0 bg-[#10233f]/35 mix-blend-multiply" />
                <figcaption className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#10233f]/85 to-transparent px-5 pb-5 pt-16 text-sm font-semibold text-white">Work done with care.</figcaption>
              </figure>
            </div>
