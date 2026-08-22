@@ -1,0 +1,28 @@
+kind = "web"
+previewPath = "/"
+title = "Kellys Roofing Dublin"
+description = "A polished lead-generation website for Kellys Roofing & Interiors, helping Dublin homeowners, landlords, and commercial clients understand roofing, masonry, gutter, and interior construction services and request a quote."
+version = "1.0.0"
+id = "artifacts/kellys-roofing"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 20162
+
+[services.development]
+run = "pnpm --filter @workspace/kellys-roofing run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/kellys-roofing", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/kellys-roofing/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "20162"
+BASE_PATH = "/"
