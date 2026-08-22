@@ -94,62 +94,62 @@ function App() {
               ['How we work', '#approach'],
               ['About Kellys', '#about'],
             ].map(([label, href]) => (
-              <a key={href} href={href} className="nav-link text-[12px] font-semibold tracking-[.04em] text-white/80 transition-colors hover:text-white" data-testid={`link-nav-${label.toLowerCase().replaceAll(' ', '-')}`}>
+              <a key={href} href={href} className="nav-link text-[12px] font-semibold tracking-[.04em] text-[#10233f]/75 transition-colors hover:text-[#10233f]" data-testid={`link-nav-${label.toLowerCase().replaceAll(' ', '-')}`}>
                 {label}
               </a>
             ))}
-            <button onClick={scrollToContact} className="group inline-flex items-center gap-2 rounded-full border border-white/30 bg-white/10 px-4 py-2.5 text-[12px] font-bold text-white backdrop-blur-sm transition hover:border-[#f26a3d] hover:bg-[#f26a3d]" data-testid="button-nav-quote">
+            <button onClick={scrollToContact} className="group inline-flex items-center gap-2 rounded-full border border-[#10233f]/20 bg-white/65 px-4 py-2.5 text-[12px] font-bold text-[#10233f] backdrop-blur-sm transition hover:border-[#f26a3d] hover:bg-[#f26a3d]" data-testid="button-nav-quote">
               Request a quote <ArrowRight size={14} className="transition-transform group-hover:translate-x-0.5" />
             </button>
           </nav>
-          <button onClick={() => setMenuOpen((current) => !current)} className="rounded-full border border-white/25 p-2.5 text-white lg:hidden" aria-label={menuOpen ? 'Close menu' : 'Open menu'} data-testid="button-mobile-menu">
+          <button onClick={() => setMenuOpen((current) => !current)} className="rounded-full border border-[#10233f]/20 bg-white/70 p-2.5 text-[#10233f] lg:hidden" aria-label={menuOpen ? 'Close menu' : 'Open menu'} data-testid="button-mobile-menu">
             {menuOpen ? <X size={21} /> : <Menu size={21} />}
           </button>
         </div>
         {menuOpen && (
-          <div className="mx-4 rounded-xl border border-white/20 bg-[#10233f]/95 p-3 shadow-2xl backdrop-blur-md lg:hidden" data-testid="mobile-menu">
+           <div className="mx-4 rounded-xl border border-[#10233f]/10 bg-[#fbfaf6]/95 p-3 shadow-2xl backdrop-blur-md lg:hidden" data-testid="mobile-menu">
             {[
               ['Services', '#services'],
               ['How we work', '#approach'],
               ['About Kellys', '#about'],
               ['Request a quote', '#contact'],
             ].map(([label, href]) => (
-              <a key={href} href={href} onClick={closeMenu} className="flex items-center justify-between border-b border-white/10 px-3 py-3.5 text-sm font-semibold text-white last:border-0" data-testid={`link-mobile-${label.toLowerCase().replaceAll(' ', '-')}`}>
-                {label}<ArrowRight size={15} className="text-[#f26a3d]" />
+               <a key={href} href={href} onClick={closeMenu} className="flex items-center justify-between border-b border-[#10233f]/10 px-3 py-3.5 text-sm font-semibold text-[#10233f] last:border-0" data-testid={`link-mobile-${label.toLowerCase().replaceAll(' ', '-')}`}>
+                 {label}<ArrowRight size={15} className="text-[#c75632]" />
               </a>
             ))}
           </div>
         )}
       </header>
 
-      <section id="top" className="relative isolate min-h-[720px] bg-[#0c1b31] text-[#fbfaf6] sm:min-h-[780px]">
-        <div className="absolute inset-0 -z-10 bg-[linear-gradient(110deg,#0c1b31_5%,rgba(12,27,49,.88)_42%,rgba(12,27,49,.38)_100%)]" />
-        <img src={rooflinePath} alt="" className="absolute inset-0 -z-20 h-full w-full object-cover object-center opacity-80" />
-        <div className="absolute inset-0 -z-10 bg-[linear-gradient(to_bottom,rgba(12,27,49,.48),transparent_34%,rgba(12,27,49,.88))]" />
-        <div className="absolute bottom-0 left-0 right-0 -z-10 h-32 bg-gradient-to-t from-[#0c1b31] to-transparent" />
+       <section id="top" className="relative isolate min-h-[720px] bg-[#f4f0e7] text-[#10233f] sm:min-h-[780px]">
+         <div className="absolute inset-0 -z-10 bg-[linear-gradient(110deg,#f4f0e7_5%,rgba(244,240,231,.93)_42%,rgba(244,240,231,.5)_100%)]" />
+         <img src={rooflinePath} alt="" className="absolute inset-0 -z-20 h-full w-full object-cover object-center opacity-25 mix-blend-multiply" />
+         <div className="absolute inset-0 -z-10 bg-[linear-gradient(to_bottom,rgba(244,240,231,.35),transparent_34%,rgba(244,240,231,.96))]" />
+         <div className="absolute bottom-0 left-0 right-0 -z-10 h-32 bg-gradient-to-t from-[#f4f0e7] to-transparent" />
         <div className="mx-auto flex min-h-[720px] max-w-[1380px] flex-col justify-end px-5 pb-14 pt-32 sm:min-h-[780px] sm:px-8 sm:pb-20 lg:px-12">
           <div className="max-w-[800px]">
             <p className="section-kicker reveal text-[#ff8b60]">Roofing · building · interiors / Dublin</p>
-            <h1 className="display-title reveal delay-1 mt-5 max-w-[780px] text-[clamp(3.6rem,9vw,8rem)] font-semibold text-[#fbfaf6]">
+             <h1 className="display-title reveal delay-1 mt-5 max-w-[780px] text-[clamp(3.6rem,9vw,8rem)] font-semibold text-[#10233f]">
               Proper work.<br /><span className="text-[#ff8b60]">Solidly done.</span>
             </h1>
             <div className="reveal delay-2 mt-8 flex max-w-[570px] flex-col gap-7 sm:flex-row sm:items-end sm:gap-12">
-              <p className="max-w-[410px] text-[15px] leading-7 text-white/75 sm:text-base">
+               <p className="max-w-[410px] text-[15px] leading-7 text-[#536075] sm:text-base">
                 Kellys Roofing & Interiors looks after the spaces that matter — from a leaking roof in a family home to the final detail of a property ready for its next chapter.
               </p>
-              <button onClick={scrollToContact} className="group flex shrink-0 items-center gap-2 text-left text-sm font-bold text-white" data-testid="button-hero-quote">
+               <button onClick={scrollToContact} className="group flex shrink-0 items-center gap-2 text-left text-sm font-bold text-[#10233f]" data-testid="button-hero-quote">
                 Start with a conversation <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#f26a3d] transition-transform group-hover:translate-x-1"><ArrowDownRight size={17} /></span>
               </button>
             </div>
           </div>
-          <div className="reveal delay-3 mt-16 flex items-center gap-4 text-[10px] font-bold uppercase tracking-[.18em] text-white/50">
+           <div className="reveal delay-3 mt-16 flex items-center gap-4 text-[10px] font-bold uppercase tracking-[.18em] text-[#536075]">
             <span className="h-px w-16 bg-[#f26a3d]" /> Serving homeowners, landlords, property managers & commercial clients
           </div>
         </div>
       </section>
 
-      <section className="bg-[#0c1b31] px-5 pb-20 text-[#fbfaf6] sm:px-8 lg:px-12">
-        <div className="mx-auto grid max-w-[1380px] grid-cols-1 gap-8 border-t border-white/15 pt-10 sm:grid-cols-3 sm:gap-0">
+       <section className="page-grid bg-[#f4f0e7] px-5 pb-20 text-[#10233f] sm:px-8 lg:px-12">
+         <div className="mx-auto grid max-w-[1380px] grid-cols-1 gap-8 border-t border-[#10233f]/15 pt-10 sm:grid-cols-3 sm:gap-0">
           {[
             ['01', 'Roof over your head', 'Responsive thinking for the jobs you cannot afford to leave to chance.'],
             ['02', 'One joined-up team', 'The outside and the inside, considered as one property — not separate call-outs.'],
@@ -158,7 +158,7 @@ function App() {
             <div key={number} className={`reveal delay-${index + 1} border-white/15 sm:px-8 sm:first:pl-0 sm:not-first:border-l`}>
               <span className="mono text-[11px] text-[#ff8b60]">{number}</span>
               <h2 className="display mt-5 text-xl font-semibold">{title}</h2>
-              <p className="mt-3 max-w-[270px] text-sm leading-6 text-white/55">{text}</p>
+               <p className="mt-3 max-w-[270px] text-sm leading-6 text-[#536075]">{text}</p>
             </div>
           ))}
         </div>
@@ -225,16 +225,16 @@ function App() {
         </div>
       </section>
 
-      <section id="about" className="bg-[#f4f0e7] px-5 py-24 sm:px-8 lg:px-12 lg:py-32">
+       <section id="about" className="page-grid bg-[#f4f0e7] px-5 py-24 sm:px-8 lg:px-12 lg:py-32">
         <div className="mx-auto grid max-w-[1380px] items-center gap-12 lg:grid-cols-[1.1fr_.9fr] lg:gap-24">
-          <div className="relative min-h-[430px] overflow-hidden rounded-lg bg-[#10233f] p-8 sm:p-12">
-            <div className="absolute -right-14 -top-10 h-52 w-52 rounded-full border-[24px] border-[#f26a3d]/70" />
-            <div className="absolute -bottom-28 -left-8 h-60 w-60 rounded-full border border-white/20" />
+           <div className="relative min-h-[430px] overflow-hidden rounded-lg border border-[#10233f]/10 bg-[#dbe3e4] p-8 sm:p-12">
+             <div className="absolute -right-14 -top-10 h-52 w-52 rounded-full border-[24px] border-[#f26a3d]/70" />
+             <div className="absolute -bottom-28 -left-8 h-60 w-60 rounded-full border border-[#10233f]/20" />
             <div className="relative flex h-full flex-col justify-between">
-              <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[.18em] text-white/50"><span className="h-2 w-2 rounded-full bg-[#f26a3d]" /> The Kellys standard</div>
+               <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[.18em] text-[#536075]"><span className="h-2 w-2 rounded-full bg-[#f26a3d]" /> The Kellys standard</div>
               <div>
-                <p className="display max-w-[510px] text-[clamp(2.3rem,5vw,4.5rem)] font-semibold leading-[.97] tracking-[-.045em] text-[#fbfaf6]">Treat every address like someone’s <span className="text-[#ff8b60]">home.</span></p>
-                <div className="mt-8 flex items-center gap-3 text-sm text-white/60"><ClipboardList size={17} className="text-[#ff8b60]" /> A considered scope. A clean finish. No shortcuts in the details.</div>
+                 <p className="display max-w-[510px] text-[clamp(2.3rem,5vw,4.5rem)] font-semibold leading-[.97] tracking-[-.045em] text-[#10233f]">Treat every address like someone’s <span className="text-[#c75632]">home.</span></p>
+                 <div className="mt-8 flex items-center gap-3 text-sm text-[#536075]"><ClipboardList size={17} className="text-[#c75632]" /> A considered scope. A clean finish. No shortcuts in the details.</div>
               </div>
             </div>
           </div>
@@ -250,39 +250,39 @@ function App() {
         </div>
       </section>
 
-      <section id="contact" className="dark-panel bg-[#10233f] px-5 py-24 text-[#fbfaf6] sm:px-8 lg:px-12 lg:py-32">
+       <section id="contact" className="page-grid bg-[#dbe3e4] px-5 py-24 text-[#10233f] sm:px-8 lg:px-12 lg:py-32">
         <div className="mx-auto grid max-w-[1380px] gap-16 lg:grid-cols-[.85fr_1.15fr] lg:gap-24">
           <div>
             <p className="section-kicker">Let’s talk about the job</p>
             <h2 className="display-title mt-5 max-w-[560px] text-[clamp(3rem,6vw,5.8rem)] font-semibold">A sound next step starts with <span className="text-[#ff8b60]">a few details.</span></h2>
-            <p className="mt-7 max-w-[390px] text-sm leading-7 text-white/60">Share what you know below. We will review the basics and come back to arrange the right conversation or site visit.</p>
-            <div className="mt-12 border-t border-white/15 pt-6">
-              <p className="mono text-[10px] uppercase tracking-[.16em] text-white/45">Prefer to speak?</p>
-              <p className="mt-2 text-sm text-white/75">Ask us to call you at a time that suits. We do not publish a number here, but every enquiry is read by the team.</p>
+             <p className="mt-7 max-w-[390px] text-sm leading-7 text-[#536075]">Share what you know below. We will review the basics and come back to arrange the right conversation or site visit.</p>
+             <div className="mt-12 border-t border-[#10233f]/15 pt-6">
+               <p className="mono text-[10px] uppercase tracking-[.16em] text-[#536075]">Prefer to speak?</p>
+               <p className="mt-2 text-sm text-[#10233f]/75">Ask us to call you at a time that suits. We do not publish a number here, but every enquiry is read by the team.</p>
             </div>
           </div>
-          <div className="rounded-lg bg-[#173252] p-6 sm:p-9">
+           <div className="rounded-lg border border-[#10233f]/10 bg-[#f8f6f0] p-6 shadow-sm sm:p-9">
             {submitted ? (
               <div className="flex min-h-[440px] flex-col justify-center" data-testid="status-form-success">
                 <span className="flex h-14 w-14 items-center justify-center rounded-full bg-[#f26a3d] text-[#10233f]"><CircleCheck size={28} /></span>
                 <p className="section-kicker mt-8">Enquiry received</p>
-                <h3 className="display mt-4 text-4xl font-semibold">Thanks — we have the outline.</h3>
-                <p className="mt-4 max-w-[430px] text-sm leading-7 text-white/65">Your details are ready for review. We will be in touch to understand the property and agree the best next step.</p>
+                 <h3 className="display mt-4 text-4xl font-semibold">Thanks — we have the outline.</h3>
+                 <p className="mt-4 max-w-[430px] text-sm leading-7 text-[#536075]">Your details are ready for review. We will be in touch to understand the property and agree the best next step.</p>
                 <button onClick={() => setSubmitted(false)} className="mt-8 inline-flex w-fit items-center gap-2 border-b border-[#ff8b60] pb-1 text-sm font-bold text-[#ff8b60]" data-testid="button-submit-another">Send another enquiry <ArrowRight size={14} /></button>
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-5" data-testid="form-quote">
                 <div className="grid gap-5 sm:grid-cols-2">
-                  <label className="text-xs font-semibold text-white/65">Your name<input required name="name" placeholder="Name" className="field mt-2" data-testid="input-name" /></label>
-                  <label className="text-xs font-semibold text-white/65">Best way to reach you<input required name="contact" placeholder="Phone or email" className="field mt-2" data-testid="input-contact" /></label>
+                   <label className="text-xs font-semibold text-[#536075]">Your name<input required name="name" placeholder="Name" className="field mt-2" data-testid="input-name" /></label>
+                   <label className="text-xs font-semibold text-[#536075]">Best way to reach you<input required name="contact" placeholder="Phone or email" className="field mt-2" data-testid="input-contact" /></label>
                 </div>
                 <div className="grid gap-5 sm:grid-cols-2">
-                  <label className="text-xs font-semibold text-white/65">Property area<input required name="area" placeholder="e.g. Rathmines" className="field mt-2" data-testid="input-area" /></label>
-                  <label className="text-xs font-semibold text-white/65">I need help with<select name="service" defaultValue="" className="field mt-2" data-testid="select-service"><option value="" disabled>Select a service</option><option>Roof repairs</option><option>Roof replacement</option><option>Flat roofing</option><option>Interiors & building</option><option>Not sure yet</option></select></label>
+                   <label className="text-xs font-semibold text-[#536075]">Property area<input required name="area" placeholder="e.g. Rathmines" className="field mt-2" data-testid="input-area" /></label>
+                   <label className="text-xs font-semibold text-[#536075]">I need help with<select name="service" defaultValue="" className="field mt-2" data-testid="select-service"><option value="" disabled>Select a service</option><option>Roof repairs</option><option>Roof replacement</option><option>Flat roofing</option><option>Interiors & building</option><option>Not sure yet</option></select></label>
                 </div>
-                <label className="block text-xs font-semibold text-white/65">Tell us what is happening<textarea required name="message" placeholder="A few words about the property or the work needed" rows={5} className="field mt-2 resize-none" data-testid="textarea-message" /></label>
-                <div className="flex flex-col items-start justify-between gap-5 border-t border-white/15 pt-5 sm:flex-row sm:items-center">
-                  <p className="max-w-[270px] text-[11px] leading-5 text-white/45">Please do not include sensitive personal information. This form is for an initial project enquiry.</p>
+                 <label className="block text-xs font-semibold text-[#536075]">Tell us what is happening<textarea required name="message" placeholder="A few words about the property or the work needed" rows={5} className="field mt-2 resize-none" data-testid="textarea-message" /></label>
+                 <div className="flex flex-col items-start justify-between gap-5 border-t border-[#10233f]/15 pt-5 sm:flex-row sm:items-center">
+                   <p className="max-w-[270px] text-[11px] leading-5 text-[#536075]">Please do not include sensitive personal information. This form is for an initial project enquiry.</p>
                   <button type="submit" className="group inline-flex items-center gap-3 rounded-full bg-[#f26a3d] px-5 py-3 text-sm font-bold text-[#10233f] transition hover:bg-[#ff8b60]" data-testid="button-submit-quote">
                     Send enquiry <ArrowRight size={15} className="transition-transform group-hover:translate-x-1" />
                   </button>
@@ -293,18 +293,18 @@ function App() {
         </div>
       </section>
 
-      <footer className="bg-[#0c1b31] px-5 py-10 text-[#fbfaf6] sm:px-8 lg:px-12">
+       <footer className="page-grid bg-[#f4f0e7] px-5 py-10 text-[#10233f] sm:px-8 lg:px-12">
         <div className="mx-auto flex max-w-[1380px] flex-col justify-between gap-8 sm:flex-row sm:items-end">
           <div>
             <img src={logoPath} alt="Kellys Roofing and Interiors" className="h-auto w-[175px] rounded bg-[#fbfaf6] p-1" />
-            <p className="mt-5 text-xs text-white/45">Roofing, building & interiors across Dublin.</p>
+             <p className="mt-5 text-xs text-[#536075]">Roofing, building & interiors across Dublin.</p>
           </div>
-          <div className="flex flex-col items-start gap-3 text-xs text-white/55 sm:items-end">
-            <a href="#top" className="inline-flex items-center gap-2 font-bold text-white transition-colors hover:text-[#ff8b60]" data-testid="link-back-top">Back to top <ChevronDown size={14} className="rotate-180" /></a>
-            <p data-testid="text-footer-note">Enquiries welcome from homeowners, landlords, property managers and commercial clients.</p>
+           <div className="flex flex-col items-start gap-3 text-xs text-[#536075] sm:items-end">
+             <a href="#top" className="inline-flex items-center gap-2 font-bold text-[#10233f] transition-colors hover:text-[#c75632]" data-testid="link-back-top">Back to top <ChevronDown size={14} className="rotate-180" /></a>
+             <p data-testid="text-footer-note">Enquiries welcome from homeowners, landlords, property managers and commercial clients.</p>
           </div>
         </div>
-        <div className="mx-auto mt-8 max-w-[1380px] border-t border-white/10 pt-5 text-[10px] uppercase tracking-[.14em] text-white/30">Kellys Roofing & Interiors · Dublin</div>
+         <div className="mx-auto mt-8 max-w-[1380px] border-t border-[#10233f]/15 pt-5 text-[10px] uppercase tracking-[.14em] text-[#536075]">Kellys Roofing & Interiors · Dublin</div>
       </footer>
     </main>
   );
