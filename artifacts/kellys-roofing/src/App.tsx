@@ -2,13 +2,11 @@ import { useEffect, useState, type FormEvent } from 'react';
 import {
   ArrowDownRight,
   ArrowRight,
-  Check,
   ChevronDown,
   CircleCheck,
   ClipboardList,
   House,
   Menu,
-  Minus,
   MoveUpRight,
   Ruler,
   ShieldCheck,
@@ -20,9 +18,9 @@ import logoPath from '@assets/kellys-logo-cropped.png';
 import rooflinePath from '@assets/generated_images/kellys-roofline.jpg';
 import roofTilesPath from '@assets/unsplash/roof-tiles.jpg';
 import roofFramingPath from '@assets/unsplash/roof-framing.jpg';
-import roofingTeamPath from '@assets/unsplash/roofing-team.jpg';
 import rooferFixingRoofHeroPath from '@assets/unsplash/roofer-fixing-roof-hero.jpg';
 import interiorRenovationPath from '@assets/unsplash/interior-renovation.jpg';
+import homeRenovationStandardPath from '@assets/unsplash/home-renovation-standard.jpg';
 
 type Service = {
   number: string;
@@ -167,7 +165,6 @@ function ServicePage({ service }: { service: Service }) {
 function App() {
   const [location] = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
-  const [openService, setOpenService] = useState<string | null>(null);
   const [submitted, setSubmitted] = useState(false);
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
@@ -296,7 +293,6 @@ function App() {
           <div className="mt-16 grid grid-cols-1 gap-3 md:grid-cols-2">
             {services.map((service) => {
               const Icon = service.icon;
-              const isOpen = openService === service.number;
               return (
                   <article key={service.number} className="group service-card rounded-lg border border-[#c9c5bb] bg-[#f8f6f0] p-6 sm:p-8" data-testid={`card-service-${service.number}`}>
                   <div className="flex items-start justify-between">
@@ -309,12 +305,10 @@ function App() {
                    </div>
                   <h3 className="display mt-12 text-3xl font-semibold tracking-[-.035em] text-[#10233f]">{service.title}</h3>
                   <p className="mt-3 max-w-[470px] text-sm leading-6 text-[#536075]">{service.intro}</p>
-                  <div className={`service-detail ${isOpen ? 'open' : ''}`}>
-                    <p className="mt-4 max-w-[470px] border-t border-[#d7d1c5] pt-4 text-sm leading-6 text-[#10233f]">{service.detail}</p>
-                  </div>
-                  <button onClick={() => setOpenService(isOpen ? null : service.number)} className="mt-7 inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-[.12em] text-[#10233f]" aria-expanded={isOpen} data-testid={`button-service-details-${service.number}`}>
-                    {isOpen ? 'Close details' : 'See what is involved'} {isOpen ? <Minus size={15} className="text-[#1f365e]" /> : <MoveUpRight size={15} className="text-[#1f365e]" />}
-                  </button>
+                   <p className="mt-4 max-w-[470px] border-t border-[#d7d1c5] pt-4 text-sm leading-6 text-[#10233f]">{service.detail}</p>
+                   <Link href={`/services/${serviceSlugs[service.title]}`} className="mt-7 inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-[.12em] text-[#10233f]" data-testid={`link-service-details-${service.number}`}>
+                     Explore this service <MoveUpRight size={15} className="text-[#1f365e]" />
+                   </Link>
                 </article>
               );
             })}
@@ -369,7 +363,7 @@ function App() {
        <section id="about" className="page-grid bg-white px-5 py-24 sm:px-8 lg:px-12 lg:py-32">
         <div className="mx-auto grid max-w-[1380px] items-center gap-12 lg:grid-cols-[1.1fr_.9fr] lg:gap-24">
            <div className="relative min-h-[430px] overflow-hidden rounded-lg border border-[#10233f]/10 bg-[#dbe3e4] p-8 sm:p-12">
-             <img src={roofingTeamPath} alt="" className="absolute inset-0 h-full w-full object-cover opacity-[.12] mix-blend-multiply" />
+             <img src={homeRenovationStandardPath} alt="Home renovation work in progress" className="absolute inset-0 h-full w-full object-cover opacity-[.16] mix-blend-multiply" />
              <div className="absolute -right-14 -top-10 h-52 w-52 rounded-full border-[24px] border-[#1f365e]/70" />
              <div className="absolute -bottom-28 -left-8 h-60 w-60 rounded-full border border-[#10233f]/20" />
             <div className="relative flex h-full flex-col justify-between">
