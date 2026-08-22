@@ -19,7 +19,6 @@ import logoPath from '@assets/kellys-logo-cropped.png';
 import rooflinePath from '@assets/generated_images/kellys-roofline.jpg';
 import roofTilesPath from '@assets/unsplash/roof-tiles.jpg';
 import roofFramingPath from '@assets/unsplash/roof-framing.jpg';
-import rooferAtWorkPath from '@assets/unsplash/roofer-at-work.jpg';
 import roofingTeamPath from '@assets/unsplash/roofing-team.jpg';
 import rooferFixingRoofHeroPath from '@assets/unsplash/roofer-fixing-roof-hero.jpg';
 
@@ -224,7 +223,7 @@ function App() {
                <figcaption className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#10233f]/85 to-transparent px-5 pb-5 pt-16 text-sm font-semibold text-white">Careful work beneath the surface.</figcaption>
              </figure>
              <figure className="project-card group relative min-h-[250px] overflow-hidden rounded-lg md:col-span-3">
-               <img src={rooferAtWorkPath} alt="Roofer working at height on a construction site" className="absolute inset-0 h-full w-full object-cover" />
+               <img src={rooferFixingRoofHeroPath} alt="Male roofer repairing a tiled roof" className="absolute inset-0 h-full w-full object-cover" />
                <div className="absolute inset-0 bg-[#10233f]/35 mix-blend-multiply" />
                <figcaption className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#10233f]/85 to-transparent px-5 pb-5 pt-16 text-sm font-semibold text-white">Work done with care.</figcaption>
              </figure>
