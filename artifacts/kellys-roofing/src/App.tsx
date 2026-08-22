@@ -17,6 +17,10 @@ import {
 } from 'lucide-react';
 import logoPath from '@assets/4_1787393946280.jpg';
 import rooflinePath from '@assets/generated_images/kellys-roofline.jpg';
+import roofTilesPath from '@assets/unsplash/roof-tiles.jpg';
+import roofFramingPath from '@assets/unsplash/roof-framing.jpg';
+import rooferAtWorkPath from '@assets/unsplash/roofer-at-work.jpg';
+import roofingTeamPath from '@assets/unsplash/roofing-team.jpg';
 
 type Service = {
   number: string;
@@ -195,6 +199,20 @@ function App() {
               );
             })}
           </div>
+           <div className="mt-5 grid grid-cols-1 gap-3 md:grid-cols-12">
+             <figure className="project-card group relative min-h-[250px] overflow-hidden rounded-lg md:col-span-5">
+               <img src={roofTilesPath} alt="Roof tiles prepared for a residential roofing project" className="absolute inset-0 h-full w-full object-cover" />
+               <figcaption className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#10233f]/85 to-transparent px-5 pb-5 pt-16 text-sm font-semibold text-white">Materials that suit the building.</figcaption>
+             </figure>
+             <figure className="project-card group relative min-h-[250px] overflow-hidden rounded-lg md:col-span-4">
+               <img src={roofFramingPath} alt="Roof framing work underway on a property" className="absolute inset-0 h-full w-full object-cover" />
+               <figcaption className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#10233f]/85 to-transparent px-5 pb-5 pt-16 text-sm font-semibold text-white">Careful work beneath the surface.</figcaption>
+             </figure>
+             <figure className="project-card group relative min-h-[250px] overflow-hidden rounded-lg md:col-span-3">
+               <img src={rooferAtWorkPath} alt="Roofer working at height on a construction site" className="absolute inset-0 h-full w-full object-cover" />
+               <figcaption className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#10233f]/85 to-transparent px-5 pb-5 pt-16 text-sm font-semibold text-white">Work done with care.</figcaption>
+             </figure>
+           </div>
           <div className="mt-8 flex flex-col items-start justify-between gap-6 border-t border-[#c9c5bb] pt-7 sm:flex-row sm:items-center">
             <p className="text-sm text-[#536075]">Not sure which service fits? That is exactly what the first conversation is for.</p>
             <button onClick={scrollToContact} className="group inline-flex items-center gap-3 text-sm font-bold text-[#10233f]" data-testid="button-services-contact">
@@ -228,6 +246,7 @@ function App() {
        <section id="about" className="page-grid bg-white px-5 py-24 sm:px-8 lg:px-12 lg:py-32">
         <div className="mx-auto grid max-w-[1380px] items-center gap-12 lg:grid-cols-[1.1fr_.9fr] lg:gap-24">
            <div className="relative min-h-[430px] overflow-hidden rounded-lg border border-[#10233f]/10 bg-[#dbe3e4] p-8 sm:p-12">
+             <img src={roofingTeamPath} alt="" className="absolute inset-0 h-full w-full object-cover opacity-[.12] mix-blend-multiply" />
              <div className="absolute -right-14 -top-10 h-52 w-52 rounded-full border-[24px] border-[#f26a3d]/70" />
              <div className="absolute -bottom-28 -left-8 h-60 w-60 rounded-full border border-[#10233f]/20" />
             <div className="relative flex h-full flex-col justify-between">
