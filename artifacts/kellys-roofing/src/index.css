@@ -36,12 +36,12 @@
 }
 
 :root {
-  --background: 38 38% 95%;
+  --background: 0 0% 100%;
   --foreground: 219 38% 16%;
   --border: 35 20% 82%;
   --input: 35 20% 82%;
   --ring: 17 72% 50%;
-  --card: 39 34% 98%;
+  --card: 0 0% 100%;
   --card-foreground: 219 38% 16%;
   --card-border: 35 20% 85%;
   --popover: 39 34% 98%;

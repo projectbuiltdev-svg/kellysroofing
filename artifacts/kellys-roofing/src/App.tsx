@@ -122,11 +122,11 @@ function App() {
         )}
       </header>
 
-       <section id="top" className="relative isolate min-h-[720px] bg-[#f4f0e7] text-[#10233f] sm:min-h-[780px]">
-         <div className="absolute inset-0 -z-10 bg-[linear-gradient(110deg,#f4f0e7_5%,rgba(244,240,231,.93)_42%,rgba(244,240,231,.5)_100%)]" />
+       <section id="top" className="relative isolate min-h-[720px] bg-white text-[#10233f] sm:min-h-[780px]">
+         <div className="absolute inset-0 -z-10 bg-[linear-gradient(110deg,#ffffff_5%,rgba(255,255,255,.94)_42%,rgba(255,255,255,.55)_100%)]" />
          <img src={rooflinePath} alt="" className="absolute inset-0 -z-20 h-full w-full object-cover object-center opacity-25 mix-blend-multiply" />
-         <div className="absolute inset-0 -z-10 bg-[linear-gradient(to_bottom,rgba(244,240,231,.35),transparent_34%,rgba(244,240,231,.96))]" />
-         <div className="absolute bottom-0 left-0 right-0 -z-10 h-32 bg-gradient-to-t from-[#f4f0e7] to-transparent" />
+         <div className="absolute inset-0 -z-10 bg-[linear-gradient(to_bottom,rgba(255,255,255,.35),transparent_34%,rgba(255,255,255,.97))]" />
+         <div className="absolute bottom-0 left-0 right-0 -z-10 h-32 bg-gradient-to-t from-white to-transparent" />
         <div className="mx-auto flex min-h-[720px] max-w-[1380px] flex-col justify-end px-5 pb-14 pt-32 sm:min-h-[780px] sm:px-8 sm:pb-20 lg:px-12">
           <div className="max-w-[800px]">
             <p className="section-kicker reveal text-[#ff8b60]">Roofing · building · interiors / Dublin</p>
@@ -148,7 +148,7 @@ function App() {
         </div>
       </section>
 
-       <section className="page-grid bg-[#f4f0e7] px-5 pb-20 text-[#10233f] sm:px-8 lg:px-12">
+       <section className="page-grid bg-white px-5 pb-20 text-[#10233f] sm:px-8 lg:px-12">
          <div className="mx-auto grid max-w-[1380px] grid-cols-1 gap-8 border-t border-[#10233f]/15 pt-10 sm:grid-cols-3 sm:gap-0">
           {[
             ['01', 'Roof over your head', 'Responsive thinking for the jobs you cannot afford to leave to chance.'],
@@ -164,7 +164,7 @@ function App() {
         </div>
       </section>
 
-      <section id="services" className="page-grid bg-[#f4f0e7] px-5 py-24 sm:px-8 lg:px-12 lg:py-32">
+       <section id="services" className="page-grid bg-white px-5 py-24 sm:px-8 lg:px-12 lg:py-32">
         <div className="mx-auto max-w-[1380px]">
           <div className="flex flex-col justify-between gap-8 lg:flex-row lg:items-end">
             <div className="max-w-[720px]">
@@ -204,7 +204,7 @@ function App() {
         </div>
       </section>
 
-      <section id="approach" className="bg-[#dbe3e4] px-5 py-24 sm:px-8 lg:px-12 lg:py-32">
+       <section id="approach" className="page-grid bg-white px-5 py-24 sm:px-8 lg:px-12 lg:py-32">
         <div className="mx-auto grid max-w-[1380px] gap-14 lg:grid-cols-[.8fr_1.2fr] lg:gap-24">
           <div>
             <p className="section-kicker">How we work</p>
@@ -225,7 +225,7 @@ function App() {
         </div>
       </section>
 
-       <section id="about" className="page-grid bg-[#f4f0e7] px-5 py-24 sm:px-8 lg:px-12 lg:py-32">
+       <section id="about" className="page-grid bg-white px-5 py-24 sm:px-8 lg:px-12 lg:py-32">
         <div className="mx-auto grid max-w-[1380px] items-center gap-12 lg:grid-cols-[1.1fr_.9fr] lg:gap-24">
            <div className="relative min-h-[430px] overflow-hidden rounded-lg border border-[#10233f]/10 bg-[#dbe3e4] p-8 sm:p-12">
              <div className="absolute -right-14 -top-10 h-52 w-52 rounded-full border-[24px] border-[#f26a3d]/70" />
@@ -250,7 +250,7 @@ function App() {
         </div>
       </section>
 
-       <section id="contact" className="page-grid bg-[#dbe3e4] px-5 py-24 text-[#10233f] sm:px-8 lg:px-12 lg:py-32">
+       <section id="contact" className="page-grid bg-white px-5 py-24 text-[#10233f] sm:px-8 lg:px-12 lg:py-32">
         <div className="mx-auto grid max-w-[1380px] gap-16 lg:grid-cols-[.85fr_1.15fr] lg:gap-24">
           <div>
             <p className="section-kicker">Let’s talk about the job</p>
@@ -293,7 +293,7 @@ function App() {
         </div>
       </section>
 
-       <footer className="page-grid bg-[#f4f0e7] px-5 py-10 text-[#10233f] sm:px-8 lg:px-12">
+       <footer className="page-grid bg-white px-5 py-10 text-[#10233f] sm:px-8 lg:px-12">
         <div className="mx-auto flex max-w-[1380px] flex-col justify-between gap-8 sm:flex-row sm:items-end">
           <div>
             <img src={logoPath} alt="Kellys Roofing and Interiors" className="h-auto w-[175px] rounded bg-[#fbfaf6] p-1" />
