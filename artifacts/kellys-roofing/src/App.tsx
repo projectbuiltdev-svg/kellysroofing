@@ -39,7 +39,7 @@ const services: Service[] = [
     intro: 'A clear, practical response to leaks, storm damage and the small signs that should not be ignored.',
     detail: 'We inspect the issue, explain what needs doing and carry out focused repairs across Dublin homes and managed properties.',
     icon: ShieldCheck,
-    image: rooferAtWorkPath,
+    image: rooferFixingRoofHeroPath,
   },
   {
     number: '02',
@@ -139,7 +139,6 @@ function App() {
            <img src={rooferFixingRoofHeroPath} alt="Male roofer repairing a tiled roof with a hammer" className="h-full w-full object-cover object-center opacity-90" />
            <div className="absolute inset-0 bg-gradient-to-r from-white via-white/45 to-transparent" />
            <div className="absolute inset-0 bg-gradient-to-t from-white/80 via-transparent to-white/10" />
-           <div className="absolute inset-0 bg-[#10233f]/35 mix-blend-multiply" />
          </div>
         <div className="mx-auto flex min-h-[720px] max-w-[1380px] flex-col justify-end px-5 pb-14 pt-32 sm:min-h-[780px] sm:px-8 sm:pb-20 lg:px-12">
           <div className="max-w-[800px]">
