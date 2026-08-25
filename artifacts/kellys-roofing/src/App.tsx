@@ -24,8 +24,10 @@ import {
 } from './content';
 import { locationProfiles } from './locationProfiles';
 import logoPath from '@assets/optimized/kellys-logo-640.webp';
+import logoSmallPath from '@assets/optimized/kellys-logo-320.webp';
 import rooflinePath from '@assets/optimized/roofline-1600.webp';
 import rooflineMobilePath from '@assets/optimized/roofline-800.webp';
+import rooflinePosterPath from '@assets/optimized/roofline-poster-512.webp';
 import roofTilesPath from '@assets/optimized/roof-tiles-1600.webp';
 import roofTilesMobilePath from '@assets/optimized/roof-tiles-800.webp';
 import roofFramingPath from '@assets/optimized/roof-framing-1600.webp';
@@ -566,7 +568,7 @@ function HeroVideo({ wrapperClassName = '', className = '' }: { wrapperClassName
         loop
         playsInline
         preload="metadata"
-        poster={rooflineMobilePath}
+        poster={rooflinePosterPath}
         className={`h-full w-full object-cover opacity-[55%] ${className}`}
         aria-hidden="true"
       >
@@ -575,7 +577,7 @@ function HeroVideo({ wrapperClassName = '', className = '' }: { wrapperClassName
       <div className="pointer-events-none absolute inset-0 bg-primary/15" aria-hidden="true" />
       <div className="pointer-events-none absolute bottom-4 left-4 z-10 w-[42%] max-w-[190px]" aria-hidden="true">
         <img
-          src={logoPath}
+          src={logoSmallPath}
           alt=""
           width="640"
           height="368"
@@ -597,11 +599,11 @@ function Header({ isServicePage = false, isGalleryPage = false, isBlogPage = fal
       <div className="mx-auto flex max-w-[1600px] items-center justify-between px-6 py-3 md:px-12">
         {isInnerPage ? (
           <Link href="/" onClick={closeMenu} className="relative z-[110] mix-blend-multiply" data-testid="link-logo">
-            <img src={logoPath} alt="Kellys Roofing and Interiors" width="640" height="368" decoding="async" className="h-24 w-auto object-contain md:h-32" />
+            <img src={logoSmallPath} srcSet={`${logoSmallPath} 320w, ${logoPath} 640w`} sizes="(max-width: 767px) 168px, 224px" alt="Kellys Roofing and Interiors" width="640" height="368" loading="eager" fetchPriority="high" decoding="async" className="h-24 w-auto object-contain md:h-32" />
           </Link>
         ) : (
           <a href="#top" onClick={closeMenu} className="relative z-[110] mix-blend-multiply" data-testid="link-logo">
-            <img src={logoPath} alt="Kellys Roofing and Interiors" width="640" height="368" decoding="async" className="h-24 w-auto object-contain md:h-32" />
+            <img src={logoSmallPath} srcSet={`${logoSmallPath} 320w, ${logoPath} 640w`} sizes="(max-width: 767px) 168px, 224px" alt="Kellys Roofing and Interiors" width="640" height="368" loading="eager" fetchPriority="high" decoding="async" className="h-24 w-auto object-contain md:h-32" />
           </a>
         )}
         
@@ -641,11 +643,11 @@ function Header({ isServicePage = false, isGalleryPage = false, isBlogPage = fal
            <div className="flex items-center justify-between border-b border-border pb-4">
              {isInnerPage ? (
                <Link href="/" onClick={closeMenu} className="mix-blend-multiply" data-testid="link-mobile-logo">
-                  <img src={logoPath} alt="Kellys Roofing and Interiors" width="640" height="368" decoding="async" className="h-20 w-auto object-contain" />
+                  <img src={logoSmallPath} alt="Kellys Roofing and Interiors" width="320" height="184" decoding="async" className="h-20 w-auto object-contain" />
                </Link>
              ) : (
                <a href="#top" onClick={closeMenu} className="mix-blend-multiply" data-testid="link-mobile-logo">
-                  <img src={logoPath} alt="Kellys Roofing and Interiors" width="640" height="368" decoding="async" className="h-20 w-auto object-contain" />
+                  <img src={logoSmallPath} alt="Kellys Roofing and Interiors" width="320" height="184" decoding="async" className="h-20 w-auto object-contain" />
                </a>
              )}
              <button onClick={closeMenu} className="p-2 text-primary" aria-label="Close menu">
@@ -790,8 +792,8 @@ function SiteFooter() {
       <footer className="border-t border-border bg-white px-6 py-16 text-foreground md:px-12 md:py-20">
       <div className="mx-auto grid max-w-[1600px] gap-12 md:grid-cols-[repeat(14,minmax(0,1fr))] md:gap-8">
         <div className="md:col-span-4">
-          <img src={logoPath} alt="Kellys Roofing and Interiors" width="640" height="368" loading="lazy" decoding="async" className="h-28 w-auto object-contain md:h-32" />
-          <p className="mt-6 max-w-[460px] text-sm leading-relaxed text-foreground/70">
+          <img src={logoSmallPath} srcSet={`${logoSmallPath} 320w, ${logoPath} 640w`} sizes="(max-width: 767px) 196px, 224px" alt="Kellys Roofing and Interiors" width="640" height="368" loading="lazy" decoding="async" className="h-28 w-auto object-contain md:h-32" />
+          <p className="mt-6 max-w-[460px] text-sm leading-relaxed text-foreground/85">
             Professional roof repairs Dublin, slate and tile roofing, guttering, chimney repairs, flat roofs, and emergency roofing services since 2009. Serving all areas of Dublin County.
           </p>
           <p className="mt-5 max-w-[460px] font-mono text-[10px] uppercase tracking-[0.12em] text-primary">
@@ -832,7 +834,7 @@ function SiteFooter() {
             <a href="tel:+353863395381" className="inline-flex min-h-10 items-center gap-2 font-bold uppercase tracking-[0.12em] text-primary link-hover" aria-label="Call Kellys Roofing at +353 86 339 5381">
               <Phone size={17} /> Call Kellys Roofing
             </a>
-            <a href="https://wa.me/353863395381" target="_blank" rel="noreferrer" className="inline-flex min-h-10 items-center gap-2 font-bold uppercase tracking-[0.12em] text-[#128C7E] link-hover" aria-label="WhatsApp us">
+            <a href="https://wa.me/353863395381" target="_blank" rel="noreferrer" className="inline-flex min-h-10 items-center gap-2 font-bold uppercase tracking-[0.12em] text-[#0B665C] link-hover" aria-label="WhatsApp us">
               <svg viewBox="0 0 32 32" aria-hidden="true" className="h-5 w-5 fill-current">
                 <path d="M16 3.2a12.8 12.8 0 0 0-10.95 19.44L3.2 28.8l6.34-1.8A12.8 12.8 0 1 0 16 3.2Zm0 23.3a10.45 10.45 0 0 1-5.33-1.46l-.38-.23-3.77 1.07 1.1-3.67-.25-.39A10.47 10.47 0 1 1 16 26.5Zm5.74-7.75c-.31-.16-1.84-.91-2.13-1.01-.29-.11-.5-.16-.71.16-.21.31-.81 1.01-.99 1.22-.18.21-.37.24-.68.08-.31-.16-1.31-.48-2.5-1.53-.92-.82-1.54-1.83-1.72-2.14-.18-.31-.02-.48.14-.64.14-.14.31-.37.47-.55.16-.18.21-.31.31-.52.1-.21.05-.39-.03-.55-.08-.16-.71-1.7-.97-2.33-.26-.61-.52-.53-.71-.54h-.6c-.21 0-.55.08-.84.39-.29.31-1.1 1.08-1.1 2.64s1.13 3.06 1.29 3.27c.16.21 2.22 3.39 5.38 4.76.75.32 1.33.51 1.78.65.75.24 1.43.21 1.97.13.6-.09 1.84-.75 2.1-1.48.26-.73.26-1.35.18-1.48-.08-.13-.29-.21-.6-.37Z" />
               </svg>
@@ -864,7 +866,7 @@ function SiteFooter() {
             href="https://www.facebook.com/"
             target="_blank"
             rel="noreferrer"
-            className="group flex h-36 w-full flex-col justify-between bg-[#1877F2] p-4 text-white transition-colors hover:bg-[#125dcc]"
+            className="group flex h-36 w-full flex-col justify-between bg-[#0B5FCC] p-4 text-white transition-colors hover:bg-[#084B9F]"
             aria-label="View our work on Facebook"
           >
             <svg viewBox="0 0 24 24" aria-hidden="true" className="h-9 w-9 fill-current">
@@ -2045,7 +2047,7 @@ export default function App() {
                   <span className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.16em]"><Phone size={16} /> Call Us Now</span>
                   <span className="font-display text-xl">+353 86 339 5381</span>
                 </a>
-                <a href="https://wa.me/353863395381" target="_blank" rel="noreferrer" className="flex flex-col gap-2 bg-[#25D366] px-5 py-5 text-white transition-colors hover:bg-[#128C7E]">
+                <a href="https://wa.me/353863395381" target="_blank" rel="noreferrer" className="flex flex-col gap-2 bg-[#25D366] px-5 py-5 text-[#0B2F26] transition-colors hover:bg-[#1EBE5B]">
                   <span className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.16em]"><MessageCircle size={16} /> WhatsApp Us</span>
                   <svg viewBox="0 0 32 32" aria-label="WhatsApp" role="img" className="mt-2 h-10 w-10 fill-current">
                     <path d="M16 3.2a12.8 12.8 0 0 0-10.95 19.44L3.2 28.8l6.34-1.8A12.8 12.8 0 1 0 16 3.2Zm0 23.3a10.45 10.45 0 0 1-5.33-1.46l-.38-.23-3.77 1.07 1.1-3.67-.25-.39A10.47 10.47 0 1 1 16 26.5Zm5.74-7.75c-.31-.16-1.84-.91-2.13-1.01-.29-.11-.5-.16-.71.16-.21.31-.81 1.01-.99 1.22-.18.21-.37.24-.68.08-.31-.16-1.31-.48-2.5-1.53-.92-.82-1.54-1.83-1.72-2.14-.18-.31-.02-.48.14-.64.14-.14.31-.37.47-.55.16-.18.21-.31.31-.52.1-.21.05-.39-.03-.55-.08-.16-.71-1.7-.97-2.33-.26-.61-.52-.53-.71-.54h-.6c-.21 0-.55.08-.84.39-.29.31-1.1 1.08-1.1 2.64s1.13 3.06 1.29 3.27c.16.21 2.22 3.39 5.38 4.76.75.32 1.33.51 1.78.65.75.24 1.43.21 1.97.13.6-.09 1.84-.75 2.1-1.48.26-.73.26-1.35.18-1.48-.08-.13-.29-.21-.6-.37Z" />
