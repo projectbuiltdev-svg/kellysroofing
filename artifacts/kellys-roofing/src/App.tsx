@@ -103,7 +103,7 @@ function Header({ isServicePage = false }: { isServicePage?: boolean }) {
             ))}
             {!isServicePage && (
               <>
-                <a href="#approach" className="text-sm font-medium hover:text-primary transition-colors link-hover">How we work</a>
+                <a href="#approach" className="text-sm font-medium hover:text-primary transition-colors link-hover">View our work</a>
                 <a href="#about" className="text-sm font-medium hover:text-primary transition-colors link-hover">About Kellys</a>
               </>
             )}
@@ -153,7 +153,7 @@ function Header({ isServicePage = false }: { isServicePage?: boolean }) {
              ))}
              {!isServicePage && (
                <>
-                 <a href="#approach" onClick={closeMenu} className="border-b border-border pb-4" data-testid="link-mobile-approach">How we work</a>
+                 <a href="#approach" onClick={closeMenu} className="border-b border-border pb-4" data-testid="link-mobile-approach">View our work</a>
                  <a href="#about" onClick={closeMenu} className="border-b border-border pb-4" data-testid="link-mobile-about">About Kellys</a>
                </>
              )}
@@ -379,7 +379,7 @@ export default function App() {
       <section id="approach" className="py-24 md:py-40 px-6 md:px-12 border-b border-border">
         <div className="mx-auto max-w-[1600px] grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24">
           <div>
-            <span className="kicker mb-8">How we work</span>
+            <span className="kicker mb-8">View our work</span>
             <h2 className="heading-section max-w-[500px] mb-8">
               No fog. Just a clear route through the work.
             </h2>
