@@ -14,6 +14,13 @@ import {
 } from 'lucide-react';
 import { Link, useLocation } from 'wouter';
 
+import {
+  blogPosts,
+  servicePageContent,
+  type BlogImageKey,
+  type BlogPost,
+  type ServiceSlug,
+} from './content';
 import logoPath from '@assets/kellys_roofing_logo_transparent.png';
 import rooflinePath from '@assets/generated_images/kellys-roofline.jpg';
 import roofTilesPath from '@assets/unsplash/roof-tiles.jpg';
@@ -86,60 +93,14 @@ const galleryItems = [
   ['06', 'The finished detail', 'The small decisions that help a renovated space feel considered.', homeRenovationStandardPath],
 ];
 
-type BlogPost = {
-  category: string;
-  title: string;
-  excerpt: string;
-  image: string;
-  readTime: string;
+const blogCategories = services.map((service) => service.title);
+
+const blogImages: Record<BlogImageKey, string> = {
+  repair: rooferFixingRoofHeroPath,
+  replacement: roofTilesPath,
+  flat: roofFramingPath,
+  interiors: interiorRenovationPath,
 };
-
-const blogCategories = ['Roof repairs', 'Roof replacement', 'Flat roofing'];
-
-const blogPosts: BlogPost[] = [
-  {
-    category: 'Roof repairs',
-    title: 'The early signs that a roof needs attention',
-    excerpt: 'A slipped tile, a damp patch or a change in the way water runs can all be useful clues. Knowing what to look for helps you deal with a small issue before it becomes a larger one.',
-    image: rooferFixingRoofHeroPath,
-    readTime: '4 min read',
-  },
-  {
-    category: 'Roof repairs',
-    title: 'What to do after storm damage',
-    excerpt: 'After high winds, a quick visual check can help you spot loose materials and exposed areas. We look at the safest first steps and when it is time to arrange a proper inspection.',
-    image: rooflinePath,
-    readTime: '3 min read',
-  },
-  {
-    category: 'Roof replacement',
-    title: 'Repair or replace: making the right call',
-    excerpt: 'The age of a roof is only part of the picture. Condition, previous repairs, ventilation and the long-term plans for the property all matter when weighing up the options.',
-    image: roofTilesPath,
-    readTime: '5 min read',
-  },
-  {
-    category: 'Roof replacement',
-    title: 'A simple guide to planning a new roof',
-    excerpt: 'A well-planned replacement keeps surprises to a minimum. Here are the practical details worth discussing early, from materials and access to sequencing and finishing.',
-    image: roofFramingPath,
-    readTime: '6 min read',
-  },
-  {
-    category: 'Flat roofing',
-    title: 'The details that make a flat roof last',
-    excerpt: 'Falls, edges, outlets and joins all play a part in how a flat roof performs. Good detailing is what turns a covering into dependable protection for the building below.',
-    image: roofFramingPath,
-    readTime: '5 min read',
-  },
-  {
-    category: 'Flat roofing',
-    title: 'Flat roofs for extensions and outbuildings',
-    excerpt: 'From a home extension to a garage or commercial unit, the right flat-roof approach starts with how the space will be used. We cover the questions to ask before work begins.',
-    image: rooferFixingRoofHeroPath,
-    readTime: '4 min read',
-  },
-];
 
 const locationNames = `
 Adamstown
@@ -252,6 +213,7 @@ export const prerenderRoutes = [
   '/blog',
   '/locations',
   ...services.map((service) => `/services/${serviceSlugs[service.title]}`),
+  ...blogPosts.map((post) => `/blog/${post.slug}`),
   ...locationItems.map((area) => `/locations/${area.slug}`),
   ...locationItems.flatMap((area) =>
     services.map((service) => `/locations/${area.slug}/${serviceSlugs[service.title]}`),
@@ -260,6 +222,7 @@ export const prerenderRoutes = [
 
 export function getPageMetadata(location: string) {
   const activeService = services.find((service) => `/services/${serviceSlugs[service.title]}` === location);
+  const activeBlogPost = blogPosts.find((post) => `/blog/${post.slug}` === location);
   const activeLocation = locationItems.find((area) => `/locations/${area.slug}` === location);
   const locationServiceMatch = location.match(/^\/locations\/([^/]+)\/([^/]+)$/);
   const activeLocationService = locationServiceMatch
@@ -271,6 +234,8 @@ export function getPageMetadata(location: string) {
 
   const title = activeService
     ? `${activeService.title} | Kellys Roofing Dublin`
+    : activeBlogPost
+      ? `${activeBlogPost.title} | Kellys Roofing Dublin`
     : location === '/work'
       ? 'Our Work | Kellys Roofing & Interiors | Dublin'
       : location === '/blog'
@@ -285,6 +250,8 @@ export function getPageMetadata(location: string) {
 
   const description = activeService
     ? `${activeService.intro} Kellys Roofing & Interiors serves homes and properties across Dublin.`
+    : activeBlogPost
+      ? activeBlogPost.metaDescription
     : location === '/work'
       ? 'Explore selected roofing, building and interior work from Kellys Roofing & Interiors in Dublin.'
       : location === '/blog'
@@ -360,11 +327,6 @@ function Header({ isServicePage = false, isGalleryPage = false, isBlogPage = fal
             ))}
             <Link href="/work" className="text-sm font-medium hover:text-primary transition-colors link-hover">View our work</Link>
             <Link href="/blog" className="text-sm font-medium hover:text-primary transition-colors link-hover">Blog</Link>
-            {isInnerPage ? (
-              <Link href="/#about" className="text-sm font-medium hover:text-primary transition-colors link-hover">About Kellys</Link>
-            ) : (
-              <a href="#about" className="text-sm font-medium hover:text-primary transition-colors link-hover">About Kellys</a>
-            )}
           </div>
           {isInnerPage ? (
             <Link href="/#contact" className="bg-primary text-primary-foreground px-6 py-2.5 text-sm font-medium hover:bg-accent transition-colors" data-testid="button-nav-quote">
@@ -411,11 +373,6 @@ function Header({ isServicePage = false, isGalleryPage = false, isBlogPage = fal
              ))}
              <Link href="/work" onClick={closeMenu} className="border-b border-border pb-4" data-testid="link-mobile-work">View our work</Link>
              <Link href="/blog" onClick={closeMenu} className="border-b border-border pb-4" data-testid="link-mobile-blog">Blog</Link>
-             {isInnerPage ? (
-               <Link href="/#about" onClick={closeMenu} className="border-b border-border pb-4" data-testid="link-mobile-about">About Kellys</Link>
-             ) : (
-               <a href="#about" onClick={closeMenu} className="border-b border-border pb-4" data-testid="link-mobile-about">About Kellys</a>
-             )}
               {isInnerPage ? (
                <Link href="/#contact" onClick={closeMenu} className="border-b border-border pb-4" data-testid="link-mobile-contact">Request a quote</Link>
              ) : (
@@ -528,6 +485,10 @@ function SiteFooter() {
 }
 
 function ServicePage({ service }: { service: Service }) {
+  const serviceSlug = serviceSlugs[service.title] as ServiceSlug;
+  const content = servicePageContent[serviceSlug];
+  const relatedArticle = blogPosts.find((post) => post.serviceSlug === serviceSlug);
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [service]);
@@ -564,11 +525,11 @@ function ServicePage({ service }: { service: Service }) {
             </div>
             <div className="lg:col-span-8">
               <p className="text-lg md:text-xl leading-relaxed mb-12 max-w-[700px]">
-                {service.detail}
+                 {content.overview}
               </p>
               
               <div className="border-t border-border">
-                 {['A practical first conversation about the property and what needs attention.', 'Straightforward advice on the right materials, sequence and level of work.', 'Careful preparation, clean working habits and a considered handover.'].map((item, i) => (
+                 {content.processSteps.map((item, i) => (
                   <div key={i} className="flex gap-6 md:gap-12 py-8 border-b border-border items-start">
                     <span className="font-mono text-sm text-primary">0{i + 1}</span>
                     <p className="text-base md:text-lg">{item}</p>
@@ -577,6 +538,65 @@ function ServicePage({ service }: { service: Service }) {
               </div>
             </div>
           </div>
+
+           <div className="border-t border-border">
+             {content.editorialSections.map((section, index) => (
+               <section key={section.heading} className="grid grid-cols-1 gap-8 border-b border-border py-14 md:py-20 lg:grid-cols-12 lg:gap-20">
+                 <div className="lg:col-span-4">
+                   <span className="font-mono text-xs uppercase tracking-[0.18em] text-muted-foreground">0{index + 1} / Detail</span>
+                   <h2 className="mt-5 font-display text-4xl leading-tight text-primary md:text-5xl">{section.heading}</h2>
+                 </div>
+                 <div className="space-y-6 text-lg leading-relaxed text-foreground/80 lg:col-span-7 lg:col-start-6">
+                   {section.paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
+                 </div>
+               </section>
+             ))}
+           </div>
+
+           <section className="grid grid-cols-1 gap-10 border-b border-border py-14 md:py-20 lg:grid-cols-12 lg:gap-20">
+             <div className="lg:col-span-5">
+               <span className="kicker mb-6">When to arrange an inspection</span>
+               <h2 className="heading-section">Signs and points worth checking.</h2>
+             </div>
+             <div className="border-t border-border lg:col-span-7">
+               {content.signsOrConsiderations.map((item, index) => (
+                 <div key={item} className="flex gap-6 border-b border-border py-6">
+                   <span className="font-mono text-xs text-primary">0{index + 1}</span>
+                   <p className="leading-relaxed text-foreground/80">{item}</p>
+                 </div>
+               ))}
+             </div>
+           </section>
+
+           <section className="grid grid-cols-1 gap-10 py-14 md:py-20 lg:grid-cols-12 lg:gap-20">
+             <div className="lg:col-span-4">
+               <span className="kicker mb-6">Practical answers</span>
+               <h2 className="heading-section">Questions about {service.title.toLowerCase()}.</h2>
+             </div>
+             <div className="divide-y divide-border border-y border-border lg:col-span-8">
+               {content.faqs.map((faq) => (
+                 <div key={faq.question} className="py-8">
+                   <h3 className="font-display text-2xl text-primary md:text-3xl">{faq.question}</h3>
+                   <p className="mt-4 max-w-[760px] leading-relaxed text-foreground/75">{faq.answer}</p>
+                 </div>
+               ))}
+             </div>
+           </section>
+
+           {relatedArticle && (
+             <aside className="mb-16 grid grid-cols-1 gap-8 border border-border bg-white p-8 md:mb-20 md:p-12 lg:grid-cols-12 lg:items-end">
+               <div className="lg:col-span-8">
+                 <span className="kicker mb-6">Related guide</span>
+                 <h2 className="font-display text-3xl text-primary md:text-5xl">{relatedArticle.title}</h2>
+                 <p className="mt-5 max-w-[760px] leading-relaxed text-foreground/70">{relatedArticle.excerpt}</p>
+               </div>
+               <div className="lg:col-span-4 lg:text-right">
+                 <Link href={`/blog/${relatedArticle.slug}`} className="inline-flex items-center gap-3 text-sm font-bold uppercase tracking-[0.16em] text-primary link-hover">
+                   Read the full guide <ArrowRight size={17} />
+                 </Link>
+               </div>
+             </aside>
+           )}
         </div>
       </article>
 
@@ -677,7 +697,7 @@ function BlogPage() {
             <div className="md:col-span-4">
               <HeroVideo wrapperClassName="mb-8 aspect-[4/3] w-full" />
               <p className="max-w-[360px] text-lg leading-relaxed text-foreground/70">
-                Straightforward notes on repairs, replacement and flat roofing, written for the people looking after a property.
+                In-depth, straightforward guides to repairs, replacement, flat roofing and restoring the rooms below.
               </p>
             </div>
           </header>
@@ -687,29 +707,33 @@ function BlogPage() {
               <section key={category} className="border-b border-border py-12 md:py-16" aria-labelledby={`blog-category-${category}`}>
                 <div className="mb-10 flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
                   <h2 id={`blog-category-${category}`} className="heading-section text-4xl md:text-5xl">{category}</h2>
-                  <span className="font-mono text-xs uppercase tracking-[0.18em] text-muted-foreground">02 articles</span>
+                   <span className="font-mono text-xs uppercase tracking-[0.18em] text-muted-foreground">01 article</span>
                 </div>
 
-                <div className="grid grid-cols-1 gap-12 md:grid-cols-2 md:gap-8">
+                 <div className="grid grid-cols-1 gap-12">
                   {blogPosts.filter((post) => post.category === category).map((post, index) => (
-                    <article key={post.title} className="group">
-                      <OverlayImage
-                        src={post.image}
-                        alt=""
-                        wrapperClassName="aspect-[16/10] bg-muted"
-                        className="transition-transform duration-700 group-hover:scale-105"
-                      />
-                      <div className="mt-6 border-t border-border pt-4">
-                        <div className="mb-5 flex items-center justify-between gap-4">
-                          <span className="font-mono text-xs text-primary">0{index + 1} / {post.category}</span>
-                          <span className="font-mono text-xs text-muted-foreground">{post.readTime}</span>
-                        </div>
-                        <h3 className="max-w-[560px] font-display text-3xl text-primary md:text-4xl">{post.title}</h3>
-                        <p className="mt-4 max-w-[560px] text-base leading-relaxed text-foreground/70">{post.excerpt}</p>
-                        <span className="mt-6 inline-flex items-center gap-3 text-xs font-bold uppercase tracking-[0.16em] text-primary">
-                          Read the note <ArrowRight size={16} className="-rotate-45 transition-transform group-hover:rotate-0" />
-                        </span>
-                      </div>
+                     <article key={post.title} className="group grid grid-cols-1 gap-8 md:grid-cols-12 md:items-end">
+                       <Link href={`/blog/${post.slug}`} className="block md:col-span-6" aria-label={`Read ${post.title}`}>
+                         <OverlayImage
+                           src={blogImages[post.imageKey]}
+                           alt=""
+                           wrapperClassName="aspect-[16/10] bg-muted"
+                           className="transition-transform duration-700 group-hover:scale-105"
+                         />
+                       </Link>
+                       <div className="border-t border-border pt-4 md:col-span-6 md:pb-2">
+                         <div className="mb-5 flex items-center justify-between gap-4">
+                           <span className="font-mono text-xs text-primary">0{index + 1} / {post.category}</span>
+                           <span className="font-mono text-xs text-muted-foreground">{post.readTime}</span>
+                         </div>
+                         <h3 className="max-w-[620px] font-display text-3xl text-primary md:text-5xl">
+                           <Link href={`/blog/${post.slug}`}>{post.title}</Link>
+                         </h3>
+                         <p className="mt-5 max-w-[620px] text-base leading-relaxed text-foreground/70">{post.excerpt}</p>
+                         <Link href={`/blog/${post.slug}`} className="mt-7 inline-flex items-center gap-3 text-xs font-bold uppercase tracking-[0.16em] text-primary">
+                           Read the guide <ArrowRight size={16} className="-rotate-45 transition-transform group-hover:rotate-0" />
+                         </Link>
+                       </div>
                     </article>
                   ))}
                 </div>
@@ -730,6 +754,101 @@ function BlogPage() {
           </Link>
         </div>
       </section>
+      <SiteFooter />
+    </main>
+  );
+}
+
+function BlogArticlePage({ post }: { post: BlogPost }) {
+  const service = services.find((item) => serviceSlugs[item.title] === post.serviceSlug);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [post]);
+
+  return (
+    <main className="texture-overlay min-h-[100dvh] bg-background text-foreground selection:bg-primary selection:text-primary-foreground">
+      <Header isBlogPage />
+
+      <article className="pt-36 md:pt-44">
+        <div className="mx-auto max-w-[1600px] px-6 md:px-12">
+          <Link href="/blog" className="mb-12 inline-flex items-center gap-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
+            <ArrowRight size={16} className="rotate-180" /> Back to the journal
+          </Link>
+
+          <header className="grid grid-cols-1 gap-10 border-b border-border pb-14 md:grid-cols-12 md:gap-14 md:pb-20">
+            <div className="md:col-span-8">
+              <span className="kicker mb-8">{post.publishedLabel} / {post.category}</span>
+              <h1 className="heading-hero max-w-[1100px] text-primary">{post.title}</h1>
+              <p className="mt-10 max-w-[850px] text-xl leading-relaxed text-foreground/75 md:text-2xl">{post.dek}</p>
+            </div>
+            <div className="md:col-span-4">
+              <OverlayImage
+                src={blogImages[post.imageKey]}
+                alt=""
+                wrapperClassName="aspect-[4/5] w-full bg-muted"
+              />
+              <div className="mt-5 flex items-center justify-between border-t border-border pt-4 font-mono text-xs uppercase tracking-[0.14em] text-muted-foreground">
+                <span>Dublin</span>
+                <span>{post.readTime}</span>
+              </div>
+            </div>
+          </header>
+
+          <div className="grid grid-cols-1 gap-12 py-14 md:py-20 lg:grid-cols-12 lg:gap-20">
+            <aside className="lg:col-span-3">
+              <div className="sticky top-40 border-t border-border pt-5">
+                <p className="font-mono text-xs uppercase tracking-[0.16em] text-primary">In this guide</p>
+                <ol className="mt-5 space-y-3 text-sm leading-relaxed text-foreground/65">
+                  {post.sections.map((section, index) => (
+                    <li key={section.heading}>
+                      <a href={`#section-${index + 1}`} className="transition-colors hover:text-primary">
+                        0{index + 1} — {section.heading}
+                      </a>
+                    </li>
+                  ))}
+                </ol>
+              </div>
+            </aside>
+
+            <div className="lg:col-span-8 lg:col-start-5">
+              {post.sections.map((section, index) => (
+                <section key={section.heading} id={`section-${index + 1}`} className="scroll-mt-40 border-t border-border py-10 first:pt-0 first:border-t-0">
+                  <span className="font-mono text-xs text-primary">0{index + 1}</span>
+                  <h2 className="mt-5 font-display text-4xl leading-tight text-primary md:text-5xl">{section.heading}</h2>
+                  <div className="mt-7 space-y-6 text-lg leading-[1.8] text-foreground/80">
+                    {section.paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
+                    {section.bullets && (
+                      <ul className="space-y-3 border-l border-primary pl-6">
+                        {section.bullets.map((bullet) => <li key={bullet}>{bullet}</li>)}
+                      </ul>
+                    )}
+                  </div>
+                </section>
+              ))}
+            </div>
+          </div>
+
+          {service && (
+            <aside className="mb-16 grid grid-cols-1 gap-8 border border-border bg-white p-8 md:mb-24 md:p-12 lg:grid-cols-12 lg:items-end">
+              <div className="lg:col-span-8">
+                <span className="kicker mb-6">Related service</span>
+                <h2 className="font-display text-4xl text-primary md:text-5xl">{service.title}</h2>
+                <p className="mt-5 max-w-[720px] text-lg leading-relaxed text-foreground/70">{service.intro}</p>
+              </div>
+              <div className="flex flex-wrap gap-5 lg:col-span-4 lg:justify-end">
+                <Link href={`/services/${post.serviceSlug}`} className="inline-flex items-center gap-3 text-sm font-bold uppercase tracking-[0.14em] text-primary link-hover">
+                  Explore the service <ArrowRight size={17} />
+                </Link>
+                <Link href="/#contact" className="inline-flex items-center gap-3 bg-primary px-6 py-4 text-sm font-bold uppercase tracking-[0.14em] text-primary-foreground">
+                  Request a quote <ArrowRight size={17} />
+                </Link>
+              </div>
+            </aside>
+          )}
+        </div>
+      </article>
+
       <SiteFooter />
     </main>
   );
@@ -991,6 +1110,7 @@ export default function App() {
   const activeService = services.find((service) => `/services/${serviceSlugs[service.title]}` === location);
   const isGalleryPage = location === '/work';
   const isBlogPage = location === '/blog';
+  const activeBlogPost = blogPosts.find((post) => `/blog/${post.slug}` === location);
   const isLocationsHub = location === '/locations';
   const activeLocation = locationItems.find((area) => `/locations/${area.slug}` === location);
   const activeLocationService = (() => {
@@ -1016,6 +1136,7 @@ export default function App() {
   if (activeService) return <ServicePage service={activeService} />;
   if (isGalleryPage) return <GalleryPage />;
   if (isBlogPage) return <BlogPage />;
+  if (activeBlogPost) return <BlogArticlePage post={activeBlogPost} />;
   if (isLocationsHub) return <LocationsHubPage />;
   if (activeLocationService) return <LocationServicePage area={activeLocationService.area} service={activeLocationService.service} />;
   if (activeLocation) return <LocationPage area={activeLocation} />;
@@ -1196,47 +1317,6 @@ export default function App() {
                 </div>
               ))}
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* About Section */}
-      <section id="about" className="border-b border-border px-6 py-16 md:px-12 md:py-24">
-        <div className="mx-auto max-w-[1600px] grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-24 items-center">
-          <div className="lg:col-span-5 order-2 lg:order-1">
-            <div className="aspect-[3/4] w-full overflow-hidden bg-muted relative group">
-              <OverlayImage
-                src={homeRenovationStandardPath}
-                alt="Home renovation"
-                wrapperClassName="absolute inset-0"
-                className="transition-transform duration-1000 group-hover:scale-105 grayscale-[10%]"
-              />
-              
-              <div className="absolute bottom-8 left-8 right-8 bg-background/95 backdrop-blur p-6 border border-border">
-               <p className="kicker mb-3">The Kellys standard</p>
-               <p className="font-display text-2xl mb-2">Treat every address like someone’s home.</p>
-               <p className="text-sm text-foreground/70">A considered scope. A clean finish. No shortcuts in the details.</p>
-              </div>
-            </div>
-          </div>
-          
-          <div className="lg:col-span-7 order-1 lg:order-2">
-            <span className="kicker mb-8">About Kellys</span>
-            <h2 className="heading-section mb-10 max-w-[600px]">
-              Built around your peace of mind.
-            </h2>
-            <div className="text-lg text-foreground/80 space-y-6 max-w-[540px]">
-              <p>
-                Kellys Roofing & Interiors is a Dublin-based roofing and construction team for people who want their property work handled properly. We bring the same care to an urgent repair, a managed rental portfolio and a full roof-and-interior project.
-              </p>
-              <p>
-                The best work is often the least dramatic: good preparation, honest advice, and a finish that feels like it was always meant to be there.
-              </p>
-            </div>
-            
-            <button onClick={scrollToContact} className="mt-12 group inline-flex items-center gap-4 bg-primary text-primary-foreground px-8 py-4 text-sm font-bold uppercase tracking-wider hover:bg-accent transition-colors">
-              Talk through your property <ArrowRight size={18} className="transition-transform group-hover:translate-x-1" />
-            </button>
           </div>
         </div>
       </section>
