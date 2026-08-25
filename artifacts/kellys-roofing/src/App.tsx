@@ -213,6 +213,7 @@ type LocationProfile = {
     longitude: number;
     label: string;
   };
+  introduction: string[];
   attractions: string[];
 };
 
@@ -223,6 +224,10 @@ const locationProfiles: Partial<Record<string, LocationProfile>> = {
       longitude: -6.4689,
       label: '53.3353°N, 6.4689°W',
     },
+    introduction: [
+      'Adamstown has a varied mix of modern housing developments, apartment buildings, terraces and family homes. Even relatively recent properties can develop roofing issues around exposed edges, roof junctions, gutters, flashing and flat-roof sections, particularly after prolonged rain or strong Dublin winds.',
+      'Our starting point is a careful look at the condition of the roof and the signs visible inside the property. We explain whether the issue appears suited to a focused repair, requires further opening-up, or points towards more extensive renewal. The aim is to give Adamstown property owners a practical recommendation based on the building in front of us—not a one-size-fits-all answer.',
+    ],
     attractions: [
       'Airlie Park',
       "Tandy's Lane Park",
@@ -970,6 +975,11 @@ function LocationPage({ area }: { area: (typeof locationItems)[number] }) {
               <p className="mt-8 max-w-[680px] text-xl leading-relaxed text-foreground/80">
                 From roof repairs and replacement to flat roofing and interiors, Kellys Roofing & Interiors helps property owners in {area.name} make a clear, practical next move.
               </p>
+               {locationProfile?.introduction.map((paragraph) => (
+                 <p key={paragraph} className="mt-6 max-w-[680px] text-base leading-8 text-foreground/70">
+                   {paragraph}
+                 </p>
+               ))}
             </div>
             <div className="lg:col-span-5">
               <HeroVideo wrapperClassName="aspect-[4/5] bg-muted" />
