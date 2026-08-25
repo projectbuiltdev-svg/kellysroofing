@@ -1,0 +1,64 @@
+2026-08-25T11:14:16.762Z	Success: Finished initializing build environment
+2026-08-25T11:14:18.214Z	Cloning repository...
+2026-08-25T11:14:20.991Z	Restoring from dependencies cache
+2026-08-25T11:14:20.993Z	Restoring from build output cache
+2026-08-25T11:14:22.994Z	Detected the following tools from environment: pnpm@10.26.1, nodejs@24.18.0
+2026-08-25T11:14:25.309Z	Installing project dependencies: pnpm install --frozen-lockfile
+2026-08-25T11:14:25.852Z	Scope: all 9 workspace projects
+2026-08-25T11:14:25.966Z	Lockfile is up to date, resolution step is skipped
+2026-08-25T11:14:26.042Z	Progress: resolved 1, reused 0, downloaded 0, added 0
+2026-08-25T11:14:26.085Z	Packages: +473
+2026-08-25T11:14:26.086Z	++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+2026-08-25T11:14:27.043Z	Progress: resolved 473, reused 0, downloaded 88, added 35
+2026-08-25T11:14:28.046Z	Progress: resolved 473, reused 0, downloaded 248, added 123
+2026-08-25T11:14:29.045Z	Progress: resolved 473, reused 0, downloaded 291, added 147
+2026-08-25T11:14:30.046Z	Progress: resolved 473, reused 0, downloaded 304, added 147
+2026-08-25T11:14:31.061Z	Progress: resolved 473, reused 0, downloaded 376, added 175
+2026-08-25T11:14:32.061Z	Progress: resolved 473, reused 0, downloaded 468, added 207
+2026-08-25T11:14:32.834Z	Progress: resolved 473, reused 0, downloaded 473, added 473, done
+2026-08-25T11:14:33.008Z	.../esbuild@0.27.3/node_modules/esbuild postinstall$ node install.js
+2026-08-25T11:14:33.093Z	.../esbuild@0.27.3/node_modules/esbuild postinstall: Done
+2026-08-25T11:14:33.487Z	
+2026-08-25T11:14:33.488Z	dependencies:
+2026-08-25T11:14:33.489Z	+ @replit/connectors-sdk 0.4.1
+2026-08-25T11:14:33.489Z	
+2026-08-25T11:14:33.489Z	devDependencies:
+2026-08-25T11:14:33.489Z	+ prettier 3.9.6
+2026-08-25T11:14:33.489Z	+ typescript 5.9.3
+2026-08-25T11:14:33.489Z	
+2026-08-25T11:14:33.535Z	. preinstall$ sh -c 'rm -f package-lock.json yarn.lock; case "$npm_config_user_agent" in pnpm/*) ;; *) echo "Use pnpm instead" >&2; exit 1 ;; esac'
+2026-08-25T11:14:33.545Z	. preinstall: Done
+2026-08-25T11:14:33.691Z	Done in 8.2s using pnpm v10.26.1
+2026-08-25T11:14:33.944Z	Executing user build command: pnpm --filter @workspace/kellys-roofing run build
+2026-08-25T11:14:34.379Z	
+2026-08-25T11:14:34.379Z	> @workspace/kellys-roofing@0.0.0 build /opt/buildhome/repo/artifacts/kellys-roofing
+2026-08-25T11:14:34.379Z	> vite build --config vite.config.ts && SSR_BUILD=true vite build --config vite.config.ts && node scripts/prerender.mjs
+2026-08-25T11:14:34.379Z	
+2026-08-25T11:14:34.715Z	vite v7.3.6 building client environment for production...
+2026-08-25T11:14:34.797Z	transforming...
+2026-08-25T11:14:37.309Z	✓ 1693 modules transformed.
+2026-08-25T11:14:37.508Z	rendering chunks...
+2026-08-25T11:14:37.522Z	computing gzip size...
+2026-08-25T11:14:37.534Z	dist/public/index.html                                                      1.44 kB │ gzip:  0.55 kB
+2026-08-25T11:14:37.536Z	dist/public/assets/kellys-roofline-C6R3kGZo.jpg                           116.48 kB
+2026-08-25T11:14:37.536Z	dist/public/assets/roof-framing-Cvewv4oP.jpg                              441.70 kB
+2026-08-25T11:14:37.540Z	dist/public/assets/kellys_roofing_logo_transparent-7jv3CI26.png           566.37 kB
+2026-08-25T11:14:37.540Z	dist/public/assets/home-renovation-standard-D_5SgvR5.jpg                  572.12 kB
+2026-08-25T11:14:37.541Z	dist/public/assets/roofer-fixing-roof-hero-Cw8zWJ4U.jpg                   610.41 kB
+2026-08-25T11:14:37.541Z	dist/public/assets/roof-tiles--XFbs6xl.jpg                              1,134.08 kB
+2026-08-25T11:14:37.541Z	dist/public/assets/interior-renovation-DUFzpW3k.jpg                     1,641.56 kB
+2026-08-25T11:14:37.541Z	dist/public/assets/kellys_roofing_video_(1)_1787649902452-BP4Kl0yX.mp4  2,522.73 kB
+2026-08-25T11:14:37.541Z	dist/public/assets/index-BJJJXsaO.css                                     109.88 kB │ gzip: 18.51 kB
+2026-08-25T11:14:37.541Z	dist/public/assets/index-W9fDenAz.js                                      251.56 kB │ gzip: 75.77 kB
+2026-08-25T11:14:37.541Z	✓ built in 2.79s
+2026-08-25T11:14:37.921Z	vite v7.3.6 building ssr environment for production...
+2026-08-25T11:14:37.986Z	transforming...
+2026-08-25T11:14:38.121Z	✓ 11 modules transformed.
+2026-08-25T11:14:38.154Z	rendering chunks...
+2026-08-25T11:14:38.158Z	dist/server/entry-server.js  82.64 kB
+2026-08-25T11:14:38.159Z	✓ built in 218ms
+2026-08-25T11:14:39.662Z	Pre-rendered 473 routes.
+2026-08-25T11:14:39.694Z	Success: Build command completed
+2026-08-25T11:14:39.882Z	Executing user deploy command: artifacts/kellys-roofing/dist/public
+2026-08-25T11:14:39.886Z	/bin/sh: 1: artifacts/kellys-roofing/dist/public: Permission denied
+2026-08-25T11:14:39.889Z	Failed: error occurred while running deploy command

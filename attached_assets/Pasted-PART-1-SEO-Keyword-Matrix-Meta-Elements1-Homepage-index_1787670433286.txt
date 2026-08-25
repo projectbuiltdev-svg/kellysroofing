@@ -1,0 +1,161 @@
+PART 1: SEO Keyword Matrix & Meta Elements1. Homepage (index.html)Meta Title: Roofers Dublin | Professional Roofing Contractors | Kellys RoofingMeta Description: Looking for trusted roofers in Dublin? Kellys Roofing & Interiors delivers expert roof repairs, complete replacements, and interior ceiling damage restoration across County Dublin since 2009. Get a free quote today.50 Keywords: roofers dublin, roofing contractors dublin, dublin roofers, roofing company dublin, local roofers dublin, residential roofers dublin, commercial roofers dublin, certified roofers dublin, professional roofers dublin, best roofers dublin, roofers dublin 8, roofers south dublin, roofers north dublin, roofers the tenters, roofers dublin city, roofing contractors county dublin, emergency roofer dublin 8, local roofing company dublin, roofers leinster, find a roofer dublin, reliable roofing dublin, registered contractors dublin, fully insured roofers dublin, affordable roofing dublin, expert roofing solutions, quality roofers dublin, domestic roofing dublin, landlord roofing services dublin, industrial roofers dublin, building and roofing dublin, trusted roofers near me, local roofing contractors dublin, roof assessment dublin, free roofing quote dublin, exterior home repairs dublin, flat and pitched roofers dublin, licensed roofers dublin, residential roofing services, commercial roofing solutions, roofing specialists dublin, kellys roofing dublin, kellys roofing and interiors, roofing and building contractors, internal and external roof repairs, professional property maintenance dublin, complete roofing services, roofing repairs and plastering, Dublin roof contractors, family run roofing business, local master roofers.2. Roof Repairs Page (/roof-repairs)Meta Title: Emergency Roof Repairs Dublin | Fix Leaking Roofs | KellysMeta Description: Affordable emergency roof repairs in Dublin. We fix leaking roofs, storm damage, broken slates, valley leaks, and sagging ceilings. Call Kellys Roofing for rapid response and permanent solutions.50 Keywords: roof repairs dublin, emergency roof repairs dublin, fix leaking roof, leaking roof repair dublin, storm damage roof repair, rapid response roofers, emergency roofer dublin, urgent roof repair, roof leak detection, active roof leak fix, roof tile repair dublin, broken slate replacement, roof flashing repair, lead flashing specialist, chimney flashing repair, valley repair roof, ridge tile re-pointing, roof verge repair, roof gables fix, gutter repair dublin, water leaking through ceiling, roof dripping water, wind damaged roof tiles, loose slates on roof, roof valley leaking, damp patch on ceiling, rotting roof timber, sagging roof repair, chimney water leak, ceiling water damage repair, roof repair cost dublin, affordable roof repairs, local roof repair specialists, emergency leak repair dublin, slate roof repairs south dublin, tile roof repairs north dublin, cheap roof fix dublin, reliable roof repairs, prompt roofing repairs, commercial roof repair dublin, flat roof leak repair, pitched roof repairs, timber roof structure repair, roof joist repairs, structural roofing repairs, fascia and soffit repair, emergency tarping service, water ingress solutions, residential roof patching, industrial roof patching.3. Roof Replacement Page (/roof-replacement)Meta Title: New Roof Cost Dublin | Full Roof Replacement ContractorsMeta Description: Expert roof replacement and reroofing services across County Dublin. Get durable natural slate or concrete tile options with fully guaranteed workmanship. Request a free site survey.50 Keywords: roof replacement dublin, new roof cost dublin, reroofing contractors dublin, full roof replacement, complete roof overhaul, cost of new roof dublin, replace slate roof, replace tile roof, professional reroofing, house roof replacement, natural slate roof installation, concrete tile roof dublin, clay tile roofing, synthetic slate roof, timber roof replacement, felt roof replacement, slate roof specialist dublin, tile roof contractors, metal roof installation, modern roofing materials, guaranteed new roofs, long lasting roof installation, high quality reroofing, residential roof replacement, commercial roof replacement, flat roof replacement, extension roof replacement, complete roof build, energy efficient roofing, roof insulation upgrade, structural roof replacement, full strip and reroof, roof rafters replacement, building regulations roofing dublin, local reroofing specialists, cost to replace roof dublin, roof replacement quotes, certified roof installations, slate and tile replacement, new roof guarantee, when to replace a roof, reroofing old houses dublin, period property roof replacement, modern tile roofing systems, complete roof construction, pitched roof replacement, durable roof solutions, landlord reroofing services, industrial roof replacement, domestic reroofing dublin.4. Flat Roofing Page (/flat-roofing)Meta Title: Flat Roofing Dublin | Torch-on Felt & Extension RoofsMeta Description: Durable flat roofing solutions for Dublin extensions, garages, and commercial units. High-quality torch-on felt, rubber, and liquid waterproofing membranes. Get a free flat roof quote.50 Keywords: flat roofing dublin, flat roof repair dublin, flat roof replacement, flat roof installation, local flat roofers, torch on felt dublin, extension flat roof, garage flat roof, commercial flat roofing, residential flat roof, torch-on felt roof, flat roof membrane, liquid plastic roofing, fibreglass flat roof, rubber flat roof dublin, epdm roofing dublin, bitumous roofing felt, high performance felt, flat roof waterproofing, single ply membrane, kitchen extension flat roof, apartment flat roof repairs, industrial flat roofing dublin, flat roof balcony, porch flat roof, flat roof felt layers, multi layer felt roofing, flat roof overlay system, clear gutter flat roof, waterproofing flat roofs, leaking flat roof fix, ponding water flat roof, flat roof timber rot, flat roof insulation, warm roof construction, cold roof installation, flat roof cost per square metre, affordable flat roofers, flat roofing specialist dublin, durable flat roofs, replace flat roof felt, commercial felt roofing contractors, flat roof replacement cost dublin, garage roof replacement felt, flat roof leak detection, asphalt roofing repairs, modern flat roof solutions, domestic flat roofing, weatherproofing flat roofs, premium flat roof membranes.5. Interiors & Building Services Page (/interiors-and-building)Meta Title: Ceiling Repairs & Plastering Dublin | Water Damage RestorationMeta Description: Complete interior damage repair caused by roof leaks. We handle ceiling replacements, plastering, drylining, and internal carpentry across Dublin. One joined-up service.50 Keywords: ceiling repair dublin, water damaged ceiling repair, fix leaking ceiling plaster, ceiling plastering dublin, drylining repair dublin, internal ceiling restoration, repair water damaged drywall, plasterer dublin, internal damage from roof leak, fix water stains on ceiling, local plastering contractors, professional plasterer dublin, drywall installation dublin, internal carpentry services, timber ceiling framework, ceiling skimming dublin, plasterboard replacement, structural plaster repairs, ceiling joist replacement, interior building repairs, interior and exterior contractors, roof leak interior repair, water damage builders dublin, ceiling collapse repair, plastering and decorating, wood rot repair internal, home insulation drylining, internal wall lining, plastering services dublin 8, domestic plasterers, sagging ceiling repair, moldy drywall replacement, damp wall plastering, fix cracked ceiling plaster, ceiling boarding dublin, interior finishing trades, water ingress room restoration, ceiling timber treatment, re-plastering after leak, commercial plastering dublin, cost to repair water damaged ceiling, hire a plasterer dublin, local drywall specialists, home renovation after roof leak, ceiling tracking and boarding, internal carpentry repair, soundproof drylining dublin, emergency ceiling repair, comprehensive interior builders, high quality plastering finish.PART 2: JSON-LD Structured Schema Code Snippets1. Add to Homepage (index.html) Header Blockhtml<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "RoofingContractor",
+      "@id": "https://kellysroofing.ie",
+      "name": "Kellys Roofing & Interiors",
+      "url": "https://kellysroofing.ie",
+      "logo": "https://kellysroofing.iewp-content/uploads/2023/10/logo.png",
+      "image": "https://kellysroofing.iewp-content/uploads/2023/10/hero.jpg",
+      "telephone": "+353874312154",
+      "email": "akroofing@outlook.com",
+      "priceRange": "$$",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "3 O'Curry Avenue, The Tenters",
+        "addressLocality": "Dublin 8",
+        "addressRegion": "Leinster",
+        "postalCode": "D08 XH61",
+        "addressCountry": "IE"
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": 53.3364,
+        "longitude": -6.2798
+      },
+      "areaServed": [
+        {
+          "@type": "AdministrativeArea",
+          "name": "Dublin"
+        },
+        {
+          "@type": "AdministrativeArea",
+          "name": "County Dublin"
+        }
+      ],
+      "openingHoursSpecification": {
+        "@type": "OpeningHoursSpecification",
+        "dayOfWeek": [
+          "Monday",
+          "Tuesday",
+          "Wednesday",
+          "Thursday",
+          "Friday",
+          "Saturday"
+        ],
+        "opens": "08:00",
+        "closes": "18:00"
+      }
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://kellysroofing.ie#website",
+      "url": "https://kellysroofing.ie",
+      "name": "Kellys Roofing & Interiors",
+      "publisher": {
+        "@id": "https://kellysroofing.ie"
+      }
+    }
+  ]
+}
+</script>
+Use code with caution.2. Add to Roof Repairs Page Header Blockhtml<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Service",
+      "name": "Emergency Roof Repairs",
+      "serviceType": "Roof Repair Service",
+      "provider": {
+        "@type": "RoofingContractor",
+        "@id": "https://kellysroofing.ie"
+      },
+      "areaServed": {
+        "@type": "AdministrativeArea",
+        "name": "County Dublin"
+      },
+      "description": "Rapid response local roofing repairs targeting active leaks, storm damage, loose slates, broken tiles, and flashing degradation across all of Dublin."
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Do you offer emergency roof leak repairs in Dublin?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes, Kellys Roofing provides rapid emergency response services across County Dublin to secure leaks and prevent structural water damage."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can you fix interior damage caused by a roof leak?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Absolutely. Unique to our business, we provide a joined-up service covering structural exterior roof repairs and internal ceiling plasterboard restoration."
+          }
+        }
+      ]
+    }
+  ]
+}
+</script>
+Use code with caution.3. Add to Roof Replacement Page Header Blockhtml<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Service",
+  "name": "Full Roof Replacement and Reroofing",
+  "serviceType": "Roof Installation Service",
+  "provider": {
+    "@type": "RoofingContractor",
+    "@id": "https://kellysroofing.ie"
+  },
+  "areaServed": {
+    "@type": "AdministrativeArea",
+    "name": "County Dublin"
+  },
+  "description": "Complete strip-and-replace solutions for old residential roofing. Specializing in durable natural slate and concrete tile variants with structural timber reinforcements.",
+  "offers": {
+    "@type": "Offer",
+    "priceCurrency": "EUR",
+    "description": "Free conditional on-site roof inspection and project estimation."
+  }
+}
+</script>
+Use code with caution.4. Add to Flat Roofing Page Header Blockhtml<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Service",
+  "name": "Flat Roofing Systems",
+  "serviceType": "Flat Roof Installation and Maintenance",
+  "provider": {
+    "@type": "RoofingContractor",
+    "@id": "https://kellysroofing.ie"
+  },
+  "areaServed": {
+    "@type": "AdministrativeArea",
+    "name": "County Dublin"
+  },
+  "description": "High performance multi-layer torch-on felt and modern waterproofing systems tailored for residential home extensions, standalone garages, and commercial installations."
+}
+</script>
+Use code with caution.5. Add to Interiors & Building Page Header Blockhtml<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Service",
+  "name": "Water Damage Ceiling & Plaster Repair",
+  "serviceType": "Interior Restoration Service",
+  "provider": {
+    "@type": "RoofingContractor",
+    "@id": "https://kellysroofing.ie"
+  },
+  "areaServed": {
+    "@type": "AdministrativeArea",
+    "name": "County Dublin"
+  },
+  "description": "Comprehensive internal restoration following water damage ingress. Includes structural timber support treatments, plasterboard slab installations, high-quality skimming, and drylining insulation upgrades."
+}
+</script>

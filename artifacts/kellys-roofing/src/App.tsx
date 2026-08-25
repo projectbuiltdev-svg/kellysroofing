@@ -223,20 +223,77 @@ const slugify = (value: string) => value
   .replace(/(^-|-$)/g, '');
 
 const locationItems = locationNames.map((name) => ({ name, slug: slugify(name) }));
+const featuredLocationSlugs = ['adamstown', 'clontarf', 'dun-laoghaire', 'howth', 'lucan', 'malahide', 'portmarnock', 'rathfarnham'];
+const featuredLocations = featuredLocationSlugs
+  .map((slug) => locationItems.find((area) => area.slug === slug))
+  .filter((area): area is (typeof locationItems)[number] => Boolean(area));
 
-const locationServiceDescriptionEndings = [
-  'Get clear advice and a free quote from Kellys Roofing & Interiors.',
-  'Ask Kellys Roofing & Interiors about the most practical next step.',
-  'Arrange an assessment and free quote with Kellys Roofing & Interiors.',
-  'Get straightforward guidance shaped around the property.',
-] as const;
+const serviceSeo: Record<ServiceSlug, {
+  title: string;
+  description: string;
+  schemaName: string;
+  serviceType: string;
+  keywords: readonly string[];
+}> = {
+  'roof-repairs': {
+    title: 'Emergency Roof Repairs Dublin | Fix Leaking Roofs | Kellys',
+    description: 'Roof repairs in Dublin for leaking roofs, storm damage, broken slates, flashing and valleys. Ask Kellys Roofing & Interiors for a free quote.',
+    schemaName: 'Roof Repairs in Dublin',
+    serviceType: 'Roof Repair Service',
+    keywords: ['roof repairs dublin', 'emergency roof repairs dublin', 'leaking roof repair', 'storm damage roof repair', 'slate roof repairs', 'roof flashing repair'],
+  },
+  'roof-replacement': {
+    title: 'New Roof Cost Dublin | Full Roof Replacement Contractors',
+    description: 'Roof replacement and reroofing across County Dublin for ageing slate and tile roofs. Get clear advice, a defined scope and a free quote.',
+    schemaName: 'Full Roof Replacement and Reroofing',
+    serviceType: 'Roof Installation Service',
+    keywords: ['roof replacement dublin', 'new roof cost dublin', 'reroofing contractors dublin', 'slate roof replacement', 'tile roof replacement', 'house reroofing'],
+  },
+  'flat-roofing': {
+    title: 'Flat Roofing Dublin | Extension, Garage & Commercial Roofs',
+    description: 'Flat roofing for Dublin extensions, garages and commercial units, with careful attention to decks, falls, drainage and waterproofing details.',
+    schemaName: 'Flat Roofing Systems',
+    serviceType: 'Flat Roof Installation and Maintenance',
+    keywords: ['flat roofing dublin', 'flat roof repair dublin', 'flat roof replacement', 'extension flat roof', 'garage flat roof', 'commercial flat roofing'],
+  },
+  'interiors-building': {
+    title: 'Ceiling Repairs & Plastering Dublin | Water Damage Restoration',
+    description: 'Interior repairs after roof leaks, including ceilings, plastering, drylining and carpentry across Dublin. One practical, joined-up service.',
+    schemaName: 'Water Damage Ceiling and Plaster Repair',
+    serviceType: 'Interior Restoration Service',
+    keywords: ['ceiling repair dublin', 'water damaged ceiling repair', 'plastering dublin', 'drylining repair', 'interior water damage', 'roof leak interior repair'],
+  },
+};
+
+const blogSeo: Record<string, { title: string; keywords: readonly string[] }> = {
+  'how-to-handle-a-roof-leak-in-dublin': {
+    title: 'Roof Leak Dublin | What to Do & How Repairs Work | Kellys',
+    keywords: ['roof leak dublin', 'leaking roof repair', 'water leaking through ceiling', 'roof leak detection', 'emergency roof repairs dublin', 'roof repair guide'],
+  },
+  'planning-a-roof-replacement-for-a-dublin-home': {
+    title: 'Roof Replacement Dublin Guide | Planning a New Roof',
+    keywords: ['roof replacement dublin', 'new roof cost dublin', 'reroofing guide', 'slate roof replacement', 'tile roof replacement', 'planning a new roof'],
+  },
+  'flat-roof-guide-for-dublin-extensions': {
+    title: 'Flat Roof Guide Dublin | Extensions, Garages & Repairs',
+    keywords: ['flat roofing dublin', 'extension flat roof', 'garage flat roof', 'flat roof repair', 'flat roof drainage', 'flat roof waterproofing'],
+  },
+  'repairing-interiors-after-a-roof-leak': {
+    title: 'Ceiling Water Damage Repair Dublin | Roof Leak Guide',
+    keywords: ['ceiling repair dublin', 'water damaged ceiling repair', 'plastering after roof leak', 'drylining repair', 'interior water damage', 'ceiling restoration'],
+  },
+};
 
 function getLocationServiceDescription(area: (typeof locationItems)[number], service: Service) {
-  const areaIndex = locationItems.findIndex((item) => item.slug === area.slug);
-  const serviceIndex = services.findIndex((item) => item.title === service.title);
-  const endingIndex = (areaIndex + serviceIndex * 3) % locationServiceDescriptionEndings.length;
+  const serviceSlug = serviceSlugs[service.title] as ServiceSlug;
+  const descriptions: Record<ServiceSlug, string> = {
+    'roof-repairs': `Roof repairs in ${area.name} for leaks, storm damage, broken slates, flashing and valleys. Ask Kellys Roofing & Interiors for a free quote.`,
+    'roof-replacement': `Roof replacement in ${area.name} for ageing slate and tile roofs. Get practical reroofing advice and a free quote from Kellys Roofing & Interiors.`,
+    'flat-roofing': `Flat roofing in ${area.name} for extensions, garages and commercial units. Get advice on repairs, renewal, drainage and waterproofing.`,
+    'interiors-building': `Ceiling repairs, plastering, drylining and carpentry in ${area.name} after roof leaks or water damage. Ask Kellys for a free quote.`,
+  };
 
-  return `${service.title} services for homes and properties in ${area.name}, Dublin. ${locationServiceDescriptionEndings[endingIndex]}`;
+  return descriptions[serviceSlug];
 }
 
 export const prerenderRoutes = [
@@ -264,24 +321,35 @@ export function getPageMetadata(location: string) {
       }
     : undefined;
 
-  const title = activeService
-    ? `${activeService.title} | Kellys Roofing Dublin`
+  const activeServiceSlug = activeService ? serviceSlugs[activeService.title] as ServiceSlug : undefined;
+  const activeLocationServiceSlug = activeLocationService?.service
+    ? serviceSlugs[activeLocationService.service.title] as ServiceSlug
+    : undefined;
+  const locationServiceTitles: Record<ServiceSlug, (areaName: string) => string> = {
+    'roof-repairs': (areaName) => `Roof Repairs ${areaName} | Leaks & Storm Damage | Kellys`,
+    'roof-replacement': (areaName) => `Roof Replacement ${areaName} | New Roof Contractors`,
+    'flat-roofing': (areaName) => `Flat Roofing ${areaName} | Repairs & Installation`,
+    'interiors-building': (areaName) => `Ceiling Repairs ${areaName} | Plastering & Interiors`,
+  };
+
+  const title = activeService && activeServiceSlug
+    ? serviceSeo[activeServiceSlug].title
     : activeBlogPost
-      ? `${activeBlogPost.title} | Kellys Roofing Dublin`
+      ? blogSeo[activeBlogPost.slug].title
     : location === '/work'
       ? 'Our Work | Kellys Roofing & Interiors | Dublin'
       : location === '/blog'
-        ? 'Blog | Kellys Roofing & Interiors | Dublin'
-        : activeLocationService?.area && activeLocationService.service
-          ? `${activeLocationService.service.title} in ${activeLocationService.area.name} | Kellys Roofing Dublin`
+        ? 'Roofing Advice Dublin | Roof Repair & Replacement Guides'
+        : activeLocationService?.area && activeLocationService.service && activeLocationServiceSlug
+          ? locationServiceTitles[activeLocationServiceSlug](activeLocationService.area.name)
           : activeLocation
-            ? `Roofing Services in ${activeLocation.name} | Kellys Roofing Dublin`
+            ? `Roofers in ${activeLocation.name} | Roofing Contractors | Kellys`
             : location === '/locations'
               ? 'Dublin Service Areas | Kellys Roofing & Interiors'
-              : 'Kellys Roofing & Interiors | Dublin';
+              : 'Roofers Dublin | Professional Roofing Contractors | Kellys Roofing';
 
-  const description = activeService
-    ? `${activeService.intro} Kellys Roofing & Interiors serves homes and properties across Dublin.`
+  const description = activeService && activeServiceSlug
+    ? serviceSeo[activeServiceSlug].description
     : activeBlogPost
       ? activeBlogPost.metaDescription
     : location === '/work'
@@ -291,12 +359,168 @@ export function getPageMetadata(location: string) {
         : activeLocationService?.area && activeLocationService.service
           ? getLocationServiceDescription(activeLocationService.area, activeLocationService.service)
           : activeLocation
-            ? locationProfiles[activeLocation.slug].metaDescription
+            ? `Looking for roofers in ${activeLocation.name}? Kellys provides roof repairs, replacement, flat roofing and interior restoration across Dublin.`
             : location === '/locations'
               ? 'Explore all County Dublin service areas covered by Kellys Roofing & Interiors.'
-              : 'Kellys Roofing & Interiors provides roofing, building and interior work across Dublin.';
+              : 'Looking for trusted roofers in Dublin? Kellys Roofing & Interiors provides roof repairs, replacements and interior restoration across County Dublin.';
 
-  return { title, description };
+  const keywords = activeServiceSlug
+    ? [...serviceSeo[activeServiceSlug].keywords]
+    : activeBlogPost
+      ? [...blogSeo[activeBlogPost.slug].keywords]
+      : activeLocationService?.area && activeLocationServiceSlug
+        ? [
+            `${activeLocationService.service!.title.toLowerCase()} ${activeLocationService.area.name}`,
+            `${serviceSeo[activeLocationServiceSlug].serviceType.toLowerCase()} ${activeLocationService.area.name}`,
+            ...serviceSeo[activeLocationServiceSlug].keywords.slice(0, 4),
+          ]
+        : activeLocation
+          ? [
+              `roofers ${activeLocation.name}`,
+              `roofing contractors ${activeLocation.name}`,
+              `roof repairs ${activeLocation.name}`,
+              `roof replacement ${activeLocation.name}`,
+              `flat roofing ${activeLocation.name}`,
+              `ceiling repairs ${activeLocation.name}`,
+            ]
+          : location === '/blog'
+            ? ['roofing advice dublin', 'roof repair guides', 'roof replacement guide', 'flat roofing advice', 'ceiling water damage advice']
+            : ['roofers dublin', 'roofing contractors dublin', 'roof repairs dublin', 'roof replacement dublin', 'flat roofing dublin', 'ceiling repairs dublin'];
+
+  const businessEntity = {
+    '@type': 'RoofingContractor',
+    '@id': 'https://kellysroofing.ie/#business',
+    name: 'Kellys Roofing & Interiors',
+    url: 'https://kellysroofing.ie/',
+    logo: 'https://kellysroofing.ie/kellys-roofing-dublin-social-2026.jpg',
+    image: 'https://kellysroofing.ie/kellys-roofing-dublin-social-2026.jpg',
+    telephone: '+353863395381',
+    email: 'akroofing@outlook.com',
+    priceRange: '€€',
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: "3 O'Curry Avenue, The Tenters",
+      addressLocality: 'Dublin 8',
+      addressRegion: 'Leinster',
+      postalCode: 'D08 XH61',
+      addressCountry: 'IE',
+    },
+    areaServed: [
+      { '@type': 'AdministrativeArea', name: 'Dublin' },
+      { '@type': 'AdministrativeArea', name: 'County Dublin' },
+    ],
+  };
+
+  const serviceForSchema = activeService ?? activeLocationService?.service;
+  const serviceSlugForSchema = serviceForSchema
+    ? serviceSlugs[serviceForSchema.title] as ServiceSlug
+    : undefined;
+  const areaForSchema = activeLocationService?.area ?? activeLocation;
+  const faqContent = serviceSlugForSchema ? servicePageContent[serviceSlugForSchema].faqs : undefined;
+  const canonicalUrl = location === '/' ? 'https://kellysroofing.ie/' : `https://kellysroofing.ie${location}/`;
+  const breadcrumbItems: Array<{ name: string; url: string }> = [
+    { name: 'Home', url: 'https://kellysroofing.ie/' },
+  ];
+
+  if (location === '/work') {
+    breadcrumbItems.push({ name: 'Our Work', url: canonicalUrl });
+  } else if (location === '/blog') {
+    breadcrumbItems.push({ name: 'Roofing Advice', url: canonicalUrl });
+  } else if (activeBlogPost) {
+    breadcrumbItems.push(
+      { name: 'Roofing Advice', url: 'https://kellysroofing.ie/blog/' },
+      { name: activeBlogPost.title, url: canonicalUrl },
+    );
+  } else if (activeService) {
+    breadcrumbItems.push({ name: activeService.title, url: canonicalUrl });
+  } else if (location === '/locations') {
+    breadcrumbItems.push({ name: 'Dublin Service Areas', url: canonicalUrl });
+  } else if (activeLocation) {
+    breadcrumbItems.push(
+      { name: 'Dublin Service Areas', url: 'https://kellysroofing.ie/locations/' },
+      { name: activeLocation.name, url: canonicalUrl },
+    );
+  } else if (activeLocationService?.area && activeLocationService.service) {
+    breadcrumbItems.push(
+      { name: 'Dublin Service Areas', url: 'https://kellysroofing.ie/locations/' },
+      {
+        name: activeLocationService.area.name,
+        url: `https://kellysroofing.ie/locations/${activeLocationService.area.slug}/`,
+      },
+      { name: activeLocationService.service.title, url: canonicalUrl },
+    );
+  }
+
+  const structuredData = {
+    '@context': 'https://schema.org',
+    '@graph': [
+      businessEntity,
+      ...(location === '/' ? [
+        {
+          '@type': 'WebSite',
+          '@id': 'https://kellysroofing.ie/#website',
+          url: 'https://kellysroofing.ie/',
+          name: 'Kellys Roofing & Interiors',
+          publisher: { '@id': 'https://kellysroofing.ie/#business' },
+        },
+      ] : []),
+      ...(serviceSlugForSchema ? [{
+        '@type': 'Service',
+        name: areaForSchema
+          ? `${serviceSeo[serviceSlugForSchema].schemaName} in ${areaForSchema.name}`
+          : serviceSeo[serviceSlugForSchema].schemaName,
+        serviceType: serviceSeo[serviceSlugForSchema].serviceType,
+        provider: { '@id': 'https://kellysroofing.ie/#business' },
+        areaServed: areaForSchema
+          ? { '@type': 'Place', name: `${areaForSchema.name}, Dublin` }
+          : { '@type': 'AdministrativeArea', name: 'County Dublin' },
+        description,
+        url: location === '/' ? 'https://kellysroofing.ie/' : `https://kellysroofing.ie${location}/`,
+      }] : []),
+      ...(activeLocation && !serviceSlugForSchema ? [{
+        '@type': 'Service',
+        name: `Roofing Services in ${activeLocation.name}`,
+        serviceType: 'Roofing Contractor',
+        provider: { '@id': 'https://kellysroofing.ie/#business' },
+        areaServed: { '@type': 'Place', name: `${activeLocation.name}, Dublin` },
+        description,
+        url: `https://kellysroofing.ie${location}/`,
+      }] : []),
+      ...(activeBlogPost ? [{
+        '@type': 'BlogPosting',
+        headline: activeBlogPost.title,
+        description: activeBlogPost.metaDescription,
+        image: 'https://kellysroofing.ie/kellys-roofing-dublin-social-2026.jpg',
+        mainEntityOfPage: `https://kellysroofing.ie/blog/${activeBlogPost.slug}/`,
+        author: { '@id': 'https://kellysroofing.ie/#business' },
+        publisher: { '@id': 'https://kellysroofing.ie/#business' },
+        datePublished: activeBlogPost.publishedDate,
+        dateModified: activeBlogPost.modifiedDate,
+        articleSection: activeBlogPost.category,
+        keywords: blogSeo[activeBlogPost.slug].keywords.join(', '),
+      }] : []),
+      ...(location !== '/' ? [{
+        '@type': 'BreadcrumbList',
+        '@id': `${canonicalUrl}#breadcrumb`,
+        itemListElement: breadcrumbItems.map((item, index) => ({
+          '@type': 'ListItem',
+          position: index + 1,
+          name: item.name,
+          item: item.url,
+        })),
+      }] : []),
+      ...(faqContent ? [{
+        '@type': 'FAQPage',
+        mainEntity: faqContent.map((faq) => ({
+          '@type': 'Question',
+          name: faq.question,
+          acceptedAnswer: { '@type': 'Answer', text: faq.answer },
+        })),
+      }] : []),
+    ],
+  };
+
+  return { title, description, keywords, structuredData };
 }
 
 function scrollToContact() {
@@ -349,6 +573,16 @@ function HeroVideo({ wrapperClassName = '', className = '' }: { wrapperClassName
         <source src={heroVideoPath} type="video/mp4" />
       </video>
       <div className="pointer-events-none absolute inset-0 bg-primary/15" aria-hidden="true" />
+      <div className="pointer-events-none absolute bottom-4 left-4 z-10 w-[42%] max-w-[190px]" aria-hidden="true">
+        <img
+          src={logoPath}
+          alt=""
+          width="640"
+          height="368"
+          decoding="async"
+          className="h-auto w-full opacity-80"
+        />
+      </div>
     </div>
   );
 }
@@ -579,9 +813,15 @@ function SiteFooter() {
         <div className="md:col-span-2">
           <p className="kicker mb-5">Service areas</p>
           <div className="flex max-w-[240px] flex-col items-start gap-4">
-            <Link href="/locations" className="link-hover text-sm">County Dublin (93 areas)</Link>
+            <nav className="grid grid-cols-2 gap-x-5 gap-y-2 text-sm" aria-label="Popular Dublin service areas">
+              {featuredLocations.map((area) => (
+                <Link key={area.slug} href={`/locations/${area.slug}`} className="link-hover">
+                  {area.name}
+                </Link>
+              ))}
+            </nav>
             <Link href="/locations" className="inline-flex min-h-10 items-center gap-2 text-sm font-bold uppercase tracking-wider text-primary link-hover">
-              View all locations <ArrowRight size={15} />
+              View all 93 areas <ArrowRight size={15} />
             </Link>
           </div>
         </div>
@@ -941,6 +1181,9 @@ function BlogPage() {
 
 function BlogArticlePage({ post }: { post: BlogPost }) {
   const service = services.find((item) => serviceSlugs[item.title] === post.serviceSlug);
+  const formatArticleDate = (value: string) =>
+    new Intl.DateTimeFormat('en-IE', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' })
+      .format(new Date(`${value}T00:00:00Z`));
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -961,6 +1204,13 @@ function BlogArticlePage({ post }: { post: BlogPost }) {
               <span className="kicker mb-8">{post.publishedLabel} / {post.category}</span>
               <h1 className="heading-hero max-w-[1100px] text-primary">{post.title}</h1>
               <p className="mt-10 max-w-[850px] text-xl leading-relaxed text-foreground/75 md:text-2xl">{post.dek}</p>
+              <p className="mt-7 font-mono text-xs uppercase tracking-[0.14em] text-muted-foreground">
+                By Kellys Roofing &amp; Interiors · Published{' '}
+                <time dateTime={post.publishedDate}>{formatArticleDate(post.publishedDate)}</time>
+                {post.modifiedDate !== post.publishedDate && (
+                  <> · Updated <time dateTime={post.modifiedDate}>{formatArticleDate(post.modifiedDate)}</time></>
+                )}
+              </p>
             </div>
             <div className="md:col-span-4">
               <OverlayImage
@@ -1010,21 +1260,43 @@ function BlogArticlePage({ post }: { post: BlogPost }) {
           </div>
 
           {service && (
-            <aside className="mb-16 grid grid-cols-1 gap-8 border border-border bg-white p-8 md:mb-24 md:p-12 lg:grid-cols-12 lg:items-end">
-              <div className="lg:col-span-8">
-                <span className="kicker mb-6">Related service</span>
-                <h2 className="font-display text-4xl text-primary md:text-5xl">{service.title}</h2>
-                <p className="mt-5 max-w-[720px] text-lg leading-relaxed text-foreground/70">{service.intro}</p>
-              </div>
-              <div className="flex flex-wrap gap-5 lg:col-span-4 lg:justify-end">
-                <Link href={`/services/${post.serviceSlug}`} className="inline-flex items-center gap-3 text-sm font-bold uppercase tracking-[0.14em] text-primary link-hover">
-                  Explore the service <ArrowRight size={17} />
+            <>
+              <aside className="grid grid-cols-1 gap-8 border border-border bg-white p-8 md:p-12 lg:grid-cols-12 lg:items-end">
+                <div className="lg:col-span-8">
+                  <span className="kicker mb-6">Related service</span>
+                  <h2 className="font-display text-4xl text-primary md:text-5xl">{service.title}</h2>
+                  <p className="mt-5 max-w-[720px] text-lg leading-relaxed text-foreground/70">{service.intro}</p>
+                </div>
+                <div className="flex flex-wrap gap-5 lg:col-span-4 lg:justify-end">
+                  <Link href={`/services/${post.serviceSlug}`} className="inline-flex items-center gap-3 text-sm font-bold uppercase tracking-[0.14em] text-primary link-hover">
+                    Explore the service <ArrowRight size={17} />
+                  </Link>
+                  <Link href="/#contact" className="inline-flex items-center gap-3 bg-primary px-6 py-4 text-sm font-bold uppercase tracking-[0.14em] text-primary-foreground">
+                    Request a quote <ArrowRight size={17} />
+                  </Link>
+                </div>
+              </aside>
+              <aside className="mb-16 border-x border-b border-border bg-background p-8 md:mb-24 md:p-12" aria-labelledby={`${post.slug}-area-links`}>
+                <span className="kicker mb-5">Local service pages</span>
+                <h2 id={`${post.slug}-area-links`} className="font-display text-3xl text-primary">
+                  {service.title} across Dublin.
+                </h2>
+                <div className="mt-7 grid grid-cols-2 gap-x-6 gap-y-4 text-sm sm:grid-cols-4">
+                  {featuredLocations.map((area) => (
+                    <Link
+                      key={area.slug}
+                      href={`/locations/${area.slug}/${post.serviceSlug}`}
+                      className="inline-flex items-center justify-between gap-2 border-b border-border pb-3 font-medium text-primary link-hover"
+                    >
+                      {area.name} <ArrowRight size={14} />
+                    </Link>
+                  ))}
+                </div>
+                <Link href="/locations" className="mt-7 inline-flex items-center gap-3 text-sm font-bold uppercase tracking-[0.14em] text-primary link-hover">
+                  View all Dublin locations <ArrowRight size={17} />
                 </Link>
-                <Link href="/#contact" className="inline-flex items-center gap-3 bg-primary px-6 py-4 text-sm font-bold uppercase tracking-[0.14em] text-primary-foreground">
-                  Request a quote <ArrowRight size={17} />
-                </Link>
-              </div>
-            </aside>
+              </aside>
+            </>
           )}
         </div>
       </article>
@@ -1510,7 +1782,7 @@ export default function App() {
   })();
 
   useEffect(() => {
-    const { title, description } = getPageMetadata(location);
+    const { title, description, keywords } = getPageMetadata(location);
     document.title = title;
     let meta = document.querySelector('meta[name="description"]');
     if (!meta) {
@@ -1519,6 +1791,13 @@ export default function App() {
       document.head.appendChild(meta);
     }
     meta.setAttribute('content', description);
+    let keywordMeta = document.querySelector('meta[name="keywords"]');
+    if (!keywordMeta) {
+      keywordMeta = document.createElement('meta');
+      keywordMeta.setAttribute('name', 'keywords');
+      document.head.appendChild(keywordMeta);
+    }
+    keywordMeta.setAttribute('content', keywords.join(', '));
   }, [location]);
 
   if (activeService) return <ServicePage service={activeService} />;

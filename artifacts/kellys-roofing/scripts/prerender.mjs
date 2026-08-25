@@ -19,16 +19,20 @@ for (const route of prerenderRoutes) {
   const { html, metadata } = render(route);
   const title = escapeAttribute(metadata.title);
   const description = escapeAttribute(metadata.description);
+  const keywords = escapeAttribute(metadata.keywords.join(', '));
+  const structuredData = JSON.stringify(metadata.structuredData).replaceAll('<', '\\u003c');
   const canonicalUrl = route === '/' ? `${siteOrigin}/` : `${siteOrigin}${route}/`;
   const page = template
     .replace(/<title>.*?<\/title>/s, `<title>${title}</title>`)
     .replace(/<meta name="description" content="[^"]*"\s*\/?>/, `<meta name="description" content="${description}" />`)
+    .replace(/<meta name="keywords" content="[^"]*"\s*\/?>/, `<meta name="keywords" content="${keywords}" />`)
     .replace(/<link rel="canonical" href="[^"]*"\s*\/?>/, `<link rel="canonical" href="${canonicalUrl}" />`)
     .replace(/<meta property="og:title" content="[^"]*"\s*\/?>/, `<meta property="og:title" content="${title}" />`)
     .replace(/<meta property="og:description" content="[^"]*"\s*\/?>/, `<meta property="og:description" content="${description}" />`)
     .replace(/<meta property="og:url" content="[^"]*"\s*\/?>/, `<meta property="og:url" content="${canonicalUrl}" />`)
     .replace(/<meta name="twitter:title" content="[^"]*"\s*\/?>/, `<meta name="twitter:title" content="${title}" />`)
     .replace(/<meta name="twitter:description" content="[^"]*"\s*\/?>/, `<meta name="twitter:description" content="${description}" />`)
+    .replace(/<script id="structured-data" type="application\/ld\+json">.*?<\/script>/s, `<script id="structured-data" type="application/ld+json">${structuredData}</script>`)
     .replace('<div id="root"></div>', `<div id="root">${html}</div>`);
 
   const outputDir = route === '/' ? publicDir : path.join(publicDir, route.slice(1));
@@ -36,4 +40,25 @@ for (const route of prerenderRoutes) {
   await writeFile(path.join(outputDir, 'index.html'), page);
 }
 
-console.log(`Pre-rendered ${prerenderRoutes.length} routes.`);
+const canonicalUrls = prerenderRoutes.map((route) =>
+  route === '/' ? `${siteOrigin}/` : `${siteOrigin}${route}/`,
+);
+const sitemap = [
+  '<?xml version="1.0" encoding="UTF-8"?>',
+  '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
+  ...canonicalUrls.map((url) => `  <url><loc>${url}</loc></url>`),
+  '</urlset>',
+  '',
+].join('\n');
+const robots = [
+  'User-agent: *',
+  'Allow: /',
+  '',
+  `Sitemap: ${siteOrigin}/sitemap.xml`,
+  '',
+].join('\n');
+
+await writeFile(path.join(publicDir, 'sitemap.xml'), sitemap);
+await writeFile(path.join(publicDir, 'robots.txt'), robots);
+
+console.log(`Pre-rendered ${prerenderRoutes.length} routes and generated sitemap.xml.`);

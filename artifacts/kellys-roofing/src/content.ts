@@ -269,6 +269,8 @@ export type BlogPost = {
   readTime: string;
   imageKey: BlogImageKey;
   publishedLabel: string;
+  publishedDate: string;
+  modifiedDate: string;
   metaDescription: string;
   dek: string;
   sections: readonly BlogSection[];
@@ -285,6 +287,8 @@ export const blogPosts: readonly BlogPost[] = [
     readTime: '9 min read',
     imageKey: 'repair',
     publishedLabel: 'Homeowner guide',
+    publishedDate: '2026-08-25',
+    modifiedDate: '2026-08-25',
     metaDescription:
       'A practical guide to roof leaks in Dublin homes, including safe first steps, likely sources, inspection questions and repair planning.',
     dek:
@@ -363,6 +367,8 @@ export const blogPosts: readonly BlogPost[] = [
     readTime: '10 min read',
     imageKey: 'replacement',
     publishedLabel: 'Planning guide',
+    publishedDate: '2026-08-25',
+    modifiedDate: '2026-08-25',
     metaDescription:
       'Plan a Dublin roof replacement with practical guidance on surveys, slate and tile choices, ventilation, access, sequencing and hidden defects.',
     dek:
@@ -436,6 +442,8 @@ export const blogPosts: readonly BlogPost[] = [
     readTime: '10 min read',
     imageKey: 'flat',
     publishedLabel: 'Homeowner guide',
+    publishedDate: '2026-08-25',
+    modifiedDate: '2026-08-25',
     metaDescription:
       'Practical advice for Dublin flat roofs covering ponding, drainage, membranes, insulation, upstands, inspections and renewal planning.',
     dek:
@@ -508,6 +516,8 @@ export const blogPosts: readonly BlogPost[] = [
     readTime: '9 min read',
     imageKey: 'interiors',
     publishedLabel: 'Repair guide',
+    publishedDate: '2026-08-25',
+    modifiedDate: '2026-08-25',
     metaDescription:
       'Learn how to assess, dry and repair ceilings, plaster, insulation and joinery after a roof leak in a Dublin property.',
     dek:

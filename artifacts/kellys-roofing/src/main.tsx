@@ -1,3 +1,4 @@
+import type { ErrorInfo } from 'react';
 import { createRoot, hydrateRoot } from 'react-dom/client';
 import { Router } from 'wouter';
 
@@ -16,7 +17,7 @@ const app = (
 );
 const rootOptions = {
   // Keeps caught errors off reportError(), which would raise the dev overlay.
-  onCaughtError: (error, errorInfo) => {
+  onCaughtError: (error: unknown, errorInfo: ErrorInfo) => {
     console.error(error, errorInfo.componentStack);
   },
 };
