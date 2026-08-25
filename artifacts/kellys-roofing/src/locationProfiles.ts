@@ -1,5 +1,6 @@
 export type LocationProfile = {
   header: string;
+  metaDescription: string;
   coordinates: {
     latitude: number;
     longitude: number;
@@ -145,6 +146,17 @@ const headerEndings = [
   'Straightforward help for roofs, gutters and interiors.',
 ];
 
+const metaDescriptionBuilders = [
+  (name: string) => `Roof repairs, replacement, flat roofing and interior work in ${name}, Dublin. Get practical advice and a free quote from Kellys Roofing & Interiors.`,
+  (name: string) => `Need roofing help in ${name}? Kellys Roofing & Interiors provides roof repairs, replacement, flat roofing and joined-up interior work across Dublin.`,
+  (name: string) => `Kellys Roofing & Interiors serves ${name}, Dublin with roof repairs, new roofs, flat roofing and interior building work. Request a free quote.`,
+  (name: string) => `Explore roofing services in ${name}, from focused leak repairs and roof replacement to flat roofing and interior finishing. Free quotes available.`,
+  (name: string) => `Local roofing support for ${name} properties, including repairs, replacement roofs, flat roofing and interiors from Kellys Roofing & Interiors.`,
+  (name: string) => `Planning roof work in ${name}, Dublin? Get clear advice on repairs, replacement, flat roofing and related interior work from the Kellys team.`,
+  (name: string) => `Practical roofing services for homes and properties in ${name}: roof repairs, replacement, flat roofing and coordinated interior work.`,
+  (name: string) => `From active leaks to planned roof renewal, Kellys Roofing & Interiors helps ${name} property owners choose the right roofing and interior work.`,
+];
+
 const formatCoordinate = (value: number, positive: string, negative: string) =>
   `${Math.abs(value).toFixed(4)}°${value >= 0 ? positive : negative}`;
 
@@ -160,6 +172,7 @@ export const locationProfiles: Record<string, LocationProfile> = Object.fromEntr
 
     return [slug, {
       header: `${seed.name}: ${headerEndings[index % headerEndings.length]}`,
+      metaDescription: metaDescriptionBuilders[index % metaDescriptionBuilders.length](seed.name),
       coordinates: {
         latitude: seed.latitude,
         longitude: seed.longitude,

@@ -209,6 +209,21 @@ const slugify = (value: string) => value
 
 const locationItems = locationNames.map((name) => ({ name, slug: slugify(name) }));
 
+const locationServiceDescriptionEndings = [
+  'Get clear advice and a free quote from Kellys Roofing & Interiors.',
+  'Ask Kellys Roofing & Interiors about the most practical next step.',
+  'Arrange an assessment and free quote with Kellys Roofing & Interiors.',
+  'Get straightforward guidance shaped around the property.',
+] as const;
+
+function getLocationServiceDescription(area: (typeof locationItems)[number], service: Service) {
+  const areaIndex = locationItems.findIndex((item) => item.slug === area.slug);
+  const serviceIndex = services.findIndex((item) => item.title === service.title);
+  const endingIndex = (areaIndex + serviceIndex * 3) % locationServiceDescriptionEndings.length;
+
+  return `${service.title} services for homes and properties in ${area.name}, Dublin. ${locationServiceDescriptionEndings[endingIndex]}`;
+}
+
 export const prerenderRoutes = [
   '/',
   '/work',
@@ -259,9 +274,9 @@ export function getPageMetadata(location: string) {
       : location === '/blog'
         ? 'Read practical notes about roof repairs, replacement and flat roofing from Kellys Roofing & Interiors in Dublin.'
         : activeLocationService?.area && activeLocationService.service
-          ? `${activeLocationService.service.title} for homes and properties in ${activeLocationService.area.name}, Dublin.`
+          ? getLocationServiceDescription(activeLocationService.area, activeLocationService.service)
           : activeLocation
-            ? `Roof repairs, replacement, flat roofing and interiors for properties in ${activeLocation.name}, Dublin.`
+            ? locationProfiles[activeLocation.slug].metaDescription
             : location === '/locations'
               ? 'Explore all County Dublin service areas covered by Kellys Roofing & Interiors.'
               : 'Kellys Roofing & Interiors provides roofing, building and interior work across Dublin.';
