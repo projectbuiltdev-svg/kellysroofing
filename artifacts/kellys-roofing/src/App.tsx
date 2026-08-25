@@ -1061,6 +1061,94 @@ function LocationPage({ area }: { area: (typeof locationItems)[number] }) {
               </div>
             </div>
           </section>
+
+          {locationProfile && (
+            <section className="border-t border-border py-14 md:py-20" aria-labelledby={`${area.slug}-roofing-options-title`}>
+              <div className="grid grid-cols-1 gap-10 border-b border-border pb-12 lg:grid-cols-12 lg:gap-16 lg:pb-16">
+                <div className="lg:col-span-8">
+                  <span className="kicker mb-7">Practical roofing help</span>
+                  <h2 id={`${area.slug}-roofing-options-title`} className="heading-section max-w-[900px]">
+                    Roofing options in {area.name}.
+                  </h2>
+                </div>
+                <p className="max-w-[520px] text-lg leading-8 text-foreground/70 lg:col-span-4 lg:self-end">
+                  Whether dealing with an active leak or planning a larger roof replacement, Kellys Roofing & Interiors provides clear advice, a practical scope of work and a free no-obligation quote for properties in {area.name}.
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 border-b border-border lg:grid-cols-12">
+                <div className="py-10 lg:col-span-5 lg:border-r lg:border-border lg:pr-12">
+                  <h3 className="font-display text-3xl">Services in {area.name}</h3>
+                  <div className="mt-7 border-t border-border">
+                    {services.map((service, index) => (
+                      <Link
+                        key={service.title}
+                        href={`/locations/${area.slug}/${serviceSlugs[service.title]}`}
+                        className="group flex items-center gap-4 border-b border-border py-5"
+                      >
+                        <span className="font-mono text-xs text-primary/55">
+                          {String(index + 1).padStart(2, '0')}
+                        </span>
+                        <span className="flex-1 text-lg font-medium">{service.title} in {area.name}</span>
+                        <ArrowRight size={17} className="-rotate-45 text-primary transition-transform group-hover:rotate-0" />
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="border-t border-border py-10 lg:col-span-4 lg:border-r lg:border-t-0 lg:px-12">
+                  <h3 className="font-display text-3xl">Why choose Kellys?</h3>
+                  <ul className="mt-7 space-y-5">
+                    {[
+                      'Free no-obligation quotes',
+                      'Clear, straightforward advice',
+                      'Work planned around the property',
+                      'Roofing and interior work coordinated',
+                      'Clean and considerate workmanship',
+                    ].map((reason) => (
+                      <li key={reason} className="flex items-start gap-3 text-sm leading-6 text-foreground/75">
+                        <CircleCheck size={18} className="mt-0.5 shrink-0 text-primary" aria-hidden="true" />
+                        <span>{reason}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                <aside className="border-t border-border bg-primary p-8 text-primary-foreground lg:col-span-3 lg:border-t-0" aria-label="Contact Kellys Roofing">
+                  <span className="kicker mb-7 text-primary-foreground">Contact us</span>
+                  <h3 className="font-display text-3xl">Send the details. We’ll take it from there.</h3>
+                  <div className="mt-8 space-y-3">
+                    <a href="tel:+353863395381" className="flex items-center gap-3 border-b border-primary-foreground/25 pb-4 text-sm font-bold">
+                      <Phone size={18} aria-hidden="true" />
+                      +353 86 339 5381
+                    </a>
+                    <a href="https://wa.me/353863395381" target="_blank" rel="noreferrer" className="flex items-center gap-3 border-b border-primary-foreground/25 py-4 text-sm font-bold">
+                      <MessageCircle size={18} aria-hidden="true" />
+                      WhatsApp photos for a quote
+                    </a>
+                    <a href="mailto:akroofing@Outlook.com" className="flex items-center gap-3 pt-4 text-sm font-bold break-all">
+                      <Mail size={18} className="shrink-0" aria-hidden="true" />
+                      akroofing@Outlook.com
+                    </a>
+                  </div>
+                </aside>
+              </div>
+
+              <div className="grid grid-cols-2 border-l border-border md:grid-cols-4">
+                {[
+                  ['01', 'Free quotes'],
+                  ['02', 'Dublin coverage'],
+                  ['03', 'Practical advice'],
+                  ['04', 'Joined-up work'],
+                ].map(([number, label]) => (
+                  <div key={number} className="border-b border-r border-border px-5 py-6">
+                    <span className="font-mono text-xs text-primary/55">{number}</span>
+                    <p className="mt-3 text-sm font-bold uppercase tracking-[0.12em]">{label}</p>
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
         </div>
       </article>
 
