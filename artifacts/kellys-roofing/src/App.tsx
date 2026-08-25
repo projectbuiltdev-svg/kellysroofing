@@ -431,20 +431,23 @@ type FaqItem = {
 function FaqAccordion({
   items,
   idPrefix,
+  layout = 'list',
 }: {
   items: readonly FaqItem[];
   idPrefix: string;
+  layout?: 'list' | 'grid';
 }) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
+  const isGrid = layout === 'grid';
 
   return (
-    <div className="border-t border-border">
+    <div className={isGrid ? 'grid grid-cols-1 border-l border-t border-border sm:grid-cols-2 lg:grid-cols-4' : 'border-t border-border'}>
       {items.map((faq, index) => {
         const isOpen = openIndex === index;
         const answerId = `${idPrefix}-answer-${index}`;
 
         return (
-          <article key={faq.question} className="border-b border-border">
+          <article key={faq.question} className={isGrid ? 'border-b border-r border-border px-6 md:px-8' : 'border-b border-border'}>
             <button
               type="button"
               className="flex w-full items-center justify-between gap-6 py-6 text-left md:py-8"
@@ -452,7 +455,7 @@ function FaqAccordion({
               aria-controls={answerId}
               onClick={() => setOpenIndex(isOpen ? null : index)}
             >
-              <span className="font-display text-2xl leading-tight text-primary md:text-3xl">
+              <span className="font-display text-2xl leading-tight text-primary">
                 {faq.question}
               </span>
               <ChevronDown
@@ -489,7 +492,7 @@ function SiteFaq() {
           <span className="kicker mb-6">Frequently asked questions</span>
           <h2 id="site-faq-title" className="heading-section text-primary">Clear answers before work begins.</h2>
         </div>
-        <FaqAccordion items={siteFaqs} idPrefix="site-faq" />
+        <FaqAccordion items={siteFaqs} idPrefix="site-faq" layout="grid" />
       </div>
     </section>
   );
