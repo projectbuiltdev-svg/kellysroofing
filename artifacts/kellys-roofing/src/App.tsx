@@ -259,11 +259,11 @@ function Header({ isServicePage = false, isGalleryPage = false, isBlogPage = fal
       <div className="mx-auto flex max-w-[1600px] items-center justify-between px-6 py-3 md:px-12">
         {isInnerPage ? (
           <Link href="/" onClick={closeMenu} className="relative z-[110] mix-blend-multiply" data-testid="link-logo">
-            <img src={logoPath} alt="Kellys Roofing and Interiors" className="h-20 w-auto object-contain md:h-28" />
+            <img src={logoPath} alt="Kellys Roofing and Interiors" className="h-24 w-auto object-contain md:h-32" />
           </Link>
         ) : (
           <a href="#top" onClick={closeMenu} className="relative z-[110] mix-blend-multiply" data-testid="link-logo">
-            <img src={logoPath} alt="Kellys Roofing and Interiors" className="h-20 w-auto object-contain md:h-28" />
+            <img src={logoPath} alt="Kellys Roofing and Interiors" className="h-24 w-auto object-contain md:h-32" />
           </a>
         )}
         
@@ -308,11 +308,11 @@ function Header({ isServicePage = false, isGalleryPage = false, isBlogPage = fal
            <div className="flex items-center justify-between border-b border-border pb-4">
              {isInnerPage ? (
                <Link href="/" onClick={closeMenu} className="mix-blend-multiply" data-testid="link-mobile-logo">
-                 <img src={logoPath} alt="Kellys Roofing and Interiors" className="h-16 w-auto object-contain" />
+                  <img src={logoPath} alt="Kellys Roofing and Interiors" className="h-20 w-auto object-contain" />
                </Link>
              ) : (
                <a href="#top" onClick={closeMenu} className="mix-blend-multiply" data-testid="link-mobile-logo">
-                 <img src={logoPath} alt="Kellys Roofing and Interiors" className="h-16 w-auto object-contain" />
+                  <img src={logoPath} alt="Kellys Roofing and Interiors" className="h-20 w-auto object-contain" />
                </a>
              )}
              <button onClick={closeMenu} className="p-2 text-primary" aria-label="Close menu">
@@ -350,7 +350,7 @@ function SiteFooter() {
     <footer className="border-t border-border bg-white px-6 py-16 text-foreground md:px-12 md:py-20">
       <div className="mx-auto grid max-w-[1600px] gap-12 md:grid-cols-12 md:gap-8">
         <div className="md:col-span-5">
-          <img src={logoPath} alt="Kellys Roofing and Interiors" className="h-24 w-auto object-contain md:h-28" />
+          <img src={logoPath} alt="Kellys Roofing and Interiors" className="h-28 w-auto object-contain md:h-32" />
           <p className="mt-6 max-w-[460px] text-sm leading-relaxed text-foreground/70">
             Professional roof repairs Dublin, slate and tile roofing, guttering, chimney repairs, flat roofs, and emergency roofing services since 2009. Serving all areas of Dublin County.
           </p>
