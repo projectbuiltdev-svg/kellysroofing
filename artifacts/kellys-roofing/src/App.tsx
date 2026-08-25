@@ -73,18 +73,83 @@ const projectNotes = [
   ['03', 'Respect for your property', 'Careful preparation, clean working habits and a proper handover.'],
 ];
 
+const galleryItems = [
+  ['01', 'Roof lines', 'A closer look at the roof forms and details that shape a Dublin home.', rooflinePath],
+  ['02', 'New tile work', 'Materials selected and laid to give the roof a clean, lasting finish.', roofTilesPath],
+  ['03', 'Framing and structure', 'The work beneath the surface, where a sound roof begins.', roofFramingPath],
+  ['04', 'Work at height', 'Careful, practical work carried out with the property in view.', rooferFixingRoofHeroPath],
+  ['05', 'Interiors in progress', 'The inside of a property brought back together after the roof is secure.', interiorRenovationPath],
+  ['06', 'The finished detail', 'The small decisions that help a renovated space feel considered.', homeRenovationStandardPath],
+];
+
+type BlogPost = {
+  category: string;
+  title: string;
+  excerpt: string;
+  image: string;
+  readTime: string;
+};
+
+const blogCategories = ['Roof repairs', 'Roof replacement', 'Flat roofing'];
+
+const blogPosts: BlogPost[] = [
+  {
+    category: 'Roof repairs',
+    title: 'The early signs that a roof needs attention',
+    excerpt: 'A slipped tile, a damp patch or a change in the way water runs can all be useful clues. Knowing what to look for helps you deal with a small issue before it becomes a larger one.',
+    image: rooferFixingRoofHeroPath,
+    readTime: '4 min read',
+  },
+  {
+    category: 'Roof repairs',
+    title: 'What to do after storm damage',
+    excerpt: 'After high winds, a quick visual check can help you spot loose materials and exposed areas. We look at the safest first steps and when it is time to arrange a proper inspection.',
+    image: rooflinePath,
+    readTime: '3 min read',
+  },
+  {
+    category: 'Roof replacement',
+    title: 'Repair or replace: making the right call',
+    excerpt: 'The age of a roof is only part of the picture. Condition, previous repairs, ventilation and the long-term plans for the property all matter when weighing up the options.',
+    image: roofTilesPath,
+    readTime: '5 min read',
+  },
+  {
+    category: 'Roof replacement',
+    title: 'A simple guide to planning a new roof',
+    excerpt: 'A well-planned replacement keeps surprises to a minimum. Here are the practical details worth discussing early, from materials and access to sequencing and finishing.',
+    image: roofFramingPath,
+    readTime: '6 min read',
+  },
+  {
+    category: 'Flat roofing',
+    title: 'The details that make a flat roof last',
+    excerpt: 'Falls, edges, outlets and joins all play a part in how a flat roof performs. Good detailing is what turns a covering into dependable protection for the building below.',
+    image: roofFramingPath,
+    readTime: '5 min read',
+  },
+  {
+    category: 'Flat roofing',
+    title: 'Flat roofs for extensions and outbuildings',
+    excerpt: 'From a home extension to a garage or commercial unit, the right flat-roof approach starts with how the space will be used. We cover the questions to ask before work begins.',
+    image: rooferFixingRoofHeroPath,
+    readTime: '4 min read',
+  },
+];
+
 function scrollToContact() {
   document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' });
 }
 
-function Header({ isServicePage = false }: { isServicePage?: boolean }) {
+function Header({ isServicePage = false, isGalleryPage = false, isBlogPage = false }: { isServicePage?: boolean; isGalleryPage?: boolean; isBlogPage?: boolean }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const closeMenu = () => setMenuOpen(false);
+  const isInnerPage = isServicePage || isGalleryPage || isBlogPage;
 
   return (
     <header className="fixed top-0 z-[100] w-full bg-background/90 backdrop-blur-md border-b border-border/50">
       <div className="mx-auto flex max-w-[1600px] items-center justify-between px-6 py-3 md:px-12">
-        {isServicePage ? (
+        {isInnerPage ? (
           <Link href="/" onClick={closeMenu} className="relative z-[110] mix-blend-multiply" data-testid="link-logo">
             <img src={logoPath} alt="Kellys Roofing and Interiors" className="h-20 w-auto object-contain md:h-28" />
           </Link>
@@ -101,14 +166,15 @@ function Header({ isServicePage = false }: { isServicePage?: boolean }) {
                 {label}
               </Link>
             ))}
-            {!isServicePage && (
-              <>
-                <a href="#approach" className="text-sm font-medium hover:text-primary transition-colors link-hover">View our work</a>
-                <a href="#about" className="text-sm font-medium hover:text-primary transition-colors link-hover">About Kellys</a>
-              </>
+            <Link href="/work" className="text-sm font-medium hover:text-primary transition-colors link-hover">View our work</Link>
+            <Link href="/blog" className="text-sm font-medium hover:text-primary transition-colors link-hover">Blog</Link>
+            {isInnerPage ? (
+              <Link href="/#about" className="text-sm font-medium hover:text-primary transition-colors link-hover">About Kellys</Link>
+            ) : (
+              <a href="#about" className="text-sm font-medium hover:text-primary transition-colors link-hover">About Kellys</a>
             )}
           </div>
-          {isServicePage ? (
+          {isInnerPage ? (
             <Link href="/#contact" className="bg-primary text-primary-foreground px-6 py-2.5 text-sm font-medium hover:bg-accent transition-colors" data-testid="button-nav-quote">
               Request Quote
             </Link>
@@ -132,7 +198,7 @@ function Header({ isServicePage = false }: { isServicePage?: boolean }) {
        {menuOpen && createPortal(
          <div className="fixed inset-0 z-[9999] min-h-[100dvh] overflow-y-auto bg-[#f7f5f2] px-6 py-5 lg:hidden" data-testid="mobile-menu">
            <div className="flex items-center justify-between border-b border-border pb-4">
-             {isServicePage ? (
+             {isInnerPage ? (
                <Link href="/" onClick={closeMenu} className="mix-blend-multiply" data-testid="link-mobile-logo">
                  <img src={logoPath} alt="Kellys Roofing and Interiors" className="h-16 w-auto object-contain" />
                </Link>
@@ -151,13 +217,14 @@ function Header({ isServicePage = false }: { isServicePage?: boolean }) {
                  {label}
                </Link>
              ))}
-             {!isServicePage && (
-               <>
-                 <a href="#approach" onClick={closeMenu} className="border-b border-border pb-4" data-testid="link-mobile-approach">View our work</a>
-                 <a href="#about" onClick={closeMenu} className="border-b border-border pb-4" data-testid="link-mobile-about">About Kellys</a>
-               </>
+             <Link href="/work" onClick={closeMenu} className="border-b border-border pb-4" data-testid="link-mobile-work">View our work</Link>
+             <Link href="/blog" onClick={closeMenu} className="border-b border-border pb-4" data-testid="link-mobile-blog">Blog</Link>
+             {isInnerPage ? (
+               <Link href="/#about" onClick={closeMenu} className="border-b border-border pb-4" data-testid="link-mobile-about">About Kellys</Link>
+             ) : (
+               <a href="#about" onClick={closeMenu} className="border-b border-border pb-4" data-testid="link-mobile-about">About Kellys</a>
              )}
-             {isServicePage ? (
+              {isInnerPage ? (
                <Link href="/#contact" onClick={closeMenu} className="border-b border-border pb-4" data-testid="link-mobile-contact">Request a quote</Link>
              ) : (
                <a href="#contact" onClick={closeMenu} className="border-b border-border pb-4" data-testid="link-mobile-contact">Request a quote</a>
@@ -242,6 +309,135 @@ function ServicePage({ service }: { service: Service }) {
   );
 }
 
+function GalleryPage() {
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
+  return (
+    <main className="texture-overlay min-h-[100dvh] bg-background text-foreground selection:bg-primary selection:text-primary-foreground">
+      <Header isGalleryPage />
+
+      <article className="pt-40 md:pt-52">
+        <div className="mx-auto max-w-[1600px] px-6 md:px-12">
+          <div className="grid grid-cols-1 gap-12 border-b border-border pb-20 md:grid-cols-12 md:gap-16 md:pb-32">
+            <div className="md:col-span-8">
+              <span className="kicker mb-8">Selected work / Dublin</span>
+              <h1 className="heading-hero max-w-[900px] text-primary">Work that holds up.</h1>
+            </div>
+            <div className="flex items-end md:col-span-4">
+              <p className="max-w-[360px] text-lg leading-relaxed text-foreground/70">
+                A closer look at the roofs, structures and interiors behind the Kellys approach.
+              </p>
+            </div>
+          </div>
+
+          <section className="grid grid-cols-1 gap-x-8 gap-y-20 py-20 md:grid-cols-12 md:gap-y-28 md:py-32" aria-label="Gallery of roofing and building work">
+            {galleryItems.map(([number, title, description, image], index) => (
+              <figure key={number} className={`group ${index % 3 === 0 ? 'md:col-span-7 md:col-start-1' : 'md:col-span-5 md:col-start-8'}`}>
+                <div className={`overflow-hidden bg-muted ${index % 3 === 0 ? 'aspect-[4/3]' : 'aspect-[5/6]'}`}>
+                  <img src={image} alt={title} className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                </div>
+                <figcaption className="mt-6 flex gap-6 border-t border-border pt-4">
+                  <span className="font-mono text-xs text-primary">{number}</span>
+                  <div>
+                    <h2 className="font-display text-2xl text-primary">{title}</h2>
+                    <p className="mt-2 max-w-[420px] text-sm leading-relaxed text-foreground/70">{description}</p>
+                  </div>
+                </figcaption>
+              </figure>
+            ))}
+          </section>
+        </div>
+      </article>
+
+      <section className="bg-primary px-6 py-24 text-primary-foreground md:px-12 md:py-32">
+        <div className="mx-auto flex max-w-[1600px] flex-col items-start justify-between gap-10 md:flex-row md:items-end">
+          <div>
+            <span className="kicker mb-8 text-primary-foreground">Have a property in mind?</span>
+            <h2 className="heading-section max-w-[700px]">Let’s talk through the next step.</h2>
+          </div>
+          <Link href="/#contact" className="inline-flex shrink-0 items-center gap-4 bg-primary-foreground px-8 py-4 text-sm font-bold uppercase tracking-wider text-primary transition-colors hover:bg-accent hover:text-primary-foreground">
+            Request a quote <ArrowRight size={18} />
+          </Link>
+        </div>
+      </section>
+    </main>
+  );
+}
+
+function BlogPage() {
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
+  return (
+    <main className="texture-overlay min-h-[100dvh] bg-background text-foreground selection:bg-primary selection:text-primary-foreground">
+      <Header isBlogPage />
+
+      <article className="pt-40 md:pt-52">
+        <div className="mx-auto max-w-[1600px] px-6 md:px-12">
+          <header className="grid grid-cols-1 gap-12 border-b border-border pb-20 md:grid-cols-12 md:gap-16 md:pb-32">
+            <div className="md:col-span-8">
+              <span className="kicker mb-8">The Kellys journal / Dublin</span>
+              <h1 className="heading-hero max-w-[900px] text-primary">Useful things to know about your roof.</h1>
+            </div>
+            <div className="flex items-end md:col-span-4">
+              <p className="max-w-[360px] text-lg leading-relaxed text-foreground/70">
+                Straightforward notes on repairs, replacement and flat roofing, written for the people looking after a property.
+              </p>
+            </div>
+          </header>
+
+          <div className="pb-24 md:pb-40">
+            {blogCategories.map((category) => (
+              <section key={category} className="border-b border-border py-16 md:py-24" aria-labelledby={`blog-category-${category}`}>
+                <div className="mb-10 flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
+                  <h2 id={`blog-category-${category}`} className="heading-section text-4xl md:text-5xl">{category}</h2>
+                  <span className="font-mono text-xs uppercase tracking-[0.18em] text-muted-foreground">02 articles</span>
+                </div>
+
+                <div className="grid grid-cols-1 gap-12 md:grid-cols-2 md:gap-8">
+                  {blogPosts.filter((post) => post.category === category).map((post, index) => (
+                    <article key={post.title} className="group">
+                      <div className="aspect-[16/10] overflow-hidden bg-muted">
+                        <img src={post.image} alt="" className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                      </div>
+                      <div className="mt-6 border-t border-border pt-4">
+                        <div className="mb-5 flex items-center justify-between gap-4">
+                          <span className="font-mono text-xs text-primary">0{index + 1} / {post.category}</span>
+                          <span className="font-mono text-xs text-muted-foreground">{post.readTime}</span>
+                        </div>
+                        <h3 className="max-w-[560px] font-display text-3xl text-primary md:text-4xl">{post.title}</h3>
+                        <p className="mt-4 max-w-[560px] text-base leading-relaxed text-foreground/70">{post.excerpt}</p>
+                        <span className="mt-6 inline-flex items-center gap-3 text-xs font-bold uppercase tracking-[0.16em] text-primary">
+                          Read the note <ArrowRight size={16} className="-rotate-45 transition-transform group-hover:rotate-0" />
+                        </span>
+                      </div>
+                    </article>
+                  ))}
+                </div>
+              </section>
+            ))}
+          </div>
+        </div>
+      </article>
+
+      <section className="bg-primary px-6 py-24 text-primary-foreground md:px-12 md:py-32">
+        <div className="mx-auto flex max-w-[1600px] flex-col items-start justify-between gap-10 md:flex-row md:items-end">
+          <div>
+            <span className="kicker mb-8 text-primary-foreground">Have a property in mind?</span>
+            <h2 className="heading-section max-w-[700px]">Let’s talk through the next step.</h2>
+          </div>
+          <Link href="/#contact" className="inline-flex shrink-0 items-center gap-4 bg-primary-foreground px-8 py-4 text-sm font-bold uppercase tracking-wider text-primary transition-colors hover:bg-accent hover:text-primary-foreground">
+            Request a quote <ArrowRight size={18} />
+          </Link>
+        </div>
+      </section>
+    </main>
+  );
+}
+
 export default function App() {
   const [location] = useLocation();
   const [submitted, setSubmitted] = useState(false);
@@ -252,13 +448,25 @@ export default function App() {
   };
 
   const activeService = services.find((service) => `/services/${serviceSlugs[service.title]}` === location);
+  const isGalleryPage = location === '/work';
+  const isBlogPage = location === '/blog';
 
   useEffect(() => {
-    const pageTitle = activeService ? `${activeService.title} | Kellys Roofing Dublin` : 'Kellys Roofing & Interiors | Dublin';
+    const pageTitle = activeService
+      ? `${activeService.title} | Kellys Roofing Dublin`
+      : isGalleryPage
+        ? 'Our Work | Kellys Roofing & Interiors | Dublin'
+        : isBlogPage
+          ? 'Blog | Kellys Roofing & Interiors | Dublin'
+        : 'Kellys Roofing & Interiors | Dublin';
     document.title = pageTitle;
     const description = activeService
       ? `${activeService.intro} Kellys Roofing & Interiors serves homes and properties across Dublin.`
-      : 'Kellys Roofing & Interiors provides roofing, building and interior work across Dublin.';
+      : isGalleryPage
+        ? 'Explore selected roofing, building and interior work from Kellys Roofing & Interiors in Dublin.'
+        : isBlogPage
+          ? 'Read practical notes about roof repairs, replacement and flat roofing from Kellys Roofing & Interiors in Dublin.'
+        : 'Kellys Roofing & Interiors provides roofing, building and interior work across Dublin.';
     let meta = document.querySelector('meta[name="description"]');
     if (!meta) {
       meta = document.createElement('meta');
@@ -269,6 +477,8 @@ export default function App() {
   }, [activeService]);
 
   if (activeService) return <ServicePage service={activeService} />;
+  if (isGalleryPage) return <GalleryPage />;
+  if (isBlogPage) return <BlogPage />;
 
   return (
     <main className="texture-overlay min-h-[100dvh] bg-background text-foreground selection:bg-primary selection:text-primary-foreground">
@@ -379,7 +589,7 @@ export default function App() {
       <section id="approach" className="py-24 md:py-40 px-6 md:px-12 border-b border-border">
         <div className="mx-auto max-w-[1600px] grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24">
           <div>
-            <span className="kicker mb-8">View our work</span>
+            <span className="kicker mb-8">How we work</span>
             <h2 className="heading-section max-w-[500px] mb-8">
               No fog. Just a clear route through the work.
             </h2>
