@@ -1,20 +1,17 @@
 import { useEffect, useState, type FormEvent } from 'react';
+import { createPortal } from 'react-dom';
 import {
   ArrowDownRight,
   ArrowRight,
   ChevronDown,
-  CircleCheck,
-  ClipboardList,
-  House,
   Menu,
-  MoveUpRight,
-  Ruler,
-  ShieldCheck,
-  Sparkles,
   X,
+  Phone,
+  CircleCheck
 } from 'lucide-react';
 import { Link, useLocation } from 'wouter';
-import logoPath from '@assets/kellys-logo-cropped.png';
+
+import logoPath from '@assets/kellys_roofing_logo_transparent.png';
 import rooflinePath from '@assets/generated_images/kellys-roofline.jpg';
 import roofTilesPath from '@assets/unsplash/roof-tiles.jpg';
 import roofFramingPath from '@assets/unsplash/roof-framing.jpg';
@@ -27,7 +24,6 @@ type Service = {
   title: string;
   intro: string;
   detail: string;
-  icon: typeof House;
   image: string;
 };
 
@@ -37,7 +33,6 @@ const services: Service[] = [
     title: 'Roof repairs',
     intro: 'A clear, practical response to leaks, storm damage and the small signs that should not be ignored.',
     detail: 'We inspect the issue, explain what needs doing and carry out focused repairs across Dublin homes and managed properties.',
-    icon: ShieldCheck,
     image: rooferFixingRoofHeroPath,
   },
   {
@@ -45,7 +40,6 @@ const services: Service[] = [
     title: 'Roof replacement',
     intro: 'Built-up protection for roofs that have reached the end of their useful life.',
     detail: 'From strip and renew work to new slate or tile coverings, we plan the job around the building and the people using it.',
-    icon: House,
     image: roofTilesPath,
   },
   {
@@ -53,7 +47,6 @@ const services: Service[] = [
     title: 'Flat roofing',
     intro: 'Durable flat-roof solutions for extensions, garages, commercial units and more.',
     detail: 'We help select a suitable system, pay close attention to falls and detailing, and leave the site properly finished.',
-    icon: Ruler,
     image: roofFramingPath,
   },
   {
@@ -61,7 +54,6 @@ const services: Service[] = [
     title: 'Interiors & building',
     intro: 'The considered work that brings a property back together after the roof is secure.',
     detail: 'Ceilings, plastering, drylining, carpentry and interior finishing handled as part of one joined-up scope.',
-    icon: Sparkles,
     image: interiorRenovationPath,
   },
 ];
@@ -85,86 +77,173 @@ function scrollToContact() {
   document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' });
 }
 
-function ServicePage({ service }: { service: Service }) {
+function Header({ isServicePage = false }: { isServicePage?: boolean }) {
+  const [menuOpen, setMenuOpen] = useState(false);
+  const closeMenu = () => setMenuOpen(false);
+
   return (
-    <main className="grain min-h-[100dvh] overflow-hidden bg-white text-[#10233f]">
-      <header className="relative z-40 border-b border-[#10233f]/10 bg-white">
-        <div className="mx-auto flex max-w-[1380px] items-center justify-between px-5 py-4 sm:px-8 lg:px-12">
-          <Link href="/" className="flex items-center" data-testid="link-service-logo">
-            <img src={logoPath} alt="Kellys Roofing and Interiors" className="h-auto w-[220px] max-w-[55vw] object-contain" />
+    <header className="fixed top-0 z-[100] w-full bg-background/90 backdrop-blur-md border-b border-border/50">
+      <div className="mx-auto flex max-w-[1600px] items-center justify-between px-6 py-3 md:px-12">
+        {isServicePage ? (
+          <Link href="/" onClick={closeMenu} className="relative z-[110] mix-blend-multiply" data-testid="link-logo">
+            <img src={logoPath} alt="Kellys Roofing and Interiors" className="h-20 w-auto object-contain md:h-28" />
           </Link>
-          <nav className="hidden items-center gap-5 lg:flex" aria-label="Main navigation">
+        ) : (
+          <a href="#top" onClick={closeMenu} className="relative z-[110] mix-blend-multiply" data-testid="link-logo">
+            <img src={logoPath} alt="Kellys Roofing and Interiors" className="h-20 w-auto object-contain md:h-28" />
+          </a>
+        )}
+        
+        <nav className="hidden lg:flex items-center gap-8" aria-label="Main navigation">
+          <div className="flex gap-6 mr-4">
             {serviceNavItems.map(([label, href]) => (
-              <Link key={href} href={href} className="nav-link text-[11px] font-semibold tracking-[.02em] text-[#10233f]/75 transition-colors hover:text-[#10233f]" data-testid={`link-service-nav-${serviceSlugs[label]}`}>
+              <Link key={href} href={href} className="text-sm font-medium hover:text-primary transition-colors link-hover" data-testid={`link-nav-${serviceSlugs[label]}`}>
                 {label}
               </Link>
             ))}
-            <Link href="/#approach" className="nav-link text-[11px] font-semibold tracking-[.02em] text-[#10233f]/75 transition-colors hover:text-[#10233f]">How we work</Link>
-            <Link href="/#contact" className="rounded-full bg-[#1f365e] px-4 py-2.5 text-[11px] font-bold text-white transition hover:bg-[#111315]">Request a quote</Link>
-          </nav>
-          <details className="relative lg:hidden">
-            <summary className="list-none rounded-full border border-[#10233f]/20 bg-white p-2.5 text-[#10233f]" aria-label="Open mobile menu"><Menu size={21} /></summary>
-            <div className="absolute right-0 top-12 z-50 w-72 rounded-xl border border-[#10233f]/10 bg-white p-3 shadow-2xl">
-              {serviceNavItems.map(([label, href]) => (
-                <Link key={href} href={href} className="flex items-center justify-between border-b border-[#10233f]/10 px-3 py-3.5 text-sm font-semibold last:border-0">
-                  {label}<ArrowRight size={15} className="text-[#1f365e]" />
-                </Link>
-              ))}
-              <Link href="/#contact" className="flex items-center justify-between px-3 py-3.5 text-sm font-semibold">Request a quote<ArrowRight size={15} className="text-[#1f365e]" /></Link>
-            </div>
-          </details>
-        </div>
-      </header>
-      <section className="relative isolate overflow-hidden bg-[#f8f6f0] px-5 py-16 sm:px-8 lg:px-12 lg:py-24">
-        <div className="mx-auto grid max-w-[1380px] items-center gap-12 lg:grid-cols-[.9fr_1.1fr] lg:gap-20">
-          <div>
-            <Link href="/#services" className="section-kicker inline-flex items-center gap-2 text-[#1f365e] hover:underline"><ArrowRight size={14} className="rotate-180" /> All services</Link>
-            <p className="mono mt-10 text-[11px] font-bold text-[#1f365e]">{service.number} / DUBLIN</p>
-            <h1 className="display-title mt-5 text-[clamp(3.4rem,8vw,7rem)] font-semibold text-[#10233f]">{service.title}</h1>
-            <p className="mt-7 max-w-[520px] text-lg leading-8 text-[#536075]">{service.intro}</p>
-            <Link href="/#contact" className="group mt-9 inline-flex items-center gap-3 rounded-full bg-[#1f365e] px-5 py-3 text-sm font-bold text-white transition hover:bg-[#111315]">
-              Talk through your project <ArrowRight size={15} className="transition-transform group-hover:translate-x-1" />
+            {!isServicePage && (
+              <>
+                <a href="#approach" className="text-sm font-medium hover:text-primary transition-colors link-hover">How we work</a>
+                <a href="#about" className="text-sm font-medium hover:text-primary transition-colors link-hover">About Kellys</a>
+              </>
+            )}
+          </div>
+          {isServicePage ? (
+            <Link href="/#contact" className="bg-primary text-primary-foreground px-6 py-2.5 text-sm font-medium hover:bg-accent transition-colors" data-testid="button-nav-quote">
+              Request Quote
             </Link>
-          </div>
-          <div className="relative h-[360px] overflow-hidden rounded-lg border border-[#10233f]/10 sm:h-[500px]">
-            <img src={service.image} alt={`${service.title} work by Kellys Roofing and Interiors`} className="h-full w-full object-cover" />
-            <div className="absolute inset-0 bg-[#10233f]/20 mix-blend-multiply" />
-          </div>
-        </div>
-      </section>
-      <section className="page-grid bg-white px-5 py-20 sm:px-8 lg:px-12 lg:py-28">
-        <div className="mx-auto grid max-w-[1380px] gap-12 lg:grid-cols-[.75fr_1.25fr] lg:gap-24">
-          <div>
-            <p className="section-kicker">What is involved</p>
-            <h2 className="display-title mt-5 text-[clamp(2.8rem,5vw,4.8rem)] font-semibold">A clear scope.<br /><span className="text-[#1f365e]">A proper finish.</span></h2>
-          </div>
-          <div className="border-y border-[#aab9bc]">
-            {['A practical first conversation about the property and what needs attention.', 'Straightforward advice on the right materials, sequence and level of work.', 'Careful preparation, clean working habits and a considered handover.'].map((item, index) => (
-              <div key={item} className="grid grid-cols-[50px_1fr] gap-5 border-b border-[#aab9bc] py-7 last:border-0 sm:grid-cols-[80px_1fr]">
-                <span className="mono text-[11px] font-bold text-[#1f365e]">0{index + 1}</span>
-                <p className="max-w-[600px] text-base leading-7 text-[#536075]">{item}</p>
+          ) : (
+            <button onClick={scrollToContact} className="bg-primary text-primary-foreground px-6 py-2.5 text-sm font-medium hover:bg-accent transition-colors" data-testid="button-nav-quote">
+              Request Quote
+            </button>
+          )}
+        </nav>
+
+        <button 
+          onClick={() => setMenuOpen(!menuOpen)} 
+          className="relative z-[110] p-2 text-primary lg:hidden"
+          aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+          data-testid="button-mobile-menu"
+        >
+          {menuOpen ? <X size={28} /> : <Menu size={28} />}
+        </button>
+      </div>
+
+       {menuOpen && createPortal(
+         <div className="fixed inset-0 z-[9999] min-h-[100dvh] overflow-y-auto bg-[#f7f5f2] px-6 py-5 lg:hidden" data-testid="mobile-menu">
+           <div className="flex items-center justify-between border-b border-border pb-4">
+             {isServicePage ? (
+               <Link href="/" onClick={closeMenu} className="mix-blend-multiply" data-testid="link-mobile-logo">
+                 <img src={logoPath} alt="Kellys Roofing and Interiors" className="h-16 w-auto object-contain" />
+               </Link>
+             ) : (
+               <a href="#top" onClick={closeMenu} className="mix-blend-multiply" data-testid="link-mobile-logo">
+                 <img src={logoPath} alt="Kellys Roofing and Interiors" className="h-16 w-auto object-contain" />
+               </a>
+             )}
+             <button onClick={closeMenu} className="p-2 text-primary" aria-label="Close menu">
+               <X size={28} />
+             </button>
+           </div>
+           <nav className="mt-8 flex flex-col gap-6 text-2xl font-display text-primary" aria-label="Mobile navigation">
+             {serviceNavItems.map(([label, href]) => (
+               <Link key={href} href={href} onClick={closeMenu} className="border-b border-border pb-4" data-testid={`link-mobile-${serviceSlugs[label]}`}>
+                 {label}
+               </Link>
+             ))}
+             {!isServicePage && (
+               <>
+                 <a href="#approach" onClick={closeMenu} className="border-b border-border pb-4" data-testid="link-mobile-approach">How we work</a>
+                 <a href="#about" onClick={closeMenu} className="border-b border-border pb-4" data-testid="link-mobile-about">About Kellys</a>
+               </>
+             )}
+             {isServicePage ? (
+               <Link href="/#contact" onClick={closeMenu} className="border-b border-border pb-4" data-testid="link-mobile-contact">Request a quote</Link>
+             ) : (
+               <a href="#contact" onClick={closeMenu} className="border-b border-border pb-4" data-testid="link-mobile-contact">Request a quote</a>
+             )}
+           </nav>
+         </div>,
+         document.body,
+       )}
+    </header>
+  );
+}
+
+function ServicePage({ service }: { service: Service }) {
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [service]);
+
+  return (
+    <main className="texture-overlay min-h-[100dvh] bg-background text-foreground selection:bg-primary selection:text-primary-foreground">
+      <Header isServicePage />
+
+      <article className="pt-32 md:pt-40">
+        <div className="mx-auto max-w-[1600px] px-6 md:px-12">
+          <Link href="/#services" className="inline-flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors mb-12">
+            <ArrowRight size={16} className="rotate-180" /> Back to all services
+          </Link>
+          
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-24 items-start">
+            <div className="lg:col-span-7">
+               <span className="kicker mb-8">{service.number} / Dublin</span>
+              <h1 className="heading-hero text-primary mb-8">{service.title}</h1>
+              <p className="text-xl md:text-2xl leading-relaxed text-foreground/80 mb-12 max-w-[800px]">
+                {service.intro}
+              </p>
+            </div>
+            
+            <div className="lg:col-span-5 w-full">
+              <div className="aspect-[4/5] w-full overflow-hidden bg-muted">
+                <img 
+                  src={service.image} 
+                  alt={service.title} 
+                  className="w-full h-full object-cover reveal" 
+                />
               </div>
-            ))}
-            <p className="border-t border-[#aab9bc] py-7 text-base leading-7 text-[#10233f]">{service.detail}</p>
+            </div>
+          </div>
+
+          <div className="mt-24 md:mt-32 grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-24 border-t border-border pt-24 md:pt-32 pb-24 md:pb-32">
+            <div className="lg:col-span-4">
+               <h2 className="heading-section">What is involved</h2>
+            </div>
+            <div className="lg:col-span-8">
+              <p className="text-lg md:text-xl leading-relaxed mb-12 max-w-[700px]">
+                {service.detail}
+              </p>
+              
+              <div className="border-t border-border">
+                 {['A practical first conversation about the property and what needs attention.', 'Straightforward advice on the right materials, sequence and level of work.', 'Careful preparation, clean working habits and a considered handover.'].map((item, i) => (
+                  <div key={i} className="flex gap-6 md:gap-12 py-8 border-b border-border items-start">
+                    <span className="font-mono text-sm text-primary">0{i + 1}</span>
+                    <p className="text-base md:text-lg">{item}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
-      </section>
-      <section className="bg-[#1f365e] px-5 py-20 text-white sm:px-8 lg:px-12 lg:py-24">
-        <div className="mx-auto flex max-w-[1380px] flex-col justify-between gap-8 sm:flex-row sm:items-end">
-          <div>
-            <p className="section-kicker text-white/65">Ready to take the next step?</p>
-            <h2 className="display-title mt-5 max-w-[680px] text-[clamp(2.8rem,5vw,5rem)] font-semibold">Tell us what the property needs.</h2>
+      </article>
+
+      <section className="bg-primary text-primary-foreground py-24 md:py-32 px-6 md:px-12">
+        <div className="mx-auto max-w-[1600px] flex flex-col md:flex-row gap-12 justify-between items-start md:items-end">
+          <div className="max-w-[800px]">
+             <span className="kicker text-primary-foreground mb-8">Ready to take the next step?</span>
+             <h2 className="heading-hero">Tell us what the property needs.</h2>
           </div>
-          <Link href="/#contact" className="group inline-flex w-fit items-center gap-3 rounded-full bg-white px-5 py-3 text-sm font-bold text-[#10233f] transition hover:bg-[#dbe3e4]">Request a quote <ArrowRight size={15} className="transition-transform group-hover:translate-x-1" /></Link>
+          <Link href="/#contact" className="inline-flex items-center gap-4 bg-primary-foreground text-primary px-8 py-4 text-base font-medium hover:bg-accent hover:text-primary-foreground transition-colors shrink-0">
+             Request a quote <ArrowRight size={18} />
+          </Link>
         </div>
       </section>
     </main>
   );
 }
 
-function App() {
+export default function App() {
   const [location] = useLocation();
-  const [menuOpen, setMenuOpen] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
@@ -172,14 +251,14 @@ function App() {
     setSubmitted(true);
   };
 
-  const closeMenu = () => setMenuOpen(false);
-
   const activeService = services.find((service) => `/services/${serviceSlugs[service.title]}` === location);
 
   useEffect(() => {
-    const pageTitle = activeService ? `${activeService.title} Dublin | Kellys Roofing` : 'Kellys Roofing & Interiors | Dublin';
-    const description = activeService ? `${activeService.intro} Kellys Roofing & Interiors serves homes and properties across Dublin.` : 'Kellys Roofing & Interiors provides roofing, building and interior work across Dublin.';
+    const pageTitle = activeService ? `${activeService.title} | Kellys Roofing Dublin` : 'Kellys Roofing & Interiors | Dublin';
     document.title = pageTitle;
+    const description = activeService
+      ? `${activeService.intro} Kellys Roofing & Interiors serves homes and properties across Dublin.`
+      : 'Kellys Roofing & Interiors provides roofing, building and interior work across Dublin.';
     let meta = document.querySelector('meta[name="description"]');
     if (!meta) {
       meta = document.createElement('meta');
@@ -192,171 +271,132 @@ function App() {
   if (activeService) return <ServicePage service={activeService} />;
 
   return (
-    <main className="grain min-h-[100dvh] overflow-hidden bg-background text-foreground">
-      <header className="absolute inset-x-0 top-0 z-40">
-        <div className="mx-auto flex max-w-[1380px] items-center justify-between px-5 py-4 sm:px-8 lg:px-12">
-          <a href="#top" onClick={closeMenu} className="group flex items-center gap-3" data-testid="link-logo">
-            <img src={logoPath} alt="Kellys Roofing and Interiors" className="h-auto w-[260px] max-w-[55vw] object-contain" />
-          </a>
-          <nav className="hidden items-center gap-8 lg:flex" aria-label="Main navigation">
-            {serviceNavItems.map(([label, href]) => (
-              <Link key={href} href={href} className="nav-link text-[11px] font-semibold tracking-[.02em] text-[#10233f]/75 transition-colors hover:text-[#10233f]" data-testid={`link-nav-${serviceSlugs[label]}`}>
-                {label}
-              </Link>
-            ))}
-            <a href="#approach" className="nav-link text-[11px] font-semibold tracking-[.02em] text-[#10233f]/75 transition-colors hover:text-[#10233f]">How we work</a>
-            <a href="#about" className="nav-link text-[11px] font-semibold tracking-[.02em] text-[#10233f]/75 transition-colors hover:text-[#10233f]">About Kellys</a>
-            <button onClick={scrollToContact} className="group inline-flex items-center gap-2 rounded-full border border-[#10233f]/20 bg-white/65 px-4 py-2.5 text-[12px] font-bold text-[#10233f] backdrop-blur-sm transition hover:border-[#1f365e] hover:bg-[#1f365e] hover:text-white" data-testid="button-nav-quote">
-              Request a quote <ArrowRight size={14} className="transition-transform group-hover:translate-x-0.5" />
-            </button>
-          </nav>
-          <button onClick={() => setMenuOpen((current) => !current)} className="rounded-full border border-[#10233f]/20 bg-white/70 p-2.5 text-[#10233f] lg:hidden" aria-label={menuOpen ? 'Close menu' : 'Open menu'} data-testid="button-mobile-menu">
-            {menuOpen ? <X size={21} /> : <Menu size={21} />}
-          </button>
-        </div>
-        {menuOpen && (
-           <div className="mx-4 rounded-xl border border-[#10233f]/10 bg-[#fbfaf6]/95 p-3 shadow-2xl backdrop-blur-md lg:hidden" data-testid="mobile-menu">
-             {serviceNavItems.map(([label, href]) => (
-               <Link key={href} href={href} onClick={closeMenu} className="flex items-center justify-between border-b border-[#10233f]/10 px-3 py-3.5 text-sm font-semibold text-[#10233f]" data-testid={`link-mobile-${serviceSlugs[label]}`}>
-                 {label}<ArrowRight size={15} className="text-[#1f365e]" />
-               </Link>
-             ))}
-             {[
-               ['How we work', '#approach'],
-               ['About Kellys', '#about'],
-               ['Request a quote', '#contact'],
-             ].map(([label, href]) => (
-               <a key={href} href={href} onClick={closeMenu} className="flex items-center justify-between border-b border-[#10233f]/10 px-3 py-3.5 text-sm font-semibold text-[#10233f] last:border-0" data-testid={`link-mobile-${label.toLowerCase().replaceAll(' ', '-')}`}>
-                 {label}<ArrowRight size={15} className="text-[#1f365e]" />
-               </a>
-             ))}
-          </div>
-        )}
-      </header>
+    <main className="texture-overlay min-h-[100dvh] bg-background text-foreground selection:bg-primary selection:text-primary-foreground">
+      <Header />
 
-       <section id="top" className="relative isolate min-h-[720px] bg-white text-[#10233f] sm:min-h-[780px]">
-         <div className="absolute inset-0 -z-10 bg-[linear-gradient(110deg,#ffffff_5%,rgba(255,255,255,.94)_42%,rgba(255,255,255,.55)_100%)]" />
-         <img src={rooflinePath} alt="" className="absolute inset-0 -z-20 h-full w-full object-cover object-center opacity-25 mix-blend-multiply" />
-         <div className="absolute inset-0 -z-10 bg-[linear-gradient(to_bottom,rgba(255,255,255,.35),transparent_34%,rgba(255,255,255,.97))]" />
-         <div className="absolute bottom-0 left-0 right-0 -z-10 h-32 bg-gradient-to-t from-white to-transparent" />
-         <div className="absolute right-0 top-0 -z-10 hidden h-full w-[47%] overflow-hidden lg:block">
-           <img src={rooferFixingRoofHeroPath} alt="Male roofer repairing a tiled roof with a hammer" className="h-full w-full object-cover object-center opacity-90" />
-           <div className="absolute inset-0 bg-gradient-to-r from-white via-white/45 to-transparent" />
-           <div className="absolute inset-0 bg-gradient-to-t from-white/80 via-transparent to-white/10" />
-         </div>
-        <div className="mx-auto flex min-h-[720px] max-w-[1380px] flex-col justify-end px-5 pb-14 pt-32 sm:min-h-[780px] sm:px-8 sm:pb-20 lg:px-12">
-          <div className="max-w-[800px]">
-            <p className="section-kicker reveal text-[#1f365e]">Roofing · building · interiors / Dublin</p>
-             <h1 className="display-title reveal delay-1 mt-5 max-w-[780px] text-[clamp(3.6rem,9vw,8rem)] font-semibold text-[#10233f]">
-              Proper work.<br /><span className="text-[#1f365e]">Solidly done.</span>
-            </h1>
-            <div className="reveal delay-2 mt-8 flex max-w-[570px] flex-col gap-7 sm:flex-row sm:items-end sm:gap-12">
-               <p className="max-w-[410px] text-[15px] leading-7 text-[#536075] sm:text-base">
-                Kellys Roofing & Interiors looks after the spaces that matter — from a leaking roof in a family home to the final detail of a property ready for its next chapter.
+      {/* Hero Section */}
+      <section id="top" className="relative pt-32 pb-24 md:pt-48 md:pb-32 px-6 md:px-12 border-b border-border">
+        <div className="mx-auto max-w-[1600px]">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-end">
+            <div className="lg:col-span-8 relative z-10">
+              <span className="kicker reveal mb-8">Roofing & Interiors / Dublin</span>
+              <h1 className="heading-hero text-primary reveal delay-1 mb-8 max-w-[900px]">
+                Proper work. <br />Solidly done.
+              </h1>
+              <p className="text-lg md:text-xl text-foreground/80 reveal delay-2 max-w-[540px] leading-relaxed mb-10 md:mb-0">
+                 Kellys Roofing & Interiors looks after the spaces that matter — from a leaking roof in a family home to the final detail of a property ready for its next chapter.
               </p>
-               <button onClick={scrollToContact} className="group flex shrink-0 items-center gap-2 text-left text-sm font-bold text-[#10233f]" data-testid="button-hero-quote">
-                Start with a conversation <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#1f365e] text-white transition-transform group-hover:translate-x-1"><ArrowDownRight size={17} /></span>
-              </button>
+            </div>
+            <div className="lg:col-span-4 w-full reveal delay-3">
+              <div className="aspect-[4/5] w-full overflow-hidden bg-muted">
+                <img 
+                  src={rooflinePath} 
+                  alt="Dublin residential roofline" 
+                  className="w-full h-full object-cover grayscale-[20%] contrast-125" 
+                />
+              </div>
             </div>
           </div>
-           <div className="reveal delay-3 mt-16 flex items-center gap-4 text-[10px] font-bold uppercase tracking-[.18em] text-[#536075]">
-            <span className="h-px w-16 bg-[#1f365e]" /> Serving homeowners, landlords, property managers & commercial clients
+          
+          <div className="mt-16 md:mt-32 pt-8 border-t border-border flex flex-col md:flex-row justify-between items-start md:items-center gap-6 reveal delay-4">
+            <p className="font-mono text-xs uppercase tracking-widest text-muted-foreground">
+              Serving homeowners, landlords, & commercial clients
+            </p>
+            <button onClick={scrollToContact} className="group inline-flex items-center gap-3 text-sm font-bold uppercase tracking-wider text-primary link-hover">
+              Discuss your project <ArrowDownRight size={18} className="transition-transform group-hover:translate-x-1 group-hover:translate-y-1" />
+            </button>
           </div>
         </div>
       </section>
 
-       <section className="page-grid bg-white px-5 pb-20 text-[#10233f] sm:px-8 lg:px-12">
-         <div className="mx-auto grid max-w-[1380px] grid-cols-1 gap-8 border-t border-[#10233f]/15 pt-10 sm:grid-cols-3 sm:gap-0">
-           {[
-             ['01', 'Roof over your head', 'Responsive thinking for the jobs you cannot afford to leave to chance.', roofTilesPath, 'Roof tiles prepared for a Dublin home'],
-             ['02', 'One joined-up team', 'The outside and the inside, considered as one property — not separate call-outs.', interiorRenovationPath, 'Interior renovation work underway in a home'],
-             ['03', 'Dublin, properly local', 'Familiar with the homes, weather and practical realities of working across the city.', rooflinePath, 'Residential roofline in Dublin'],
-           ].map(([number, title, text, image, alt], index) => (
-            <div key={number} className={`reveal delay-${index + 1} border-white/15 sm:px-8 sm:first:pl-0 sm:not-first:border-l`}>
-               <div className="relative mb-6 h-36 overflow-hidden rounded-md border border-[#10233f]/10">
-                 <img src={image} alt={alt} className="h-full w-full object-cover transition duration-500 hover:scale-105" />
-                 <div className="absolute inset-0 bg-[#10233f]/20 mix-blend-multiply" />
-               </div>
-              <span className="mono text-[11px] text-[#1f365e]">{number}</span>
-              <h2 className="display mt-5 text-xl font-semibold">{title}</h2>
-               <p className="mt-3 max-w-[270px] text-sm leading-6 text-[#536075]">{text}</p>
+      {/* Services Section */}
+      <section id="services" className="py-24 md:py-40 px-6 md:px-12 border-b border-border">
+        <div className="mx-auto max-w-[1600px]">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-20 gap-8">
+            <h2 className="heading-section max-w-[700px]">
+              The work behind a better building.
+            </h2>
+            <p className="text-base text-foreground/70 max-w-[320px]">
+               A practical scope, carefully managed. Tell us what is happening at your property and we will help you work out the right next move.
+            </p>
+          </div>
+
+          <div className="border-t border-border flex flex-col">
+            {services.map((service) => (
+              <Link 
+                key={service.number} 
+                href={`/services/${serviceSlugs[service.title]}`}
+                className="service-row group block border-b border-border relative py-10 md:py-16 px-4 md:px-8 -mx-4 md:-mx-8"
+              >
+                <div className="grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-12 items-center relative z-10">
+                  <div className="md:col-span-1 text-primary">
+                    <span className="font-mono text-sm">{service.number}</span>
+                  </div>
+                  <div className="md:col-span-4">
+                    <h3 className="text-3xl md:text-5xl font-display text-primary group-hover:text-accent transition-colors">{service.title}</h3>
+                  </div>
+                  <div className="md:col-span-5">
+                    <p className="text-base text-foreground/70">{service.intro}</p>
+                  </div>
+                  <div className="md:col-span-2 flex justify-end">
+                    <span className="inline-flex h-12 w-12 items-center justify-center rounded-full border border-border group-hover:bg-primary group-hover:text-primary-foreground group-hover:border-primary transition-all">
+                      <ArrowRight size={20} className="-rotate-45 transition-transform group-hover:rotate-0" />
+                    </span>
+                  </div>
+                </div>
+                
+                {/* Hover Image Reveal (Desktop only) */}
+                <div className="hidden lg:block absolute right-[20%] top-1/2 -translate-y-1/2 w-[300px] aspect-[4/3] pointer-events-none service-image-container z-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <img src={service.image} alt="" className="w-full h-full object-cover" />
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Feature Grid / Gallery */}
+      <section className="py-24 md:py-32 px-6 md:px-12 bg-white border-b border-border">
+        <div className="mx-auto max-w-[1600px] grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-8">
+          {[
+            ['01', 'Roof over your head', 'Responsive thinking for the jobs you cannot afford to leave to chance.', roofTilesPath],
+            ['02', 'One joined-up team', 'The outside and the inside, considered as one property — not separate call-outs.', interiorRenovationPath],
+            ['03', 'Dublin, properly local', 'Familiar with the homes, weather and practical realities of working across the city.', rooferFixingRoofHeroPath],
+          ].map(([num, title, desc, img]) => (
+            <div key={num} className="flex flex-col gap-6">
+              <div className="aspect-[4/3] overflow-hidden bg-muted">
+                <img src={img} alt={title} className="w-full h-full object-cover hover:scale-105 transition-transform duration-700" />
+              </div>
+              <div>
+                <span className="font-mono text-xs text-primary mb-3 block">{num}</span>
+                <h3 className="text-2xl font-display mb-2">{title}</h3>
+                <p className="text-foreground/70 text-sm">{desc}</p>
+              </div>
             </div>
           ))}
         </div>
       </section>
 
-       <section id="services" className="page-grid bg-white px-5 py-24 sm:px-8 lg:px-12 lg:py-32">
-        <div className="mx-auto max-w-[1380px]">
-          <div className="flex flex-col justify-between gap-8 lg:flex-row lg:items-end">
-            <div className="max-w-[720px]">
-              <p className="section-kicker">What we take care of</p>
-              <h2 className="display-title mt-5 text-[clamp(3rem,6vw,5.7rem)] font-semibold text-[#10233f]">The work behind<br /><span className="text-[#1f365e]">a better building.</span></h2>
-            </div>
-            <p className="max-w-[310px] text-sm leading-6 text-[#536075]">A practical scope, carefully managed. Tell us what is happening at your property and we will help you work out the right next move.</p>
-          </div>
-          <div className="mt-16 grid grid-cols-1 gap-3 md:grid-cols-2">
-            {services.map((service) => {
-              const Icon = service.icon;
-              return (
-                  <article key={service.number} className="group service-card rounded-lg border border-[#c9c5bb] bg-[#f8f6f0] p-6 sm:p-8" data-testid={`card-service-${service.number}`}>
-                  <div className="flex items-start justify-between">
-                    <span className="mono text-[11px] font-bold text-[#1f365e]">{service.number}</span>
-                    <Icon size={22} strokeWidth={1.5} className="text-[#10233f]" />
-                  </div>
-                   <div className="relative mt-7 h-36 overflow-hidden rounded-md border border-[#10233f]/10">
-                     <img src={service.image} alt={`${service.title} project work`} className="h-full w-full object-cover transition duration-500 group-hover:scale-105" />
-                     <div className="absolute inset-0 bg-[#10233f]/35 mix-blend-multiply" />
-                   </div>
-                  <h3 className="display mt-12 text-3xl font-semibold tracking-[-.035em] text-[#10233f]">{service.title}</h3>
-                  <p className="mt-3 max-w-[470px] text-sm leading-6 text-[#536075]">{service.intro}</p>
-                   <p className="mt-4 max-w-[470px] border-t border-[#d7d1c5] pt-4 text-sm leading-6 text-[#10233f]">{service.detail}</p>
-                   <Link href={`/services/${serviceSlugs[service.title]}`} className="mt-7 inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-[.12em] text-[#10233f]" data-testid={`link-service-details-${service.number}`}>
-                     Explore this service <MoveUpRight size={15} className="text-[#1f365e]" />
-                   </Link>
-                </article>
-              );
-            })}
-          </div>
-           <div className="mt-5 grid grid-cols-1 gap-3 md:grid-cols-12">
-             <figure className="project-card group relative min-h-[250px] overflow-hidden rounded-lg md:col-span-5">
-               <img src={roofTilesPath} alt="Roof tiles prepared for a residential roofing project" className="absolute inset-0 h-full w-full object-cover" />
-               <div className="absolute inset-0 bg-[#10233f]/35 mix-blend-multiply" />
-               <figcaption className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#10233f]/85 to-transparent px-5 pb-5 pt-16 text-sm font-semibold text-white">Materials that suit the building.</figcaption>
-             </figure>
-             <figure className="project-card group relative min-h-[250px] overflow-hidden rounded-lg md:col-span-4">
-               <img src={roofFramingPath} alt="Roof framing work underway on a property" className="absolute inset-0 h-full w-full object-cover" />
-               <div className="absolute inset-0 bg-[#10233f]/35 mix-blend-multiply" />
-               <figcaption className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#10233f]/85 to-transparent px-5 pb-5 pt-16 text-sm font-semibold text-white">Careful work beneath the surface.</figcaption>
-             </figure>
-             <figure className="project-card group relative min-h-[250px] overflow-hidden rounded-lg md:col-span-3">
-               <img src={rooferFixingRoofHeroPath} alt="Male roofer repairing a tiled roof" className="absolute inset-0 h-full w-full object-cover" />
-               <div className="absolute inset-0 bg-[#10233f]/35 mix-blend-multiply" />
-               <figcaption className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#10233f]/85 to-transparent px-5 pb-5 pt-16 text-sm font-semibold text-white">Work done with care.</figcaption>
-             </figure>
-           </div>
-          <div className="mt-8 flex flex-col items-start justify-between gap-6 border-t border-[#c9c5bb] pt-7 sm:flex-row sm:items-center">
-            <p className="text-sm text-[#536075]">Not sure which service fits? That is exactly what the first conversation is for.</p>
-            <button onClick={scrollToContact} className="group inline-flex items-center gap-3 text-sm font-bold text-[#10233f]" data-testid="button-services-contact">
-              Describe your project <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#10233f] text-[#f4f0e7] transition-transform group-hover:translate-x-1"><ArrowRight size={14} /></span>
-            </button>
-          </div>
-        </div>
-      </section>
-
-       <section id="approach" className="page-grid bg-white px-5 py-24 sm:px-8 lg:px-12 lg:py-32">
-        <div className="mx-auto grid max-w-[1380px] gap-14 lg:grid-cols-[.8fr_1.2fr] lg:gap-24">
+      {/* Approach Section */}
+      <section id="approach" className="py-24 md:py-40 px-6 md:px-12 border-b border-border">
+        <div className="mx-auto max-w-[1600px] grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24">
           <div>
-            <p className="section-kicker">How we work</p>
-            <h2 className="display-title mt-5 max-w-[450px] text-[clamp(3rem,6vw,5.3rem)] font-semibold text-[#10233f]">No fog.<br />Just a <span className="text-[#1f365e]">clear route</span> through the work.</h2>
-            <p className="mt-7 max-w-[390px] text-sm leading-7 text-[#536075]">Property work can be disruptive enough without chasing updates or translating jargon. We keep the process visible and the conversation open.</p>
+            <span className="kicker mb-8">How we work</span>
+            <h2 className="heading-section max-w-[500px] mb-8">
+              No fog. Just a clear route through the work.
+            </h2>
+            <p className="text-lg text-foreground/70 max-w-[420px]">
+              Property work can be disruptive enough without chasing updates or translating jargon. We keep the process visible and the conversation open.
+            </p>
           </div>
-          <div className="divide-y divide-[#aab9bc] border-y border-[#aab9bc]">
+          
+          <div className="border-t border-border">
             {projectNotes.map(([number, title, text]) => (
-              <div key={number} className="grid grid-cols-[50px_1fr] gap-5 py-8 sm:grid-cols-[80px_1fr] sm:gap-8">
-                <span className="mono text-[11px] font-bold text-[#1f365e]">{number}</span>
+              <div key={number} className="flex flex-col sm:flex-row gap-6 sm:gap-12 py-10 border-b border-border">
+                <span className="font-mono text-primary sm:w-12">{number}</span>
                 <div>
-                  <h3 className="display text-2xl font-semibold text-[#10233f]">{title}</h3>
-                  <p className="mt-3 max-w-[500px] text-sm leading-6 text-[#536075]">{text}</p>
+                  <h3 className="text-2xl font-display mb-3">{title}</h3>
+                  <p className="text-foreground/70 leading-relaxed max-w-[450px]">{text}</p>
                 </div>
               </div>
             ))}
@@ -364,90 +404,147 @@ function App() {
         </div>
       </section>
 
-       <section id="about" className="page-grid bg-white px-5 py-24 sm:px-8 lg:px-12 lg:py-32">
-        <div className="mx-auto grid max-w-[1380px] items-center gap-12 lg:grid-cols-[1.1fr_.9fr] lg:gap-24">
-           <div className="relative min-h-[430px] overflow-hidden rounded-lg border border-[#10233f]/10 bg-[#dbe3e4] p-8 sm:p-12">
-             <img src={homeRenovationStandardPath} alt="Home renovation work in progress" className="absolute inset-0 h-full w-full object-cover opacity-[.16] mix-blend-multiply" />
-             <div className="absolute -right-14 -top-10 h-52 w-52 rounded-full border-[24px] border-[#1f365e]/70" />
-             <div className="absolute -bottom-28 -left-8 h-60 w-60 rounded-full border border-[#10233f]/20" />
-            <div className="relative flex h-full flex-col justify-between">
-               <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[.18em] text-[#536075]"><span className="h-2 w-2 rounded-full bg-[#1f365e]" /> The Kellys standard</div>
-              <div>
-                 <p className="display max-w-[510px] text-[clamp(2.3rem,5vw,4.5rem)] font-semibold leading-[.97] tracking-[-.045em] text-[#10233f]">Treat every address like someone’s <span className="text-[#1f365e]">home.</span></p>
-                 <div className="mt-8 flex items-center gap-3 text-sm text-[#536075]"><ClipboardList size={17} className="text-[#1f365e]" /> A considered scope. A clean finish. No shortcuts in the details.</div>
+      {/* About Section */}
+      <section id="about" className="py-24 md:py-40 px-6 md:px-12 border-b border-border">
+        <div className="mx-auto max-w-[1600px] grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-24 items-center">
+          <div className="lg:col-span-5 order-2 lg:order-1">
+            <div className="aspect-[3/4] w-full overflow-hidden bg-muted relative group">
+              <img src={homeRenovationStandardPath} alt="Home renovation" className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105 grayscale-[10%]" />
+              <div className="absolute inset-0 bg-primary/10 mix-blend-multiply"></div>
+              
+              <div className="absolute bottom-8 left-8 right-8 bg-background/95 backdrop-blur p-6 border border-border">
+               <p className="kicker mb-3">The Kellys standard</p>
+               <p className="font-display text-2xl mb-2">Treat every address like someone’s home.</p>
+               <p className="text-sm text-foreground/70">A considered scope. A clean finish. No shortcuts in the details.</p>
               </div>
             </div>
           </div>
-          <div>
-            <p className="section-kicker">About Kellys</p>
-            <h2 className="display-title mt-5 text-[clamp(2.8rem,5vw,4.7rem)] font-semibold text-[#10233f]">Built around<br /><span className="text-[#1f365e]">your peace of mind.</span></h2>
-            <p className="mt-7 max-w-[500px] text-[15px] leading-7 text-[#536075]">Kellys Roofing & Interiors is a Dublin-based roofing and construction team for people who want their property work handled properly. We bring the same care to an urgent repair, a managed rental portfolio and a full roof-and-interior project.</p>
-            <p className="mt-4 max-w-[500px] text-[15px] leading-7 text-[#536075]">The best work is often the least dramatic: good preparation, honest advice, and a finish that feels like it was always meant to be there.</p>
-            <button onClick={scrollToContact} className="group mt-8 inline-flex items-center gap-3 rounded-full bg-[#1f365e] px-5 py-3 text-sm font-bold text-white transition hover:bg-[#111315]" data-testid="button-about-contact">
-              Talk through your property <ArrowRight size={15} className="transition-transform group-hover:translate-x-1" />
+          
+          <div className="lg:col-span-7 order-1 lg:order-2">
+            <span className="kicker mb-8">About Kellys</span>
+            <h2 className="heading-section mb-10 max-w-[600px]">
+              Built around your peace of mind.
+            </h2>
+            <div className="text-lg text-foreground/80 space-y-6 max-w-[540px]">
+              <p>
+                Kellys Roofing & Interiors is a Dublin-based roofing and construction team for people who want their property work handled properly. We bring the same care to an urgent repair, a managed rental portfolio and a full roof-and-interior project.
+              </p>
+              <p>
+                The best work is often the least dramatic: good preparation, honest advice, and a finish that feels like it was always meant to be there.
+              </p>
+            </div>
+            
+            <button onClick={scrollToContact} className="mt-12 group inline-flex items-center gap-4 bg-primary text-primary-foreground px-8 py-4 text-sm font-bold uppercase tracking-wider hover:bg-accent transition-colors">
+              Talk through your property <ArrowRight size={18} className="transition-transform group-hover:translate-x-1" />
             </button>
           </div>
         </div>
       </section>
 
-       <section id="contact" className="page-grid bg-white px-5 py-24 text-[#10233f] sm:px-8 lg:px-12 lg:py-32">
-        <div className="mx-auto grid max-w-[1380px] gap-16 lg:grid-cols-[.85fr_1.15fr] lg:gap-24">
+      {/* Contact Section */}
+      <section id="contact" className="py-24 md:py-40 px-6 md:px-12 bg-white">
+        <div className="mx-auto max-w-[1600px] grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24">
           <div>
-            <p className="section-kicker">Let’s talk about the job</p>
-            <h2 className="display-title mt-5 max-w-[560px] text-[clamp(3rem,6vw,5.8rem)] font-semibold">A sound next step starts with <span className="text-[#1f365e]">a few details.</span></h2>
-             <p className="mt-7 max-w-[390px] text-sm leading-7 text-[#536075]">Share what you know below. We will review the basics and come back to arrange the right conversation or site visit.</p>
-             <div className="mt-12 border-t border-[#10233f]/15 pt-6">
-               <p className="mono text-[10px] uppercase tracking-[.16em] text-[#536075]">Prefer to speak?</p>
-               <p className="mt-2 text-sm text-[#10233f]/75">Ask us to call you at a time that suits. We do not publish a number here, but every enquiry is read by the team.</p>
+             <span className="kicker mb-8">Let’s talk about the job</span>
+            <h2 className="heading-section mb-8 max-w-[500px]">
+               A sound next step starts with a few details.
+            </h2>
+            <p className="text-lg text-foreground/70 max-w-[420px] mb-12">
+              Share what you know below. We will review the basics and come back to arrange the right conversation or site visit.
+            </p>
+            
+            <div className="p-8 border border-border bg-background">
+              <div className="flex items-center gap-4 mb-4 text-primary">
+                <Phone size={24} />
+                <h3 className="font-display text-xl">Prefer to speak?</h3>
+              </div>
+              <p className="text-sm text-foreground/70">
+                Ask us to call you at a time that suits. We do not publish a number here, but every enquiry is read by the team.
+              </p>
             </div>
           </div>
-           <div className="rounded-lg border border-[#10233f]/10 bg-[#f8f6f0] p-6 shadow-sm sm:p-9">
+
+          <div className="bg-background p-8 md:p-12 border border-border">
             {submitted ? (
-              <div className="flex min-h-[440px] flex-col justify-center" data-testid="status-form-success">
-                <span className="flex h-14 w-14 items-center justify-center rounded-full bg-[#1f365e] text-white"><CircleCheck size={28} /></span>
-                <p className="section-kicker mt-8">Enquiry received</p>
-                 <h3 className="display mt-4 text-4xl font-semibold">Thanks — we have the outline.</h3>
-                 <p className="mt-4 max-w-[430px] text-sm leading-7 text-[#536075]">Your details are ready for review. We will be in touch to understand the property and agree the best next step.</p>
-                <button onClick={() => setSubmitted(false)} className="mt-8 inline-flex w-fit items-center gap-2 border-b border-[#1f365e] pb-1 text-sm font-bold text-[#1f365e]" data-testid="button-submit-another">Send another enquiry <ArrowRight size={14} /></button>
+              <div className="h-full min-h-[400px] flex flex-col justify-center items-center text-center animate-in fade-in zoom-in duration-500" data-testid="status-form-success">
+                <CircleCheck size={48} className="text-primary mb-6" />
+                <h3 className="font-display text-3xl mb-4">Enquiry Received</h3>
+                <p className="text-foreground/70 max-w-[340px] mb-8">
+                  Your details are ready for review. We will be in touch to understand the property and agree the best next step.
+                </p>
+                <button 
+                  onClick={() => setSubmitted(false)} 
+                  className="text-sm font-bold uppercase tracking-wider text-primary link-hover"
+                >
+                  Send another enquiry
+                </button>
               </div>
             ) : (
-              <form onSubmit={handleSubmit} className="space-y-5" data-testid="form-quote">
-                <div className="grid gap-5 sm:grid-cols-2">
-                   <label className="text-xs font-semibold text-[#536075]">Your name<input required name="name" placeholder="Name" className="field mt-2" data-testid="input-name" /></label>
-                   <label className="text-xs font-semibold text-[#536075]">Best way to reach you<input required name="contact" placeholder="Phone or email" className="field mt-2" data-testid="input-contact" /></label>
+              <form onSubmit={handleSubmit} className="space-y-8" data-testid="form-quote">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  <div>
+                    <label className="sr-only" htmlFor="name">Your Name</label>
+                    <input required id="name" name="name" placeholder="Your Name" className="form-input" data-testid="input-name" />
+                  </div>
+                  <div>
+                    <label className="sr-only" htmlFor="contact">Contact Details</label>
+                    <input required id="contact" name="contact" placeholder="Phone or Email" className="form-input" data-testid="input-contact" />
+                  </div>
                 </div>
-                <div className="grid gap-5 sm:grid-cols-2">
-                   <label className="text-xs font-semibold text-[#536075]">Property area<input required name="area" placeholder="e.g. Rathmines" className="field mt-2" data-testid="input-area" /></label>
-                   <label className="text-xs font-semibold text-[#536075]">I need help with<select name="service" defaultValue="" className="field mt-2" data-testid="select-service"><option value="" disabled>Select a service</option><option>Roof repairs</option><option>Roof replacement</option><option>Flat roofing</option><option>Interiors & building</option><option>Not sure yet</option></select></label>
+                
+                <div>
+                  <label className="sr-only" htmlFor="area">Property Area</label>
+                  <input required id="area" name="area" placeholder="Property Area (e.g. Rathmines, D6)" className="form-input" data-testid="input-area" />
                 </div>
-                 <label className="block text-xs font-semibold text-[#536075]">Tell us what is happening<textarea required name="message" placeholder="A few words about the property or the work needed" rows={5} className="field mt-2 resize-none" data-testid="textarea-message" /></label>
-                 <div className="flex flex-col items-start justify-between gap-5 border-t border-[#10233f]/15 pt-5 sm:flex-row sm:items-center">
-                   <p className="max-w-[270px] text-[11px] leading-5 text-[#536075]">Please do not include sensitive personal information. This form is for an initial project enquiry.</p>
-                  <button type="submit" className="group inline-flex items-center gap-3 rounded-full bg-[#1f365e] px-5 py-3 text-sm font-bold text-white transition hover:bg-[#111315]" data-testid="button-submit-quote">
-                    Send enquiry <ArrowRight size={15} className="transition-transform group-hover:translate-x-1" />
-                  </button>
+                
+                <div>
+                  <label className="sr-only" htmlFor="service">Service Needed</label>
+                  <select required id="service" name="service" defaultValue="" className="form-input bg-transparent text-foreground cursor-pointer appearance-none" data-testid="select-service">
+                    <option value="" disabled className="text-muted-foreground">Select primary service...</option>
+                     <option>Roof repairs</option>
+                     <option>Roof replacement</option>
+                     <option>Flat roofing</option>
+                     <option>Interiors & building</option>
+                     <option>Not sure yet</option>
+                  </select>
                 </div>
+                
+                <div>
+                  <label className="sr-only" htmlFor="details">Project Details</label>
+                  <textarea 
+                    required 
+                     id="message" 
+                     name="message" 
+                     placeholder="A few words about the property or the work needed" 
+                    rows={4}
+                    className="form-input resize-none" 
+                     data-testid="textarea-message"
+                  />
+                </div>
+                
+                 <button type="submit" className="w-full bg-primary text-primary-foreground py-4 text-sm font-bold uppercase tracking-wider hover:bg-accent transition-colors" data-testid="button-submit-quote">
+                   Send enquiry
+                </button>
               </form>
             )}
           </div>
         </div>
       </section>
 
-       <footer className="page-grid bg-white px-5 py-10 text-[#10233f] sm:px-8 lg:px-12">
-        <div className="mx-auto flex max-w-[1380px] flex-col justify-between gap-8 sm:flex-row sm:items-end">
-          <div>
-            <img src={logoPath} alt="Kellys Roofing and Interiors" className="h-auto w-[300px] max-w-full object-contain" />
-             <p className="mt-5 text-xs text-[#536075]">Roofing, building & interiors across Dublin.</p>
-          </div>
-           <div className="flex flex-col items-start gap-3 text-xs text-[#536075] sm:items-end">
-             <a href="#top" className="inline-flex items-center gap-2 font-bold text-[#10233f] transition-colors hover:text-[#1f365e]" data-testid="link-back-top">Back to top <ChevronDown size={14} className="rotate-180" /></a>
+      {/* Footer */}
+       <footer className="border-t border-border bg-white px-6 py-12 text-foreground md:px-12">
+         <div className="mx-auto flex max-w-[1600px] flex-col items-start justify-between gap-8 md:flex-row md:items-end">
+           <div>
+             <img src={logoPath} alt="Kellys Roofing and Interiors" className="h-24 w-auto object-contain md:h-28" />
+             <p className="mt-5 text-sm text-foreground/70">Roofing, building & interiors across Dublin.</p>
+           </div>
+           <div className="flex flex-col items-start gap-3 text-sm text-foreground/70 md:items-end">
+             <a href="#top" className="link-hover inline-flex items-center gap-2 font-bold text-primary" data-testid="link-back-top">Back to top <ChevronDown size={16} className="rotate-180" /></a>
              <p data-testid="text-footer-note">Enquiries welcome from homeowners, landlords, property managers and commercial clients.</p>
-          </div>
-        </div>
-         <div className="mx-auto mt-8 max-w-[1380px] border-t border-[#10233f]/15 pt-5 text-[10px] uppercase tracking-[.14em] text-[#536075]">Kellys Roofing & Interiors · Dublin</div>
+           </div>
+         </div>
+         <div className="mx-auto mt-8 max-w-[1600px] border-t border-border pt-5 font-mono text-[10px] uppercase tracking-[.14em] text-muted-foreground">Kellys Roofing & Interiors · Dublin</div>
       </footer>
     </main>
   );
 }
-
-export default App;
