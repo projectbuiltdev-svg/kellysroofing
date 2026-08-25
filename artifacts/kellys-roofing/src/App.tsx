@@ -335,10 +335,13 @@ export default function App() {
                   <div className="md:col-span-4">
                      <h3 className="text-3xl md:text-5xl font-display text-primary">{service.title}</h3>
                   </div>
-                  <div className="md:col-span-5">
+                   <div className="md:col-span-4">
                     <p className="text-base text-foreground/70">{service.intro}</p>
                   </div>
-                  <div className="md:col-span-2 flex justify-end">
+                   <div className="md:col-span-3 flex items-center justify-end gap-4">
+                     <div className="h-16 w-24 shrink-0 overflow-hidden border border-border bg-muted md:h-20 md:w-28">
+                       <img src={service.image} alt={`${service.title} project example`} className="h-full w-full object-cover grayscale-[15%]" />
+                     </div>
                     <span className="inline-flex h-12 w-12 items-center justify-center rounded-full border border-border group-hover:bg-primary group-hover:text-primary-foreground group-hover:border-primary transition-all">
                       <ArrowRight size={20} className="-rotate-45 transition-transform group-hover:rotate-0" />
                     </span>
