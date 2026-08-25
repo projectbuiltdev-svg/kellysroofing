@@ -3,11 +3,14 @@ import { createPortal } from 'react-dom';
 import {
   ArrowDownRight,
   ArrowRight,
-  ChevronDown,
   Menu,
   X,
   Phone,
-  CircleCheck
+  CircleCheck,
+  MessageCircle,
+  Mail,
+  MapPin,
+  Clock3
 } from 'lucide-react';
 import { Link, useLocation } from 'wouter';
 
@@ -137,14 +140,119 @@ const blogPosts: BlogPost[] = [
   },
 ];
 
+const locationNames = `
+Adamstown
+Artane
+Ashtown
+Balbriggan
+Baldoyle
+Balgriffin
+Ballinteer
+Ballsbridge
+Ballyboden
+Ballybough
+Ballybrack
+Ballyfermot
+Ballygall
+Ballymount
+Ballymun
+Ballyroan
+Bayside
+Beaumont
+Belfield
+Blackrock
+Blanchardstown
+Bluebell
+Booterstown
+Cabinteely
+Cabra
+Carrickmines
+Castleknock
+Chapelizod
+Cherry Orchard
+Churchtown
+Clondalkin
+Clongriffin
+Clonshaugh
+Clonskeagh
+Clontarf
+Coolock
+Crumlin
+Dalkey
+Darndale
+Dolphins Barn
+Donabate
+Donaghmede
+Donnybrook
+Donnycarney
+Drimnagh
+Drumcondra
+Dundrum
+Dún Laoghaire
+East Wall
+Fairview
+Finglas
+Foxrock
+Glasnevin
+Glasthule
+Glenageary
+Goatstown
+Greenhills
+Harold's Cross
+Howth
+Inchicore
+Irishtown
+Kilbarrack
+Killester
+Killiney
+Kilmacud
+Kilmainham
+Kilmarnock
+Kimmage
+Kinsealy
+Knocklyon
+Leopardstown
+Lucan
+Lusk
+Malahide
+Marino
+Milltown
+Monkstown
+Mount Merrion
+Mulhuddart
+Newcastle
+Ongar
+Palmerstown
+Phibsborough
+Portmarnock
+Portobello
+Raheny
+Ranelagh
+Rathcoole
+Rathfarnham
+Rathgar
+Rathmines
+Rialto
+Ringsend
+`.trim().split('\n');
+
+const slugify = (value: string) => value
+  .toLowerCase()
+  .normalize('NFD')
+  .replace(/[\u0300-\u036f]/g, '')
+  .replace(/[^a-z0-9]+/g, '-')
+  .replace(/(^-|-$)/g, '');
+
+const locationItems = locationNames.map((name) => ({ name, slug: slugify(name) }));
+
 function scrollToContact() {
   document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' });
 }
 
-function Header({ isServicePage = false, isGalleryPage = false, isBlogPage = false }: { isServicePage?: boolean; isGalleryPage?: boolean; isBlogPage?: boolean }) {
+function Header({ isServicePage = false, isGalleryPage = false, isBlogPage = false, isLocationPage = false }: { isServicePage?: boolean; isGalleryPage?: boolean; isBlogPage?: boolean; isLocationPage?: boolean }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const closeMenu = () => setMenuOpen(false);
-  const isInnerPage = isServicePage || isGalleryPage || isBlogPage;
+  const isInnerPage = isServicePage || isGalleryPage || isBlogPage || isLocationPage;
 
   return (
     <header className="fixed top-0 z-[100] w-full bg-background/90 backdrop-blur-md border-b border-border/50">
@@ -237,6 +345,61 @@ function Header({ isServicePage = false, isGalleryPage = false, isBlogPage = fal
   );
 }
 
+function SiteFooter() {
+  return (
+    <footer className="border-t border-border bg-white px-6 py-16 text-foreground md:px-12 md:py-20">
+      <div className="mx-auto grid max-w-[1600px] gap-12 md:grid-cols-12 md:gap-8">
+        <div className="md:col-span-5">
+          <img src={logoPath} alt="Kellys Roofing and Interiors" className="h-24 w-auto object-contain md:h-28" />
+          <p className="mt-6 max-w-[460px] text-sm leading-relaxed text-foreground/70">
+            Professional roof repairs Dublin, slate and tile roofing, guttering, chimney repairs, flat roofs, and emergency roofing services since 2009. Serving all areas of Dublin County.
+          </p>
+          <p className="mt-5 max-w-[460px] font-mono text-[10px] uppercase tracking-[0.12em] text-primary">
+            Fully registered contractor | Insured roofing team | Free quotation
+          </p>
+        </div>
+
+        <div className="md:col-span-2">
+          <p className="kicker mb-5">Quick links</p>
+          <nav className="flex flex-col items-start gap-3 text-sm" aria-label="Footer navigation">
+            {serviceNavItems.map(([label, href]) => (
+              <Link key={href} href={href} className="link-hover">{label}</Link>
+            ))}
+            <Link href="/blog" className="link-hover">Blog</Link>
+            <Link href="/#contact" className="link-hover">Free quote</Link>
+          </nav>
+        </div>
+
+        <div className="md:col-span-2">
+          <p className="kicker mb-5">Service areas</p>
+          <Link href="/locations" className="link-hover text-sm">County Dublin (93 areas)</Link>
+          <Link href="/locations" className="mt-5 inline-flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-primary link-hover">
+            View all locations <ArrowRight size={15} />
+          </Link>
+        </div>
+
+        <div className="md:col-span-3">
+          <p className="kicker mb-5">Contact us</p>
+          <div className="flex flex-col items-start gap-3 text-sm">
+            <a href="tel:+353863395381" className="link-hover font-medium">+353 86 339 5381</a>
+            <a href="mailto:akroofing@Outlook.com" className="link-hover">akroofing@Outlook.com</a>
+            <address className="mt-2 not-italic leading-relaxed text-foreground/70">
+              3 O'CURRY AVENUE<br />
+              DUBLIN 8<br />
+              D08 K7A4
+            </address>
+          </div>
+        </div>
+      </div>
+
+      <div className="mx-auto mt-14 flex max-w-[1600px] flex-col justify-between gap-4 border-t border-border pt-5 font-mono text-[10px] uppercase tracking-[.14em] text-muted-foreground md:flex-row">
+        <span>Serving Dublin County</span>
+        <span>Kellys Roofing & Interiors · Dublin</span>
+      </div>
+    </footer>
+  );
+}
+
 function ServicePage({ service }: { service: Service }) {
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -305,6 +468,7 @@ function ServicePage({ service }: { service: Service }) {
           </Link>
         </div>
       </section>
+      <SiteFooter />
     </main>
   );
 }
@@ -362,6 +526,7 @@ function GalleryPage() {
           </Link>
         </div>
       </section>
+      <SiteFooter />
     </main>
   );
 }
@@ -434,6 +599,147 @@ function BlogPage() {
           </Link>
         </div>
       </section>
+      <SiteFooter />
+    </main>
+  );
+}
+
+function LocationsHubPage() {
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
+  return (
+    <main className="texture-overlay min-h-[100dvh] bg-background text-foreground selection:bg-primary selection:text-primary-foreground">
+      <Header isLocationPage />
+
+      <article className="pt-40 md:pt-52">
+        <div className="mx-auto max-w-[1600px] px-6 md:px-12">
+          <header className="grid grid-cols-1 gap-12 border-b border-border pb-20 md:grid-cols-12 md:gap-16 md:pb-32">
+            <div className="md:col-span-8">
+              <span className="kicker mb-8">Service areas / County Dublin</span>
+              <h1 className="heading-hero max-w-[900px] text-primary">Roofing help, close to home.</h1>
+            </div>
+            <div className="flex items-end md:col-span-4">
+              <p className="max-w-[360px] text-lg leading-relaxed text-foreground/70">
+                Kellys Roofing & Interiors covers County Dublin with practical roofing, replacement, flat-roof and interior work.
+              </p>
+            </div>
+          </header>
+
+          <section className="py-20 md:py-32" aria-labelledby="dublin-locations-title">
+            <div className="mb-10 flex flex-col items-start justify-between gap-4 md:flex-row md:items-end">
+              <div>
+                <span className="kicker mb-5">County Dublin</span>
+                <h2 id="dublin-locations-title" className="heading-section">93 service areas.</h2>
+              </div>
+              <p className="max-w-[340px] text-sm leading-relaxed text-foreground/70">
+                Choose your area to see the roofing services available nearby.
+              </p>
+            </div>
+
+            <div className="grid border-l border-t border-border sm:grid-cols-2 lg:grid-cols-3">
+              {locationItems.map((area, index) => (
+                <Link
+                  key={area.slug}
+                  href={`/locations/${area.slug}`}
+                  className="group flex items-center justify-between gap-4 border-b border-r border-border px-5 py-5 text-sm transition-colors hover:bg-primary hover:text-primary-foreground"
+                >
+                  <span className="font-mono text-xs opacity-60">{String(index + 1).padStart(2, '0')}</span>
+                  <span className="flex-1 font-medium">{area.name}</span>
+                  <ArrowRight size={16} className="-rotate-45 transition-transform group-hover:rotate-0" />
+                </Link>
+              ))}
+            </div>
+          </section>
+        </div>
+      </article>
+
+      <section className="bg-primary px-6 py-24 text-primary-foreground md:px-12 md:py-32">
+        <div className="mx-auto flex max-w-[1600px] flex-col items-start justify-between gap-10 md:flex-row md:items-end">
+          <div>
+            <span className="kicker mb-8 text-primary-foreground">Need a quote?</span>
+            <h2 className="heading-section max-w-[700px]">Tell us what is happening at the property.</h2>
+          </div>
+          <Link href="/#contact" className="inline-flex shrink-0 items-center gap-4 bg-primary-foreground px-8 py-4 text-sm font-bold uppercase tracking-wider text-primary transition-colors hover:bg-accent hover:text-primary-foreground">
+            Get a free quote <ArrowRight size={18} />
+          </Link>
+        </div>
+      </section>
+      <SiteFooter />
+    </main>
+  );
+}
+
+function LocationPage({ area }: { area: (typeof locationItems)[number] }) {
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [area]);
+
+  return (
+    <main className="texture-overlay min-h-[100dvh] bg-background text-foreground selection:bg-primary selection:text-primary-foreground">
+      <Header isLocationPage />
+
+      <article className="pt-40 md:pt-52">
+        <div className="mx-auto max-w-[1600px] px-6 md:px-12">
+          <Link href="/locations" className="mb-12 inline-flex items-center gap-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
+            <ArrowRight size={16} className="rotate-180" /> All Dublin service areas
+          </Link>
+
+          <div className="grid grid-cols-1 gap-12 border-b border-border pb-20 lg:grid-cols-12 lg:gap-24 lg:pb-32">
+            <div className="lg:col-span-7">
+              <span className="kicker mb-8">Roofing services / {area.name}</span>
+              <h1 className="heading-hero max-w-[860px] text-primary">Roofing work in {area.name}.</h1>
+              <p className="mt-8 max-w-[680px] text-xl leading-relaxed text-foreground/80">
+                From roof repairs and replacement to flat roofing and interiors, Kellys Roofing & Interiors helps property owners in {area.name} make a clear, practical next move.
+              </p>
+            </div>
+            <div className="lg:col-span-5">
+              <div className="aspect-[4/5] overflow-hidden bg-muted">
+                <img src={rooflinePath} alt={`Dublin roofline near ${area.name}`} className="h-full w-full object-cover" />
+              </div>
+            </div>
+          </div>
+
+          <section className="grid grid-cols-1 gap-12 py-20 md:grid-cols-12 md:gap-16 md:py-32">
+            <div className="md:col-span-4">
+              <span className="kicker mb-6">What we can help with</span>
+              <h2 className="heading-section">The right work for the property.</h2>
+            </div>
+            <div className="md:col-span-8">
+              <div className="grid grid-cols-1 border-l border-t border-border sm:grid-cols-2">
+                {services.map((service) => (
+                  <Link
+                    key={service.title}
+                    href={`/services/${serviceSlugs[service.title]}`}
+                    className="group border-b border-r border-border p-6 transition-colors hover:bg-primary hover:text-primary-foreground"
+                  >
+                    <span className="font-mono text-xs opacity-60">{service.number}</span>
+                    <h3 className="mt-6 font-display text-2xl">{service.title}</h3>
+                    <p className="mt-3 text-sm leading-relaxed opacity-70">{service.intro}</p>
+                    <span className="mt-6 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.16em]">
+                      View service <ArrowRight size={15} className="-rotate-45 transition-transform group-hover:rotate-0" />
+                    </span>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          </section>
+        </div>
+      </article>
+
+      <section className="bg-primary px-6 py-24 text-primary-foreground md:px-12 md:py-32">
+        <div className="mx-auto flex max-w-[1600px] flex-col items-start justify-between gap-10 md:flex-row md:items-end">
+          <div>
+            <span className="kicker mb-8 text-primary-foreground">Free consultation</span>
+            <h2 className="heading-section max-w-[700px]">Get a free quote for your {area.name} property.</h2>
+          </div>
+          <Link href="/#contact" className="inline-flex shrink-0 items-center gap-4 bg-primary-foreground px-8 py-4 text-sm font-bold uppercase tracking-wider text-primary transition-colors hover:bg-accent hover:text-primary-foreground">
+            Request a quote <ArrowRight size={18} />
+          </Link>
+        </div>
+      </section>
+      <SiteFooter />
     </main>
   );
 }
@@ -450,6 +756,8 @@ export default function App() {
   const activeService = services.find((service) => `/services/${serviceSlugs[service.title]}` === location);
   const isGalleryPage = location === '/work';
   const isBlogPage = location === '/blog';
+  const isLocationsHub = location === '/locations';
+  const activeLocation = locationItems.find((area) => `/locations/${area.slug}` === location);
 
   useEffect(() => {
     const pageTitle = activeService
@@ -458,6 +766,10 @@ export default function App() {
         ? 'Our Work | Kellys Roofing & Interiors | Dublin'
         : isBlogPage
           ? 'Blog | Kellys Roofing & Interiors | Dublin'
+          : activeLocation
+            ? `Roofing Services in ${activeLocation.name} | Kellys Roofing Dublin`
+            : isLocationsHub
+              ? 'Dublin Service Areas | Kellys Roofing & Interiors'
         : 'Kellys Roofing & Interiors | Dublin';
     document.title = pageTitle;
     const description = activeService
@@ -466,6 +778,10 @@ export default function App() {
         ? 'Explore selected roofing, building and interior work from Kellys Roofing & Interiors in Dublin.'
         : isBlogPage
           ? 'Read practical notes about roof repairs, replacement and flat roofing from Kellys Roofing & Interiors in Dublin.'
+          : activeLocation
+            ? `Roof repairs, replacement, flat roofing and interiors for properties in ${activeLocation.name}, Dublin.`
+            : isLocationsHub
+              ? 'Explore all County Dublin service areas covered by Kellys Roofing & Interiors.'
         : 'Kellys Roofing & Interiors provides roofing, building and interior work across Dublin.';
     let meta = document.querySelector('meta[name="description"]');
     if (!meta) {
@@ -474,11 +790,13 @@ export default function App() {
       document.head.appendChild(meta);
     }
     meta.setAttribute('content', description);
-  }, [activeService]);
+  }, [activeService, activeLocation, isBlogPage, isGalleryPage, isLocationsHub]);
 
   if (activeService) return <ServicePage service={activeService} />;
   if (isGalleryPage) return <GalleryPage />;
   if (isBlogPage) return <BlogPage />;
+  if (isLocationsHub) return <LocationsHubPage />;
+  if (activeLocation) return <LocationPage area={activeLocation} />;
 
   return (
     <main className="texture-overlay min-h-[100dvh] bg-background text-foreground selection:bg-primary selection:text-primary-foreground">
@@ -650,88 +968,111 @@ export default function App() {
       </section>
 
       {/* Contact Section */}
-      <section id="contact" className="py-24 md:py-40 px-6 md:px-12 bg-white">
-        <div className="mx-auto max-w-[1600px] grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24">
+      <section id="contact" className="bg-white px-6 py-24 md:px-12 md:py-40">
+        <div className="mx-auto grid max-w-[1600px] grid-cols-1 gap-16 lg:grid-cols-2 lg:gap-24">
           <div>
-             <span className="kicker mb-8">Let’s talk about the job</span>
-            <h2 className="heading-section mb-8 max-w-[500px]">
-               A sound next step starts with a few details.
-            </h2>
-            <p className="text-lg text-foreground/70 max-w-[420px] mb-12">
-              Share what you know below. We will review the basics and come back to arrange the right conversation or site visit.
+            <span className="kicker mb-8">Free consultation</span>
+            <h2 className="heading-section mb-8 max-w-[560px]">Get a Free Quote</h2>
+            <p className="mb-12 max-w-[530px] text-lg leading-relaxed text-foreground/70">
+              Contact us via WhatsApp and send images of your roof if you can, or describe the problem. And we go from there.
             </p>
-            
-            <div className="p-8 border border-border bg-background">
-              <div className="flex items-center gap-4 mb-4 text-primary">
-                <Phone size={24} />
-                <h3 className="font-display text-xl">Prefer to speak?</h3>
+
+            <div className="bg-primary p-8 text-primary-foreground md:p-10">
+              <div className="mb-7 flex items-center gap-3 font-mono text-xs uppercase tracking-[0.18em]">
+                <Clock3 size={17} /> Available now
               </div>
-              <p className="text-sm text-foreground/70">
-                Ask us to call you at a time that suits. We do not publish a number here, but every enquiry is read by the team.
+              <h3 className="font-display text-3xl">Click to Call or WhatsApp</h3>
+              <p className="mt-4 max-w-[460px] text-primary-foreground/75">
+                Get in touch instantly — we are ready to help.
               </p>
+              <div className="mt-8 grid gap-3 sm:grid-cols-2">
+                <a href="tel:+353863395381" className="flex flex-col gap-2 bg-primary-foreground px-5 py-5 text-primary transition-colors hover:bg-accent hover:text-primary-foreground">
+                  <span className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.16em]"><Phone size={16} /> Call Us Now</span>
+                  <span className="font-display text-xl">+353 86 339 5381</span>
+                </a>
+                <a href="https://wa.me/353863395381" target="_blank" rel="noreferrer" className="flex flex-col gap-2 bg-[#25D366] px-5 py-5 text-white transition-colors hover:bg-[#128C7E]">
+                  <span className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.16em]"><MessageCircle size={16} /> WhatsApp Us</span>
+                  <svg viewBox="0 0 32 32" aria-label="WhatsApp" role="img" className="mt-2 h-10 w-10 fill-current">
+                    <path d="M16 3.2a12.8 12.8 0 0 0-10.95 19.44L3.2 28.8l6.34-1.8A12.8 12.8 0 1 0 16 3.2Zm0 23.3a10.45 10.45 0 0 1-5.33-1.46l-.38-.23-3.77 1.07 1.1-3.67-.25-.39A10.47 10.47 0 1 1 16 26.5Zm5.74-7.75c-.31-.16-1.84-.91-2.13-1.01-.29-.11-.5-.16-.71.16-.21.31-.81 1.01-.99 1.22-.18.21-.37.24-.68.08-.31-.16-1.31-.48-2.5-1.53-.92-.82-1.54-1.83-1.72-2.14-.18-.31-.02-.48.14-.64.14-.14.31-.37.47-.55.16-.18.21-.31.31-.52.1-.21.05-.39-.03-.55-.08-.16-.71-1.7-.97-2.33-.26-.61-.52-.53-.71-.54h-.6c-.21 0-.55.08-.84.39-.29.31-1.1 1.08-1.1 2.64s1.13 3.06 1.29 3.27c.16.21 2.22 3.39 5.38 4.76.75.32 1.33.51 1.78.65.75.24 1.43.21 1.97.13.6-.09 1.84-.75 2.1-1.48.26-.73.26-1.35.18-1.48-.08-.13-.29-.21-.6-.37Z" />
+                  </svg>
+                </a>
+              </div>
+            </div>
+
+            <div className="mt-6 grid grid-cols-1 border-l border-t border-border sm:grid-cols-2">
+              <a href="mailto:akroofing@Outlook.com" className="group border-b border-r border-border p-6 transition-colors hover:bg-background">
+                <Mail size={20} className="text-primary" />
+                <span className="mt-5 block font-mono text-[10px] uppercase tracking-[0.16em] text-muted-foreground">Email</span>
+                <span className="mt-2 block text-sm font-medium break-all">akroofing@Outlook.com</span>
+              </a>
+              <Link href="/locations" className="group border-b border-r border-border p-6 transition-colors hover:bg-background">
+                <MapPin size={20} className="text-primary" />
+                <span className="mt-5 block font-mono text-[10px] uppercase tracking-[0.16em] text-muted-foreground">Service Areas</span>
+                <span className="mt-2 block text-sm font-medium">Dublin & Surrounding</span>
+              </Link>
             </div>
           </div>
 
-          <div className="bg-background p-8 md:p-12 border border-border">
+          <div className="border border-border bg-background p-8 md:p-12">
             {submitted ? (
-              <div className="h-full min-h-[400px] flex flex-col justify-center items-center text-center animate-in fade-in zoom-in duration-500" data-testid="status-form-success">
-                <CircleCheck size={48} className="text-primary mb-6" />
-                <h3 className="font-display text-3xl mb-4">Enquiry Received</h3>
-                <p className="text-foreground/70 max-w-[340px] mb-8">
+              <div className="flex min-h-[540px] flex-col items-center justify-center text-center animate-in fade-in zoom-in duration-500" data-testid="status-form-success">
+                <CircleCheck size={48} className="mb-6 text-primary" />
+                <h3 className="mb-4 font-display text-3xl">Quote Request Received</h3>
+                <p className="mb-8 max-w-[340px] text-foreground/70">
                   Your details are ready for review. We will be in touch to understand the property and agree the best next step.
                 </p>
-                <button 
-                  onClick={() => setSubmitted(false)} 
-                  className="text-sm font-bold uppercase tracking-wider text-primary link-hover"
+                <button
+                  onClick={() => setSubmitted(false)}
+                  className="link-hover text-sm font-bold uppercase tracking-wider text-primary"
                 >
-                  Send another enquiry
+                  Send another quote request
                 </button>
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-8" data-testid="form-quote">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div>
+                  <span className="kicker mb-6">Send us a message</span>
+                  <h3 className="font-display text-3xl text-primary">Tell us about the property.</h3>
+                </div>
+                <div>
+                  <label className="sr-only" htmlFor="name">Your Name</label>
+                  <input required id="name" name="name" placeholder="John Smith" className="form-input" data-testid="input-name" />
+                </div>
+                <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
                   <div>
-                    <label className="sr-only" htmlFor="name">Your Name</label>
-                    <input required id="name" name="name" placeholder="Your Name" className="form-input" data-testid="input-name" />
+                    <label className="sr-only" htmlFor="email">Email Address</label>
+                    <input required type="email" id="email" name="email" placeholder="john@example.com" className="form-input" data-testid="input-email" />
                   </div>
                   <div>
-                    <label className="sr-only" htmlFor="contact">Contact Details</label>
-                    <input required id="contact" name="contact" placeholder="Phone or Email" className="form-input" data-testid="input-contact" />
+                    <label className="sr-only" htmlFor="phone">Phone Number</label>
+                    <input required type="tel" id="phone" name="phone" placeholder="+353 85 123 4567" className="form-input" data-testid="input-contact" />
                   </div>
                 </div>
-                
                 <div>
-                  <label className="sr-only" htmlFor="area">Property Area</label>
-                  <input required id="area" name="area" placeholder="Property Area (e.g. Rathmines, D6)" className="form-input" data-testid="input-area" />
-                </div>
-                
-                <div>
-                  <label className="sr-only" htmlFor="service">Service Needed</label>
-                  <select required id="service" name="service" defaultValue="" className="form-input bg-transparent text-foreground cursor-pointer appearance-none" data-testid="select-service">
-                    <option value="" disabled className="text-muted-foreground">Select primary service...</option>
-                     <option>Roof repairs</option>
-                     <option>Roof replacement</option>
-                     <option>Flat roofing</option>
-                     <option>Interiors & building</option>
-                     <option>Not sure yet</option>
+                  <label className="sr-only" htmlFor="service">Service Required</label>
+                  <select required id="service" name="service" defaultValue="" className="form-input cursor-pointer appearance-none bg-transparent text-foreground" data-testid="select-service">
+                    <option value="" disabled className="text-muted-foreground">Select a service</option>
+                    <option>Roof repairs</option>
+                    <option>Roof replacement</option>
+                    <option>Flat roofing</option>
+                    <option>Interiors & building</option>
+                    <option>Not sure yet</option>
                   </select>
                 </div>
-                
                 <div>
                   <label className="sr-only" htmlFor="details">Project Details</label>
-                  <textarea 
-                    required 
-                     id="message" 
-                     name="message" 
-                     placeholder="A few words about the property or the work needed" 
-                    rows={4}
-                    className="form-input resize-none" 
-                     data-testid="textarea-message"
+                  <textarea
+                    required
+                    id="message"
+                    name="message"
+                    placeholder="Tell us about your project..."
+                    rows={5}
+                    className="form-input resize-none"
+                    data-testid="textarea-message"
                   />
                 </div>
-                
-                 <button type="submit" className="w-full bg-primary text-primary-foreground py-4 text-sm font-bold uppercase tracking-wider hover:bg-accent transition-colors" data-testid="button-submit-quote">
-                   Send enquiry
+                <button type="submit" className="w-full bg-primary py-4 text-sm font-bold uppercase tracking-wider text-primary-foreground transition-colors hover:bg-accent" data-testid="button-submit-quote">
+                  Send Quote Request
                 </button>
               </form>
             )}
@@ -739,20 +1080,36 @@ export default function App() {
         </div>
       </section>
 
-      {/* Footer */}
-       <footer className="border-t border-border bg-white px-6 py-12 text-foreground md:px-12">
-         <div className="mx-auto flex max-w-[1600px] flex-col items-start justify-between gap-8 md:flex-row md:items-end">
-           <div>
-             <img src={logoPath} alt="Kellys Roofing and Interiors" className="h-24 w-auto object-contain md:h-28" />
-             <p className="mt-5 text-sm text-foreground/70">Roofing, building & interiors across Dublin.</p>
-           </div>
-           <div className="flex flex-col items-start gap-3 text-sm text-foreground/70 md:items-end">
-             <a href="#top" className="link-hover inline-flex items-center gap-2 font-bold text-primary" data-testid="link-back-top">Back to top <ChevronDown size={16} className="rotate-180" /></a>
-             <p data-testid="text-footer-note">Enquiries welcome from homeowners, landlords, property managers and commercial clients.</p>
-           </div>
-         </div>
-         <div className="mx-auto mt-8 max-w-[1600px] border-t border-border pt-5 font-mono text-[10px] uppercase tracking-[.14em] text-muted-foreground">Kellys Roofing & Interiors · Dublin</div>
-      </footer>
+      <section className="border-y border-border bg-background px-6 py-24 md:px-12 md:py-32">
+        <div className="mx-auto max-w-[1600px]">
+          <div className="mb-14 grid grid-cols-1 gap-8 md:grid-cols-12 md:items-end">
+            <div className="md:col-span-7">
+              <span className="kicker mb-6">Why choose us</span>
+              <h2 className="heading-section max-w-[680px]">Your Free Quote Includes</h2>
+            </div>
+            <p className="max-w-[380px] text-base leading-relaxed text-foreground/70 md:col-span-5">
+              Every consultation comes with professional advice and transparent pricing.
+            </p>
+          </div>
+
+          <div className="grid border-l border-t border-border sm:grid-cols-2 lg:grid-cols-4">
+            {[
+              ['01', 'No Obligation', 'Free quotes with zero pressure to commit.'],
+              ['02', 'Quick Response', 'We respond within 24 hours guaranteed.'],
+              ['03', 'Fully Insured', 'Complete peace of mind on every project.'],
+              ['04', 'Expert Advice', 'Professional guidance for your project.'],
+            ].map(([number, title, text]) => (
+              <div key={number} className="border-b border-r border-border p-7 md:p-8">
+                <span className="font-mono text-xs text-primary">{number}</span>
+                <h3 className="mt-8 font-display text-2xl text-primary">{title}</h3>
+                <p className="mt-4 text-sm leading-relaxed text-foreground/70">{text}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <SiteFooter />
     </main>
   );
 }
