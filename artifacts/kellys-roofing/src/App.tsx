@@ -207,6 +207,30 @@ const slugify = (value: string) => value
 
 const locationItems = locationNames.map((name) => ({ name, slug: slugify(name) }));
 
+type LocationProfile = {
+  coordinates: {
+    latitude: number;
+    longitude: number;
+    label: string;
+  };
+  attractions: string[];
+};
+
+const locationProfiles: Partial<Record<string, LocationProfile>> = {
+  adamstown: {
+    coordinates: {
+      latitude: 53.3353,
+      longitude: -6.4689,
+      label: '53.3353°N, 6.4689°W',
+    },
+    attractions: [
+      'Airlie Park',
+      "Tandy's Lane Park",
+      'Griffeen Valley Park',
+    ],
+  },
+};
+
 export const prerenderRoutes = [
   '/',
   '/work',
@@ -923,6 +947,8 @@ function LocationsHubPage() {
 }
 
 function LocationPage({ area }: { area: (typeof locationItems)[number] }) {
+  const locationProfile = locationProfiles[area.slug];
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [area]);
@@ -949,6 +975,51 @@ function LocationPage({ area }: { area: (typeof locationItems)[number] }) {
               <HeroVideo wrapperClassName="aspect-[4/5] bg-muted" />
             </div>
           </div>
+
+          {locationProfile && (
+            <section
+              className="grid grid-cols-1 border-b border-border py-14 md:grid-cols-2 md:py-20"
+              aria-labelledby={`${area.slug}-discover-title`}
+            >
+              <div className="min-h-[360px] overflow-hidden bg-muted md:min-h-[520px]">
+                <iframe
+                  title={`Map of ${area.name}, County Dublin`}
+                  src={`https://www.google.com/maps?q=${locationProfile.coordinates.latitude},${locationProfile.coordinates.longitude}&z=14&output=embed`}
+                  className="h-full min-h-[360px] w-full border-0 md:min-h-[520px]"
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                  allowFullScreen
+                />
+              </div>
+
+              <div className="flex flex-col justify-center border-l-0 border-border pt-10 md:border-l md:px-12 md:pt-0 lg:px-20">
+                <span className="kicker mb-7">Discover {area.name}</span>
+                <h2 id={`${area.slug}-discover-title`} className="heading-section max-w-[620px]">
+                  Local attractions near {area.name}.
+                </h2>
+                <p className="mt-7 max-w-[620px] border-b border-border pb-8 text-base leading-relaxed text-foreground/70">
+                  <strong className="font-semibold text-foreground">Service Area:</strong> {area.name}, Co. Dublin
+                  <span className="mx-2 text-border" aria-hidden="true">—</span>
+                  <strong className="font-semibold text-foreground">Coordinates:</strong> {locationProfile.coordinates.label}
+                </p>
+
+                <ul className="mt-2" aria-label={`Local attractions near ${area.name}`}>
+                  {locationProfile.attractions.map((attraction, index) => (
+                    <li
+                      key={attraction}
+                      className="flex items-center gap-5 border-b border-border py-5"
+                    >
+                      <span className="font-mono text-xs text-primary/60">
+                        {String(index + 1).padStart(2, '0')}
+                      </span>
+                      <MapPin size={18} className="shrink-0 text-primary" aria-hidden="true" />
+                      <span className="font-display text-xl md:text-2xl">{attraction}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </section>
+          )}
 
           <section className="grid grid-cols-1 gap-10 py-14 md:grid-cols-12 md:gap-14 md:py-20">
             <div className="md:col-span-4">
