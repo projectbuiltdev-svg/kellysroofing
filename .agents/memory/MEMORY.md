@@ -1,0 +1,2 @@
+- [Service section direction](service-section-design.md) — user approved the immersive full-image frosted accordion; preserve this concept in future refinements.
+- [Rendering strategy](rendering-strategy.md) — use build-time pre-rendering for all public routes; avoid runtime SSR and Workers unless dynamic HTML becomes necessary.

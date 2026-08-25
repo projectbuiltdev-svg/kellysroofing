@@ -21,6 +21,7 @@ import roofFramingPath from '@assets/unsplash/roof-framing.jpg';
 import rooferFixingRoofHeroPath from '@assets/unsplash/roofer-fixing-roof-hero.jpg';
 import interiorRenovationPath from '@assets/unsplash/interior-renovation.jpg';
 import homeRenovationStandardPath from '@assets/unsplash/home-renovation-standard.jpg';
+import heroVideoPath from '@assets/kellys_roofing_video_(1)_1787649902452.mp4';
 
 type Service = {
   number: string;
@@ -245,8 +246,91 @@ const slugify = (value: string) => value
 
 const locationItems = locationNames.map((name) => ({ name, slug: slugify(name) }));
 
+export const prerenderRoutes = [
+  '/',
+  '/work',
+  '/blog',
+  '/locations',
+  ...services.map((service) => `/services/${serviceSlugs[service.title]}`),
+  ...locationItems.map((area) => `/locations/${area.slug}`),
+  ...locationItems.flatMap((area) =>
+    services.map((service) => `/locations/${area.slug}/${serviceSlugs[service.title]}`),
+  ),
+];
+
+export function getPageMetadata(location: string) {
+  const activeService = services.find((service) => `/services/${serviceSlugs[service.title]}` === location);
+  const activeLocation = locationItems.find((area) => `/locations/${area.slug}` === location);
+  const locationServiceMatch = location.match(/^\/locations\/([^/]+)\/([^/]+)$/);
+  const activeLocationService = locationServiceMatch
+    ? {
+        area: locationItems.find((item) => item.slug === locationServiceMatch[1]),
+        service: services.find((item) => serviceSlugs[item.title] === locationServiceMatch[2]),
+      }
+    : undefined;
+
+  const title = activeService
+    ? `${activeService.title} | Kellys Roofing Dublin`
+    : location === '/work'
+      ? 'Our Work | Kellys Roofing & Interiors | Dublin'
+      : location === '/blog'
+        ? 'Blog | Kellys Roofing & Interiors | Dublin'
+        : activeLocationService?.area && activeLocationService.service
+          ? `${activeLocationService.service.title} in ${activeLocationService.area.name} | Kellys Roofing Dublin`
+          : activeLocation
+            ? `Roofing Services in ${activeLocation.name} | Kellys Roofing Dublin`
+            : location === '/locations'
+              ? 'Dublin Service Areas | Kellys Roofing & Interiors'
+              : 'Kellys Roofing & Interiors | Dublin';
+
+  const description = activeService
+    ? `${activeService.intro} Kellys Roofing & Interiors serves homes and properties across Dublin.`
+    : location === '/work'
+      ? 'Explore selected roofing, building and interior work from Kellys Roofing & Interiors in Dublin.'
+      : location === '/blog'
+        ? 'Read practical notes about roof repairs, replacement and flat roofing from Kellys Roofing & Interiors in Dublin.'
+        : activeLocationService?.area && activeLocationService.service
+          ? `${activeLocationService.service.title} for homes and properties in ${activeLocationService.area.name}, Dublin.`
+          : activeLocation
+            ? `Roof repairs, replacement, flat roofing and interiors for properties in ${activeLocation.name}, Dublin.`
+            : location === '/locations'
+              ? 'Explore all County Dublin service areas covered by Kellys Roofing & Interiors.'
+              : 'Kellys Roofing & Interiors provides roofing, building and interior work across Dublin.';
+
+  return { title, description };
+}
+
 function scrollToContact() {
   document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' });
+}
+
+function OverlayImage({ src, alt, className = '', wrapperClassName = '' }: { src: string; alt: string; className?: string; wrapperClassName?: string }) {
+  return (
+    <div className={`relative overflow-hidden ${wrapperClassName}`}>
+      <img src={src} alt={alt} className={`h-full w-full object-cover opacity-[55%] ${className}`} />
+      <div className="pointer-events-none absolute inset-0 bg-primary/15" aria-hidden="true" />
+    </div>
+  );
+}
+
+function HeroVideo({ wrapperClassName = '', className = '' }: { wrapperClassName?: string; className?: string }) {
+  return (
+    <div className={`relative overflow-hidden bg-muted ${wrapperClassName}`}>
+      <video
+        autoPlay
+        muted
+        loop
+        playsInline
+        preload="metadata"
+        poster={rooflinePath}
+        className={`h-full w-full object-cover opacity-[55%] ${className}`}
+        aria-hidden="true"
+      >
+        <source src={heroVideoPath} type="video/mp4" />
+      </video>
+      <div className="pointer-events-none absolute inset-0 bg-primary/15" aria-hidden="true" />
+    </div>
+  );
 }
 
 function Header({ isServicePage = false, isGalleryPage = false, isBlogPage = false, isLocationPage = false }: { isServicePage?: boolean; isGalleryPage?: boolean; isBlogPage?: boolean; isLocationPage?: boolean }) {
@@ -348,8 +432,8 @@ function Header({ isServicePage = false, isGalleryPage = false, isBlogPage = fal
 function SiteFooter() {
   return (
     <footer className="border-t border-border bg-white px-6 py-16 text-foreground md:px-12 md:py-20">
-      <div className="mx-auto grid max-w-[1600px] gap-12 md:grid-cols-12 md:gap-8">
-        <div className="md:col-span-5">
+      <div className="mx-auto grid max-w-[1600px] gap-12 md:grid-cols-[repeat(14,minmax(0,1fr))] md:gap-8">
+        <div className="md:col-span-4">
           <img src={logoPath} alt="Kellys Roofing and Interiors" className="h-28 w-auto object-contain md:h-32" />
           <p className="mt-6 max-w-[460px] text-sm leading-relaxed text-foreground/70">
             Professional roof repairs Dublin, slate and tile roofing, guttering, chimney repairs, flat roofs, and emergency roofing services since 2009. Serving all areas of Dublin County.
@@ -372,29 +456,72 @@ function SiteFooter() {
 
         <div className="md:col-span-2">
           <p className="kicker mb-5">Service areas</p>
-          <Link href="/locations" className="link-hover text-sm">County Dublin (93 areas)</Link>
-          <Link href="/locations" className="mt-5 inline-flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-primary link-hover">
-            View all locations <ArrowRight size={15} />
-          </Link>
+          <div className="flex max-w-[240px] flex-col items-start gap-4">
+            <Link href="/locations" className="link-hover text-sm">County Dublin (93 areas)</Link>
+            <Link href="/locations" className="inline-flex min-h-10 items-center gap-2 text-sm font-bold uppercase tracking-wider text-primary link-hover">
+              View all locations <ArrowRight size={15} />
+            </Link>
+          </div>
         </div>
 
-        <div className="md:col-span-3">
+        <div className="md:col-span-2">
           <p className="kicker mb-5">Contact us</p>
           <div className="flex flex-col items-start gap-3 text-sm">
-            <a href="tel:+353863395381" className="link-hover font-medium">+353 86 339 5381</a>
-            <a href="mailto:akroofing@Outlook.com" className="link-hover">akroofing@Outlook.com</a>
+            <a href="tel:+353863395381" className="inline-flex min-h-10 items-center gap-2 font-bold uppercase tracking-[0.12em] text-primary link-hover" aria-label="Call Kellys Roofing at +353 86 339 5381">
+              <Phone size={17} /> Call Kellys Roofing
+            </a>
+            <a href="https://wa.me/353863395381" target="_blank" rel="noreferrer" className="inline-flex min-h-10 items-center gap-2 font-bold uppercase tracking-[0.12em] text-[#128C7E] link-hover" aria-label="WhatsApp us">
+              <svg viewBox="0 0 32 32" aria-hidden="true" className="h-5 w-5 fill-current">
+                <path d="M16 3.2a12.8 12.8 0 0 0-10.95 19.44L3.2 28.8l6.34-1.8A12.8 12.8 0 1 0 16 3.2Zm0 23.3a10.45 10.45 0 0 1-5.33-1.46l-.38-.23-3.77 1.07 1.1-3.67-.25-.39A10.47 10.47 0 1 1 16 26.5Zm5.74-7.75c-.31-.16-1.84-.91-2.13-1.01-.29-.11-.5-.16-.71.16-.21.31-.81 1.01-.99 1.22-.18.21-.37.24-.68.08-.31-.16-1.31-.48-2.5-1.53-.92-.82-1.54-1.83-1.72-2.14-.18-.31-.02-.48.14-.64.14-.14.31-.37.47-.55.16-.18.21-.31.31-.52.1-.21.05-.39-.03-.55-.08-.16-.71-1.7-.97-2.33-.26-.61-.52-.53-.71-.54h-.6c-.21 0-.55.08-.84.39-.29.31-1.1 1.08-1.1 2.64s1.13 3.06 1.29 3.27c.16.21 2.22 3.39 5.38 4.76.75.32 1.33.51 1.78.65.75.24 1.43.21 1.97.13.6-.09 1.84-.75 2.1-1.48.26-.73.26-1.35.18-1.48-.08-.13-.29-.21-.6-.37Z" />
+              </svg>
+              WhatsApp us
+            </a>
+            <a href="mailto:akroofing@Outlook.com" className="link-hover">Email Kellys Roofing</a>
             <address className="mt-2 not-italic leading-relaxed text-foreground/70">
+              The Tenters<br />
               3 O'CURRY AVENUE<br />
-              DUBLIN 8<br />
-              D08 K7A4
+              DUBLIN 8
             </address>
           </div>
+        </div>
+
+        <div className="md:col-span-2">
+          <p className="kicker mb-5">Find us</p>
+          <iframe
+            title="Map to The Tenters, Dublin 8"
+            src="https://www.google.com/maps?q=The%20Tenters%2C%203%20O%27Curry%20Avenue%2C%20Dublin%208&output=embed"
+            className="h-36 w-full border-0 grayscale"
+            loading="lazy"
+            referrerPolicy="no-referrer-when-downgrade"
+          />
+        </div>
+
+        <div className="md:col-span-2">
+          <p className="kicker mb-5">Follow along</p>
+          <a
+            href="https://www.facebook.com/"
+            target="_blank"
+            rel="noreferrer"
+            className="group flex h-36 w-full flex-col justify-between bg-[#1877F2] p-4 text-white transition-colors hover:bg-[#125dcc]"
+            aria-label="View our work on Facebook"
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true" className="h-9 w-9 fill-current">
+              <path d="M13.5 21v-8h2.75l.41-3h-3.16V8.08c0-.87.24-1.46 1.5-1.46h1.78V3.94c-.31-.04-1.38-.14-2.62-.14-2.59 0-4.36 1.58-4.36 4.48V10H7v3h2.8v8h3.7Z" />
+            </svg>
+            <span className="inline-flex items-end justify-between gap-2 text-xs font-bold uppercase tracking-[0.12em]">
+              <span className="max-w-[140px]">View our work on Facebook</span>
+              <ArrowRight size={15} className="-rotate-45 shrink-0 transition-transform group-hover:rotate-0" />
+            </span>
+          </a>
         </div>
       </div>
 
       <div className="mx-auto mt-14 flex max-w-[1600px] flex-col justify-between gap-4 border-t border-border pt-5 font-mono text-[10px] uppercase tracking-[.14em] text-muted-foreground md:flex-row">
         <span>Serving Dublin County</span>
         <span>Kellys Roofing & Interiors · Dublin</span>
+        <a href="https://websites4tradesmen.ie/" target="_blank" rel="noreferrer" className="link-hover" aria-label="Powered by Websites 4 Tradesmen">
+          Powered by websites4tradesmen.ie
+        </a>
       </div>
     </footer>
   );
@@ -409,7 +536,7 @@ function ServicePage({ service }: { service: Service }) {
     <main className="texture-overlay min-h-[100dvh] bg-background text-foreground selection:bg-primary selection:text-primary-foreground">
       <Header isServicePage />
 
-      <article className="pt-32 md:pt-40">
+      <article className="pt-36 md:pt-44">
         <div className="mx-auto max-w-[1600px] px-6 md:px-12">
           <Link href="/#services" className="inline-flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors mb-12">
             <ArrowRight size={16} className="rotate-180" /> Back to all services
@@ -425,17 +552,13 @@ function ServicePage({ service }: { service: Service }) {
             </div>
             
             <div className="lg:col-span-5 w-full">
-              <div className="aspect-[4/5] w-full overflow-hidden bg-muted">
-                <img 
-                  src={service.image} 
-                  alt={service.title} 
-                  className="w-full h-full object-cover reveal" 
-                />
-              </div>
+              <HeroVideo
+                wrapperClassName="aspect-[4/5] w-full bg-muted reveal"
+              />
             </div>
           </div>
 
-          <div className="mt-24 md:mt-32 grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-24 border-t border-border pt-24 md:pt-32 pb-24 md:pb-32">
+          <div className="mt-16 grid grid-cols-1 gap-12 border-t border-border pb-16 pt-16 md:mt-20 md:pb-20 md:pt-20 lg:grid-cols-12 lg:gap-20">
             <div className="lg:col-span-4">
                <h2 className="heading-section">What is involved</h2>
             </div>
@@ -457,7 +580,7 @@ function ServicePage({ service }: { service: Service }) {
         </div>
       </article>
 
-      <section className="bg-primary text-primary-foreground py-24 md:py-32 px-6 md:px-12">
+      <section className="bg-primary px-6 py-16 text-primary-foreground md:px-12 md:py-20">
         <div className="mx-auto max-w-[1600px] flex flex-col md:flex-row gap-12 justify-between items-start md:items-end">
           <div className="max-w-[800px]">
              <span className="kicker text-primary-foreground mb-8">Ready to take the next step?</span>
@@ -482,26 +605,30 @@ function GalleryPage() {
     <main className="texture-overlay min-h-[100dvh] bg-background text-foreground selection:bg-primary selection:text-primary-foreground">
       <Header isGalleryPage />
 
-      <article className="pt-40 md:pt-52">
+      <article className="pt-36 md:pt-44">
         <div className="mx-auto max-w-[1600px] px-6 md:px-12">
-          <div className="grid grid-cols-1 gap-12 border-b border-border pb-20 md:grid-cols-12 md:gap-16 md:pb-32">
+          <div className="grid grid-cols-1 gap-10 border-b border-border pb-14 md:grid-cols-12 md:gap-14 md:pb-20">
             <div className="md:col-span-8">
               <span className="kicker mb-8">Selected work / Dublin</span>
               <h1 className="heading-hero max-w-[900px] text-primary">Work that holds up.</h1>
             </div>
-            <div className="flex items-end md:col-span-4">
+            <div className="md:col-span-4">
+              <HeroVideo wrapperClassName="mb-8 aspect-[4/3] w-full" />
               <p className="max-w-[360px] text-lg leading-relaxed text-foreground/70">
                 A closer look at the roofs, structures and interiors behind the Kellys approach.
               </p>
             </div>
           </div>
 
-          <section className="grid grid-cols-1 gap-x-8 gap-y-20 py-20 md:grid-cols-12 md:gap-y-28 md:py-32" aria-label="Gallery of roofing and building work">
+          <section className="grid grid-cols-1 gap-x-8 gap-y-14 py-14 md:grid-cols-12 md:gap-y-20 md:py-20" aria-label="Gallery of roofing and building work">
             {galleryItems.map(([number, title, description, image], index) => (
               <figure key={number} className={`group ${index % 3 === 0 ? 'md:col-span-7 md:col-start-1' : 'md:col-span-5 md:col-start-8'}`}>
-                <div className={`overflow-hidden bg-muted ${index % 3 === 0 ? 'aspect-[4/3]' : 'aspect-[5/6]'}`}>
-                  <img src={image} alt={title} className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" />
-                </div>
+                <OverlayImage
+                  src={image}
+                  alt={title}
+                  wrapperClassName={`bg-muted ${index % 3 === 0 ? 'aspect-[4/3]' : 'aspect-[5/6]'}`}
+                  className="transition-transform duration-700 group-hover:scale-105"
+                />
                 <figcaption className="mt-6 flex gap-6 border-t border-border pt-4">
                   <span className="font-mono text-xs text-primary">{number}</span>
                   <div>
@@ -515,7 +642,7 @@ function GalleryPage() {
         </div>
       </article>
 
-      <section className="bg-primary px-6 py-24 text-primary-foreground md:px-12 md:py-32">
+      <section className="bg-primary px-6 py-16 text-primary-foreground md:px-12 md:py-20">
         <div className="mx-auto flex max-w-[1600px] flex-col items-start justify-between gap-10 md:flex-row md:items-end">
           <div>
             <span className="kicker mb-8 text-primary-foreground">Have a property in mind?</span>
@@ -540,23 +667,24 @@ function BlogPage() {
     <main className="texture-overlay min-h-[100dvh] bg-background text-foreground selection:bg-primary selection:text-primary-foreground">
       <Header isBlogPage />
 
-      <article className="pt-40 md:pt-52">
+      <article className="pt-36 md:pt-44">
         <div className="mx-auto max-w-[1600px] px-6 md:px-12">
-          <header className="grid grid-cols-1 gap-12 border-b border-border pb-20 md:grid-cols-12 md:gap-16 md:pb-32">
+          <header className="grid grid-cols-1 gap-10 border-b border-border pb-14 md:grid-cols-12 md:gap-14 md:pb-20">
             <div className="md:col-span-8">
               <span className="kicker mb-8">The Kellys journal / Dublin</span>
               <h1 className="heading-hero max-w-[900px] text-primary">Useful things to know about your roof.</h1>
             </div>
-            <div className="flex items-end md:col-span-4">
+            <div className="md:col-span-4">
+              <HeroVideo wrapperClassName="mb-8 aspect-[4/3] w-full" />
               <p className="max-w-[360px] text-lg leading-relaxed text-foreground/70">
                 Straightforward notes on repairs, replacement and flat roofing, written for the people looking after a property.
               </p>
             </div>
           </header>
 
-          <div className="pb-24 md:pb-40">
+          <div className="pb-16 md:pb-24">
             {blogCategories.map((category) => (
-              <section key={category} className="border-b border-border py-16 md:py-24" aria-labelledby={`blog-category-${category}`}>
+              <section key={category} className="border-b border-border py-12 md:py-16" aria-labelledby={`blog-category-${category}`}>
                 <div className="mb-10 flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
                   <h2 id={`blog-category-${category}`} className="heading-section text-4xl md:text-5xl">{category}</h2>
                   <span className="font-mono text-xs uppercase tracking-[0.18em] text-muted-foreground">02 articles</span>
@@ -565,9 +693,12 @@ function BlogPage() {
                 <div className="grid grid-cols-1 gap-12 md:grid-cols-2 md:gap-8">
                   {blogPosts.filter((post) => post.category === category).map((post, index) => (
                     <article key={post.title} className="group">
-                      <div className="aspect-[16/10] overflow-hidden bg-muted">
-                        <img src={post.image} alt="" className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" />
-                      </div>
+                      <OverlayImage
+                        src={post.image}
+                        alt=""
+                        wrapperClassName="aspect-[16/10] bg-muted"
+                        className="transition-transform duration-700 group-hover:scale-105"
+                      />
                       <div className="mt-6 border-t border-border pt-4">
                         <div className="mb-5 flex items-center justify-between gap-4">
                           <span className="font-mono text-xs text-primary">0{index + 1} / {post.category}</span>
@@ -588,7 +719,7 @@ function BlogPage() {
         </div>
       </article>
 
-      <section className="bg-primary px-6 py-24 text-primary-foreground md:px-12 md:py-32">
+      <section className="bg-primary px-6 py-16 text-primary-foreground md:px-12 md:py-20">
         <div className="mx-auto flex max-w-[1600px] flex-col items-start justify-between gap-10 md:flex-row md:items-end">
           <div>
             <span className="kicker mb-8 text-primary-foreground">Have a property in mind?</span>
@@ -613,21 +744,22 @@ function LocationsHubPage() {
     <main className="texture-overlay min-h-[100dvh] bg-background text-foreground selection:bg-primary selection:text-primary-foreground">
       <Header isLocationPage />
 
-      <article className="pt-40 md:pt-52">
+      <article className="pt-36 md:pt-44">
         <div className="mx-auto max-w-[1600px] px-6 md:px-12">
-          <header className="grid grid-cols-1 gap-12 border-b border-border pb-20 md:grid-cols-12 md:gap-16 md:pb-32">
+          <header className="grid grid-cols-1 gap-10 border-b border-border pb-14 md:grid-cols-12 md:gap-14 md:pb-20">
             <div className="md:col-span-8">
               <span className="kicker mb-8">Service areas / County Dublin</span>
               <h1 className="heading-hero max-w-[900px] text-primary">Roofing help, close to home.</h1>
             </div>
-            <div className="flex items-end md:col-span-4">
+            <div className="md:col-span-4">
+              <HeroVideo wrapperClassName="mb-8 aspect-[4/3] w-full" />
               <p className="max-w-[360px] text-lg leading-relaxed text-foreground/70">
                 Kellys Roofing & Interiors covers County Dublin with practical roofing, replacement, flat-roof and interior work.
               </p>
             </div>
           </header>
 
-          <section className="py-20 md:py-32" aria-labelledby="dublin-locations-title">
+          <section className="py-14 md:py-20" aria-labelledby="dublin-locations-title">
             <div className="mb-10 flex flex-col items-start justify-between gap-4 md:flex-row md:items-end">
               <div>
                 <span className="kicker mb-5">County Dublin</span>
@@ -655,7 +787,7 @@ function LocationsHubPage() {
         </div>
       </article>
 
-      <section className="bg-primary px-6 py-24 text-primary-foreground md:px-12 md:py-32">
+      <section className="bg-primary px-6 py-16 text-primary-foreground md:px-12 md:py-20">
         <div className="mx-auto flex max-w-[1600px] flex-col items-start justify-between gap-10 md:flex-row md:items-end">
           <div>
             <span className="kicker mb-8 text-primary-foreground">Need a quote?</span>
@@ -680,13 +812,13 @@ function LocationPage({ area }: { area: (typeof locationItems)[number] }) {
     <main className="texture-overlay min-h-[100dvh] bg-background text-foreground selection:bg-primary selection:text-primary-foreground">
       <Header isLocationPage />
 
-      <article className="pt-40 md:pt-52">
+      <article className="pt-36 md:pt-44">
         <div className="mx-auto max-w-[1600px] px-6 md:px-12">
           <Link href="/locations" className="mb-12 inline-flex items-center gap-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
             <ArrowRight size={16} className="rotate-180" /> All Dublin service areas
           </Link>
 
-          <div className="grid grid-cols-1 gap-12 border-b border-border pb-20 lg:grid-cols-12 lg:gap-24 lg:pb-32">
+          <div className="grid grid-cols-1 gap-10 border-b border-border pb-14 lg:grid-cols-12 lg:gap-20 lg:pb-20">
             <div className="lg:col-span-7">
               <span className="kicker mb-8">Roofing services / {area.name}</span>
               <h1 className="heading-hero max-w-[860px] text-primary">Roofing work in {area.name}.</h1>
@@ -695,19 +827,23 @@ function LocationPage({ area }: { area: (typeof locationItems)[number] }) {
               </p>
             </div>
             <div className="lg:col-span-5">
-              <div className="aspect-[4/5] overflow-hidden bg-muted">
-                <img src={rooflinePath} alt={`Dublin roofline near ${area.name}`} className="h-full w-full object-cover" />
-              </div>
+              <HeroVideo wrapperClassName="aspect-[4/5] bg-muted" />
             </div>
           </div>
 
-          <section className="grid grid-cols-1 gap-12 py-20 md:grid-cols-12 md:gap-16 md:py-32">
+          <section className="grid grid-cols-1 gap-10 py-14 md:grid-cols-12 md:gap-14 md:py-20">
             <div className="md:col-span-4">
               <span className="kicker mb-6">What we can help with</span>
               <h2 className="heading-section">The right work for the property.</h2>
+              <OverlayImage
+                src={roofTilesPath}
+                alt={`Roofing work in ${area.name}`}
+                wrapperClassName="mt-10 aspect-[16/9] bg-muted"
+                className="object-center"
+              />
             </div>
-            <div className="md:col-span-8">
-              <div className="grid grid-cols-1 border-l border-t border-border sm:grid-cols-2">
+            <div className="md:col-span-8 md:flex md:h-full md:flex-col">
+              <div className="grid grid-cols-1 border-l border-t border-border sm:flex-1 sm:grid-cols-2 md:h-full">
                 {services.map((service) => (
                   <Link
                     key={service.title}
@@ -728,7 +864,7 @@ function LocationPage({ area }: { area: (typeof locationItems)[number] }) {
         </div>
       </article>
 
-      <section className="bg-primary px-6 py-24 text-primary-foreground md:px-12 md:py-32">
+      <section className="bg-primary px-6 py-16 text-primary-foreground md:px-12 md:py-20">
         <div className="mx-auto flex max-w-[1600px] flex-col items-start justify-between gap-10 md:flex-row md:items-end">
           <div>
             <span className="kicker mb-8 text-primary-foreground">Free consultation</span>
@@ -753,7 +889,7 @@ function LocationServicePage({ area, service }: { area: (typeof locationItems)[n
     <main className="texture-overlay min-h-[100dvh] bg-background text-foreground selection:bg-primary selection:text-primary-foreground">
       <Header isLocationPage />
 
-      <article className="pt-40 md:pt-52">
+      <article className="pt-36 md:pt-44">
         <div className="mx-auto max-w-[1600px] px-6 md:px-12">
           <div className="mb-12 flex flex-wrap items-center gap-x-3 gap-y-2 text-sm text-muted-foreground">
             <Link href="/locations" className="transition-colors hover:text-foreground">Dublin service areas</Link>
@@ -763,7 +899,7 @@ function LocationServicePage({ area, service }: { area: (typeof locationItems)[n
             <span className="text-foreground">{service.title}</span>
           </div>
 
-          <div className="grid grid-cols-1 gap-12 border-b border-border pb-20 lg:grid-cols-12 lg:gap-24 lg:pb-32">
+          <div className="grid grid-cols-1 gap-10 border-b border-border pb-14 lg:grid-cols-12 lg:gap-20 lg:pb-20">
             <div className="lg:col-span-7">
               <span className="kicker mb-8">{service.title} / {area.name}</span>
               <h1 className="heading-hero max-w-[900px] text-primary">{service.title} in {area.name}.</h1>
@@ -775,13 +911,11 @@ function LocationServicePage({ area, service }: { area: (typeof locationItems)[n
               </Link>
             </div>
             <div className="lg:col-span-5">
-              <div className="aspect-[4/5] overflow-hidden bg-muted">
-                <img src={service.image} alt={`${service.title} work in ${area.name}`} className="h-full w-full object-cover" />
-              </div>
+              <HeroVideo wrapperClassName="aspect-[4/5] bg-muted" />
             </div>
           </div>
 
-          <section className="grid grid-cols-1 gap-12 py-20 md:grid-cols-12 md:gap-16 md:py-32">
+          <section className="grid grid-cols-1 gap-10 py-14 md:grid-cols-12 md:gap-14 md:py-20">
             <div className="md:col-span-4">
               <span className="kicker mb-6">A practical approach</span>
               <h2 className="heading-section">Clear advice for the job at hand.</h2>
@@ -803,7 +937,7 @@ function LocationServicePage({ area, service }: { area: (typeof locationItems)[n
             </div>
           </section>
 
-          <section className="border-t border-border py-20 md:py-28" aria-labelledby="related-services-title">
+          <section className="border-t border-border py-14 md:py-20" aria-labelledby="related-services-title">
             <div className="mb-10 flex flex-col items-start justify-between gap-5 md:flex-row md:items-end">
               <div>
                 <span className="kicker mb-5">More for {area.name}</span>
@@ -828,7 +962,7 @@ function LocationServicePage({ area, service }: { area: (typeof locationItems)[n
         </div>
       </article>
 
-      <section className="bg-primary px-6 py-24 text-primary-foreground md:px-12 md:py-32">
+      <section className="bg-primary px-6 py-16 text-primary-foreground md:px-12 md:py-20">
         <div className="mx-auto flex max-w-[1600px] flex-col items-start justify-between gap-10 md:flex-row md:items-end">
           <div>
             <span className="kicker mb-8 text-primary-foreground">Free consultation</span>
@@ -847,6 +981,7 @@ function LocationServicePage({ area, service }: { area: (typeof locationItems)[n
 export default function App() {
   const [location] = useLocation();
   const [submitted, setSubmitted] = useState(false);
+  const [hoveredServiceCard, setHoveredServiceCard] = useState<number | null>(null);
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -867,33 +1002,8 @@ export default function App() {
   })();
 
   useEffect(() => {
-    const pageTitle = activeService
-      ? `${activeService.title} | Kellys Roofing Dublin`
-      : isGalleryPage
-        ? 'Our Work | Kellys Roofing & Interiors | Dublin'
-        : isBlogPage
-          ? 'Blog | Kellys Roofing & Interiors | Dublin'
-          : activeLocationService
-            ? `${activeLocationService.service.title} in ${activeLocationService.area.name} | Kellys Roofing Dublin`
-            : activeLocation
-              ? `Roofing Services in ${activeLocation.name} | Kellys Roofing Dublin`
-              : isLocationsHub
-                ? 'Dublin Service Areas | Kellys Roofing & Interiors'
-        : 'Kellys Roofing & Interiors | Dublin';
-    document.title = pageTitle;
-    const description = activeService
-      ? `${activeService.intro} Kellys Roofing & Interiors serves homes and properties across Dublin.`
-      : isGalleryPage
-        ? 'Explore selected roofing, building and interior work from Kellys Roofing & Interiors in Dublin.'
-        : isBlogPage
-          ? 'Read practical notes about roof repairs, replacement and flat roofing from Kellys Roofing & Interiors in Dublin.'
-          : activeLocationService
-            ? `${activeLocationService.service.title} for homes and properties in ${activeLocationService.area.name}, Dublin.`
-            : activeLocation
-              ? `Roof repairs, replacement, flat roofing and interiors for properties in ${activeLocation.name}, Dublin.`
-              : isLocationsHub
-                ? 'Explore all County Dublin service areas covered by Kellys Roofing & Interiors.'
-        : 'Kellys Roofing & Interiors provides roofing, building and interior work across Dublin.';
+    const { title, description } = getPageMetadata(location);
+    document.title = title;
     let meta = document.querySelector('meta[name="description"]');
     if (!meta) {
       meta = document.createElement('meta');
@@ -901,7 +1011,7 @@ export default function App() {
       document.head.appendChild(meta);
     }
     meta.setAttribute('content', description);
-  }, [location, activeService, activeLocation, activeLocationService, isBlogPage, isGalleryPage, isLocationsHub]);
+  }, [location]);
 
   if (activeService) return <ServicePage service={activeService} />;
   if (isGalleryPage) return <GalleryPage />;
@@ -915,7 +1025,7 @@ export default function App() {
       <Header />
 
       {/* Hero Section */}
-      <section id="top" className="relative pt-32 pb-24 md:pt-48 md:pb-32 px-6 md:px-12 border-b border-border">
+      <section id="top" className="relative border-b border-border px-6 pb-16 pt-36 md:px-12 md:pb-20 md:pt-44">
         <div className="mx-auto max-w-[1600px]">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-end">
             <div className="lg:col-span-8 relative z-10">
@@ -928,17 +1038,14 @@ export default function App() {
               </p>
             </div>
             <div className="lg:col-span-4 w-full reveal delay-3">
-              <div className="aspect-[4/5] w-full overflow-hidden bg-muted">
-                <img 
-                  src={rooflinePath} 
-                  alt="Dublin residential roofline" 
-                  className="w-full h-full object-cover grayscale-[20%] contrast-125" 
-                />
-              </div>
+              <HeroVideo
+                wrapperClassName="aspect-[4/5] w-full bg-muted"
+                className="grayscale-[20%] contrast-125"
+              />
             </div>
           </div>
           
-          <div className="mt-16 md:mt-32 pt-8 border-t border-border flex flex-col md:flex-row justify-between items-start md:items-center gap-6 reveal delay-4">
+          <div className="mt-12 flex flex-col items-start justify-between gap-6 border-t border-border pt-6 reveal delay-4 md:mt-20 md:flex-row md:items-center">
             <p className="font-mono text-xs uppercase tracking-widest text-muted-foreground">
               Serving homeowners, landlords, & commercial clients
             </p>
@@ -950,51 +1057,89 @@ export default function App() {
       </section>
 
       {/* Services Section */}
-      <section id="services" className="py-24 md:py-40 px-6 md:px-12 border-b border-border">
-        <div className="mx-auto max-w-[1600px]">
-           <div className="mb-20 flex flex-col items-start justify-between gap-8 md:flex-row md:items-end">
+      <section id="services" className="relative border-b border-border overflow-hidden bg-primary text-primary-foreground">
+        {/* Background Images */}
+        <div className="absolute inset-0 z-0">
+          {services.map((service, index) => {
+             const isActive = hoveredServiceCard === null ? index === 0 : hoveredServiceCard === index;
+             return (
+               <div 
+                 key={service.number}
+                 className={`absolute inset-0 transition-all duration-[1.2s] ease-[cubic-bezier(0.16,1,0.3,1)] ${isActive ? 'opacity-100 scale-100' : 'opacity-0 scale-105'}`}
+               >
+                  <img src={service.image} alt="" className="h-full w-full object-cover opacity-[55%] grayscale-[10%]" />
+                  <div className="absolute inset-0 bg-primary/15" />
+               </div>
+             );
+          })}
+        </div>
+
+        <div className="relative z-10 mx-auto max-w-[1600px] px-6 py-16 md:px-12 md:py-24 h-full flex flex-col justify-between min-h-[850px] md:min-h-[900px]">
+           {/* Header (Top) */}
+           <div className="flex flex-col items-start justify-between gap-8 md:flex-row md:items-end text-primary-foreground">
              <div>
-               <span className="kicker mb-6">Our services / 01—04</span>
+               <span className="kicker mb-6 !text-primary-foreground/90">Our services / 01—04</span>
                <h2 className="heading-section max-w-[700px]">
                  The work behind a better building.
                </h2>
              </div>
-             <p className="max-w-[320px] text-base text-foreground/70">
+             <p className="max-w-[320px] text-base text-primary-foreground/80">
                A practical scope, carefully managed. Tell us what is happening at your property and we will help you work out the right next move.
              </p>
           </div>
 
-           <div className="grid gap-px border border-primary bg-primary md:grid-cols-2">
-             {services.map((service) => (
-              <Link 
-                key={service.number} 
-                href={`/services/${serviceSlugs[service.title]}`}
-                className="service-card group relative flex min-h-[360px] flex-col justify-between overflow-hidden bg-background p-6 md:min-h-[420px] md:p-8"
-              >
-                 <div className="relative z-10 flex items-start justify-between gap-6">
-                   <span className="service-card-number font-mono text-xs uppercase tracking-[0.18em]">{service.number}</span>
-                   <div className="service-card-thumb h-20 w-28 shrink-0 overflow-hidden border bg-muted md:h-24 md:w-36">
-                     <img src={service.image} alt={`${service.title} project example`} className="h-full w-full object-cover grayscale-[15%] transition-transform duration-500" />
+          {/* The Interactive Composition (Bottom) */}
+          <div className="mt-16 md:mt-24 w-full flex flex-col md:flex-row border border-primary-foreground/20 shadow-2xl bg-primary/20 backdrop-blur-md rounded-sm overflow-hidden divide-y md:divide-y-0 md:divide-x divide-primary-foreground/20">
+            {services.map((service, index) => {
+               const isActive = hoveredServiceCard === null ? index === 0 : hoveredServiceCard === index;
+               return (
+                 <Link
+                   href={`/services/${serviceSlugs[service.title]}`}
+                   key={service.number}
+                   className={`group relative flex flex-col transition-all duration-[0.8s] ease-[cubic-bezier(0.16,1,0.3,1)]
+                     ${isActive ? 'flex-[2.5] bg-primary/60 backdrop-blur-xl backdrop-saturate-150' : 'flex-[1] bg-transparent hover:bg-primary/30'}
+                   `}
+                   onMouseEnter={() => setHoveredServiceCard(index)}
+                   onMouseLeave={() => setHoveredServiceCard(null)}
+                   onFocus={() => setHoveredServiceCard(index)}
+                   onBlur={() => setHoveredServiceCard(null)}
+                 >
+                   <div className="p-6 md:p-8 flex flex-col h-full justify-between min-h-[140px] md:min-h-[400px]">
+                     <div className="flex items-start justify-between">
+                       <span className={`font-mono text-xs uppercase tracking-[0.18em] transition-colors duration-500 ${isActive ? 'text-primary-foreground' : 'text-primary-foreground/60'}`}>
+                         {service.number}
+                       </span>
+                       <span className={`hidden md:inline-flex items-center justify-center h-10 w-10 rounded-full border border-primary-foreground/30 text-primary-foreground transition-all duration-[0.8s] ${isActive ? 'opacity-100 scale-100 rotate-0' : 'opacity-0 scale-50 -rotate-45'}`}>
+                         <ArrowRight size={16} className="-rotate-45" />
+                       </span>
+                     </div>
+                     
+                     <div className="mt-auto pt-4 md:pt-12">
+                       <h3 className={`font-display text-2xl md:text-3xl xl:text-4xl transition-colors duration-500 leading-tight ${isActive ? 'text-primary-foreground' : 'text-primary-foreground/80'}`}>
+                         {service.title}
+                       </h3>
+
+                       <div className={`grid transition-all duration-[0.8s] ease-[cubic-bezier(0.16,1,0.3,1)] ${isActive ? 'grid-rows-[1fr] opacity-100 mt-5 md:mt-6' : 'grid-rows-[0fr] opacity-0 mt-0'}`}>
+                         <div className="overflow-hidden">
+                           <p className="text-primary-foreground/80 text-sm md:text-base leading-relaxed max-w-[340px] mb-6 md:mb-8">
+                             {service.intro}
+                           </p>
+                           <span className="inline-flex items-center gap-3 text-[10px] md:text-xs font-bold uppercase tracking-[0.18em] text-primary-foreground">
+                             Explore service <ArrowRight size={16} className="-rotate-45 transition-transform group-hover:translate-x-1 group-hover:-translate-y-1" />
+                           </span>
+                         </div>
+                       </div>
+                     </div>
                    </div>
-                 </div>
-                 <div className="relative z-10 mt-16">
-                   <h3 className="service-card-title max-w-[420px] font-display text-3xl md:text-5xl">{service.title}</h3>
-                   <p className="service-card-copy mt-5 max-w-[440px] text-base">{service.intro}</p>
-                   <div className="mt-8 flex items-center justify-between">
-                     <span className="service-card-label font-mono text-[10px] uppercase tracking-[0.18em]">Explore service</span>
-                     <span className="service-card-arrow inline-flex h-12 w-12 items-center justify-center border transition-all">
-                       <ArrowRight size={20} className="-rotate-45 transition-transform group-hover:rotate-0" />
-                     </span>
-                   </div>
-                 </div>
-              </Link>
-            ))}
+                 </Link>
+               );
+            })}
           </div>
         </div>
       </section>
 
       {/* Feature Grid / Gallery */}
-      <section className="py-24 md:py-32 px-6 md:px-12 bg-white border-b border-border">
+      <section className="border-b border-border bg-white px-6 py-16 md:px-12 md:py-20">
         <div className="mx-auto max-w-[1600px] grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-8">
           {[
             ['01', 'Roof over your head', 'Responsive thinking for the jobs you cannot afford to leave to chance.', roofTilesPath],
@@ -1002,9 +1147,12 @@ export default function App() {
             ['03', 'Dublin, properly local', 'Familiar with the homes, weather and practical realities of working across the city.', rooferFixingRoofHeroPath],
           ].map(([num, title, desc, img]) => (
             <div key={num} className="flex flex-col gap-6">
-              <div className="aspect-[4/3] overflow-hidden bg-muted">
-                <img src={img} alt={title} className="w-full h-full object-cover hover:scale-105 transition-transform duration-700" />
-              </div>
+              <OverlayImage
+                src={img}
+                alt={title}
+                wrapperClassName="aspect-[4/3] bg-muted"
+                className="transition-transform duration-700 hover:scale-105"
+              />
               <div>
                 <span className="font-mono text-xs text-primary mb-3 block">{num}</span>
                 <h3 className="text-2xl font-display mb-2">{title}</h3>
@@ -1016,39 +1164,53 @@ export default function App() {
       </section>
 
       {/* Approach Section */}
-      <section id="approach" className="py-24 md:py-40 px-6 md:px-12 border-b border-border">
-        <div className="mx-auto max-w-[1600px] grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24">
-          <div>
-            <span className="kicker mb-8">How we work</span>
-            <h2 className="heading-section max-w-[500px] mb-8">
-              No fog. Just a clear route through the work.
-            </h2>
-            <p className="text-lg text-foreground/70 max-w-[420px]">
-              Property work can be disruptive enough without chasing updates or translating jargon. We keep the process visible and the conversation open.
-            </p>
-          </div>
-          
-          <div className="border-t border-border">
-            {projectNotes.map(([number, title, text]) => (
-              <div key={number} className="flex flex-col sm:flex-row gap-6 sm:gap-12 py-10 border-b border-border">
-                <span className="font-mono text-primary sm:w-12">{number}</span>
-                <div>
-                  <h3 className="text-2xl font-display mb-3">{title}</h3>
-                  <p className="text-foreground/70 leading-relaxed max-w-[450px]">{text}</p>
+      <section id="approach" className="relative overflow-hidden border-b border-border bg-primary text-primary-foreground md:px-12 md:py-24">
+        <div className="absolute inset-0 hidden md:block" aria-hidden="true">
+          <img src={roofFramingPath} alt="" className="h-full w-full object-cover object-right opacity-[55%]" />
+          <div className="absolute inset-0 bg-primary/15" />
+        </div>
+        <div className="relative h-72 md:hidden" aria-hidden="true">
+          <img src={roofFramingPath} alt="" className="h-full w-full object-cover object-right opacity-[55%]" />
+          <div className="absolute inset-0 bg-primary/15" />
+        </div>
+        <div className="relative z-10 mx-auto max-w-[1600px] px-6 py-16 md:px-0 md:py-0">
+          <div className="w-full border border-white/25 bg-[#071b31]/70 p-8 shadow-2xl backdrop-blur-xl backdrop-saturate-150 md:p-10 lg:w-1/2 lg:p-12">
+            <div className="max-w-[720px]">
+              <span className="kicker mb-8 !text-white">How we work</span>
+              <h2 className="heading-section mb-8 max-w-[620px]">
+                No fog. Just a clear route through the work.
+              </h2>
+              <p className="max-w-[560px] text-lg text-primary-foreground/75">
+                Property work can be disruptive enough without chasing updates or translating jargon. We keep the process visible and the conversation open.
+              </p>
+            </div>
+
+            <div className="mt-16 grid grid-cols-1 border-t border-primary-foreground/30">
+              {projectNotes.map(([number, title, text]) => (
+                <div key={number} className="flex gap-6 border-b border-primary-foreground/30 py-8">
+                  <span className="font-mono text-primary-foreground">{number}</span>
+                  <div>
+                    <h3 className="mb-3 font-display text-2xl">{title}</h3>
+                    <p className="max-w-[330px] leading-relaxed text-primary-foreground/75">{text}</p>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
       </section>
 
       {/* About Section */}
-      <section id="about" className="py-24 md:py-40 px-6 md:px-12 border-b border-border">
+      <section id="about" className="border-b border-border px-6 py-16 md:px-12 md:py-24">
         <div className="mx-auto max-w-[1600px] grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-24 items-center">
           <div className="lg:col-span-5 order-2 lg:order-1">
             <div className="aspect-[3/4] w-full overflow-hidden bg-muted relative group">
-              <img src={homeRenovationStandardPath} alt="Home renovation" className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105 grayscale-[10%]" />
-              <div className="absolute inset-0 bg-primary/10 mix-blend-multiply"></div>
+              <OverlayImage
+                src={homeRenovationStandardPath}
+                alt="Home renovation"
+                wrapperClassName="absolute inset-0"
+                className="transition-transform duration-1000 group-hover:scale-105 grayscale-[10%]"
+              />
               
               <div className="absolute bottom-8 left-8 right-8 bg-background/95 backdrop-blur p-6 border border-border">
                <p className="kicker mb-3">The Kellys standard</p>
@@ -1080,7 +1242,7 @@ export default function App() {
       </section>
 
       {/* Contact Section */}
-      <section id="contact" className="bg-white px-6 py-24 md:px-12 md:py-40">
+      <section id="contact" className="bg-white px-6 py-16 md:px-12 md:py-24">
         <div className="mx-auto grid max-w-[1600px] grid-cols-1 gap-16 lg:grid-cols-2 lg:gap-24">
           <div>
             <span className="kicker mb-8">Free consultation</span>
