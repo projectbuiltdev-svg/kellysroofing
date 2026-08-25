@@ -326,14 +326,14 @@ export default function App() {
               <Link 
                 key={service.number} 
                 href={`/services/${serviceSlugs[service.title]}`}
-                className="service-row group block border-b border-border relative py-10 md:py-16 px-4 md:px-8 -mx-4 md:-mx-8"
+                className="service-row block border-b border-border relative py-10 md:py-16 px-4 md:px-8 -mx-4 md:-mx-8"
               >
                 <div className="grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-12 items-center relative z-10">
                   <div className="md:col-span-1 text-primary">
                     <span className="font-mono text-sm">{service.number}</span>
                   </div>
                   <div className="md:col-span-4">
-                    <h3 className="text-3xl md:text-5xl font-display text-primary group-hover:text-accent transition-colors">{service.title}</h3>
+                     <h3 className="text-3xl md:text-5xl font-display text-primary">{service.title}</h3>
                   </div>
                   <div className="md:col-span-5">
                     <p className="text-base text-foreground/70">{service.intro}</p>
@@ -343,11 +343,6 @@ export default function App() {
                       <ArrowRight size={20} className="-rotate-45 transition-transform group-hover:rotate-0" />
                     </span>
                   </div>
-                </div>
-                
-                {/* Hover Image Reveal (Desktop only) */}
-                <div className="hidden lg:block absolute right-[20%] top-1/2 -translate-y-1/2 w-[300px] aspect-[4/3] pointer-events-none service-image-container z-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <img src={service.image} alt="" className="w-full h-full object-cover" />
                 </div>
               </Link>
             ))}
