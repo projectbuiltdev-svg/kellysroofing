@@ -312,41 +312,41 @@ export default function App() {
       {/* Services Section */}
       <section id="services" className="py-24 md:py-40 px-6 md:px-12 border-b border-border">
         <div className="mx-auto max-w-[1600px]">
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-20 gap-8">
-            <h2 className="heading-section max-w-[700px]">
-              The work behind a better building.
-            </h2>
-            <p className="text-base text-foreground/70 max-w-[320px]">
+           <div className="mb-20 flex flex-col items-start justify-between gap-8 md:flex-row md:items-end">
+             <div>
+               <span className="kicker mb-6">Our services / 01—04</span>
+               <h2 className="heading-section max-w-[700px]">
+                 The work behind a better building.
+               </h2>
+             </div>
+             <p className="max-w-[320px] text-base text-foreground/70">
                A practical scope, carefully managed. Tell us what is happening at your property and we will help you work out the right next move.
-            </p>
+             </p>
           </div>
 
-          <div className="border-t border-border flex flex-col">
-            {services.map((service) => (
+           <div className="grid gap-px border border-primary bg-primary md:grid-cols-2">
+             {services.map((service) => (
               <Link 
                 key={service.number} 
                 href={`/services/${serviceSlugs[service.title]}`}
-                className="service-row block border-b border-border relative py-10 md:py-16 px-4 md:px-8 -mx-4 md:-mx-8"
+                className="service-card group relative flex min-h-[360px] flex-col justify-between overflow-hidden bg-background p-6 md:min-h-[420px] md:p-8"
               >
-                <div className="grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-12 items-center relative z-10">
-                  <div className="md:col-span-1 text-primary">
-                    <span className="font-mono text-sm">{service.number}</span>
-                  </div>
-                  <div className="md:col-span-4">
-                     <h3 className="text-3xl md:text-5xl font-display text-primary">{service.title}</h3>
-                  </div>
-                   <div className="md:col-span-4">
-                    <p className="text-base text-foreground/70">{service.intro}</p>
-                  </div>
-                   <div className="md:col-span-3 flex items-center justify-end gap-4">
-                     <div className="h-16 w-24 shrink-0 overflow-hidden border border-border bg-muted md:h-20 md:w-28">
-                       <img src={service.image} alt={`${service.title} project example`} className="h-full w-full object-cover grayscale-[15%]" />
-                     </div>
-                    <span className="inline-flex h-12 w-12 items-center justify-center rounded-full border border-border group-hover:bg-primary group-hover:text-primary-foreground group-hover:border-primary transition-all">
-                      <ArrowRight size={20} className="-rotate-45 transition-transform group-hover:rotate-0" />
-                    </span>
-                  </div>
-                </div>
+                 <div className="relative z-10 flex items-start justify-between gap-6">
+                   <span className="service-card-number font-mono text-xs uppercase tracking-[0.18em]">{service.number}</span>
+                   <div className="service-card-thumb h-20 w-28 shrink-0 overflow-hidden border bg-muted md:h-24 md:w-36">
+                     <img src={service.image} alt={`${service.title} project example`} className="h-full w-full object-cover grayscale-[15%] transition-transform duration-500" />
+                   </div>
+                 </div>
+                 <div className="relative z-10 mt-16">
+                   <h3 className="service-card-title max-w-[420px] font-display text-3xl md:text-5xl">{service.title}</h3>
+                   <p className="service-card-copy mt-5 max-w-[440px] text-base">{service.intro}</p>
+                   <div className="mt-8 flex items-center justify-between">
+                     <span className="service-card-label font-mono text-[10px] uppercase tracking-[0.18em]">Explore service</span>
+                     <span className="service-card-arrow inline-flex h-12 w-12 items-center justify-center border transition-all">
+                       <ArrowRight size={20} className="-rotate-45 transition-transform group-hover:rotate-0" />
+                     </span>
+                   </div>
+                 </div>
               </Link>
             ))}
           </div>
