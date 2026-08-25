@@ -1291,6 +1291,10 @@ function LocationPage({ area }: { area: (typeof locationItems)[number] }) {
 }
 
 function LocationServicePage({ area, service }: { area: (typeof locationItems)[number]; service: Service }) {
+  const serviceSlug = serviceSlugs[service.title] as ServiceSlug;
+  const content = servicePageContent[serviceSlug];
+  const locationProfile = locationProfiles[area.slug];
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [area, service]);
@@ -1316,6 +1320,12 @@ function LocationServicePage({ area, service }: { area: (typeof locationItems)[n
               <p className="mt-8 max-w-[680px] text-xl leading-relaxed text-foreground/80">
                 {service.intro} Kellys Roofing & Interiors provides {service.title.toLowerCase()} for homes and properties in {area.name}, Dublin.
               </p>
+              <p className="mt-6 max-w-[680px] text-base leading-8 text-foreground/70">
+                {locationProfile.introduction[0]}
+              </p>
+              <p className="mt-6 max-w-[680px] text-base leading-8 text-foreground/70">
+                {content.overview}
+              </p>
               <Link href="/#contact" className="mt-10 inline-flex items-center gap-4 bg-primary px-8 py-4 text-sm font-bold uppercase tracking-wider text-primary-foreground transition-colors hover:bg-accent">
                 Get a free quote <ArrowRight size={18} />
               </Link>
@@ -1325,25 +1335,76 @@ function LocationServicePage({ area, service }: { area: (typeof locationItems)[n
             </div>
           </div>
 
-          <section className="grid grid-cols-1 gap-10 py-14 md:grid-cols-12 md:gap-14 md:py-20">
+          <section className="grid grid-cols-1 gap-10 border-b border-border py-14 md:grid-cols-12 md:gap-14 md:py-20">
             <div className="md:col-span-4">
-              <span className="kicker mb-6">A practical approach</span>
-              <h2 className="heading-section">Clear advice for the job at hand.</h2>
+              <span className="kicker mb-6">A practical approach in {area.name}</span>
+              <h2 className="heading-section">From first inspection to a clear handover.</h2>
             </div>
             <div className="md:col-span-8">
-              <p className="max-w-[700px] text-lg leading-relaxed text-foreground/80">{service.detail}</p>
+              <p className="max-w-[760px] text-lg leading-relaxed text-foreground/80">
+                {service.detail} The condition, access and construction of each {area.name} property shape the recommendation, so the scope is agreed around the building rather than a standard package.
+              </p>
               <div className="mt-12 border-t border-border">
-                {[
-                  'A practical first conversation about the property and what needs attention.',
-                  'Straightforward advice on the right materials, sequence and level of work.',
-                  'Careful preparation, clean working habits and a considered handover.',
-                ].map((item, index) => (
+                {content.processSteps.map((item, index) => (
                   <div key={item} className="flex gap-6 border-b border-border py-7 md:gap-12">
                     <span className="font-mono text-sm text-primary">0{index + 1}</span>
                     <p className="text-base md:text-lg">{item}</p>
                   </div>
                 ))}
               </div>
+            </div>
+          </section>
+
+          <div className="border-b border-border">
+            {content.editorialSections.map((section, index) => (
+              <section
+                key={section.heading}
+                className="grid grid-cols-1 gap-8 border-b border-border py-14 last:border-b-0 md:py-20 lg:grid-cols-12 lg:gap-20"
+              >
+                <div className="lg:col-span-4">
+                  <span className="font-mono text-xs uppercase tracking-[0.18em] text-muted-foreground">
+                    0{index + 1} / {area.name}
+                  </span>
+                  <h2 className="mt-5 font-display text-4xl leading-tight text-primary md:text-5xl">
+                    {section.heading} in {area.name}.
+                  </h2>
+                </div>
+                <div className="space-y-6 text-lg leading-relaxed text-foreground/80 lg:col-span-7 lg:col-start-6">
+                  {section.paragraphs.map((paragraph, paragraphIndex) => (
+                    <p key={paragraph}>
+                      {paragraphIndex === 0 ? `For ${area.name} homes and properties, ${paragraph.charAt(0).toLowerCase()}${paragraph.slice(1)}` : paragraph}
+                    </p>
+                  ))}
+                </div>
+              </section>
+            ))}
+          </div>
+
+          <section className="grid grid-cols-1 gap-10 border-b border-border py-14 md:py-20 lg:grid-cols-12 lg:gap-20">
+            <div className="lg:col-span-5">
+              <span className="kicker mb-6">When to arrange an inspection</span>
+              <h2 className="heading-section">Signs worth checking at your {area.name} property.</h2>
+              <p className="mt-7 max-w-[520px] leading-7 text-foreground/70">
+                These signs do not always point to the same solution. They are useful reasons to arrange a closer assessment before damage develops or finishes are renewed.
+              </p>
+            </div>
+            <div className="border-t border-border lg:col-span-7">
+              {content.signsOrConsiderations.map((item, index) => (
+                <div key={item} className="flex gap-6 border-b border-border py-6">
+                  <span className="font-mono text-xs text-primary">0{index + 1}</span>
+                  <p className="leading-relaxed text-foreground/80">{item}</p>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          <section className="grid grid-cols-1 gap-10 border-b border-border py-14 md:py-20 lg:grid-cols-12 lg:gap-20">
+            <div className="lg:col-span-4">
+              <span className="kicker mb-6">Practical answers</span>
+              <h2 className="heading-section">Questions about {service.title.toLowerCase()} in {area.name}.</h2>
+            </div>
+            <div className="lg:col-span-8">
+              <FaqAccordion items={content.faqs} idPrefix={`${area.slug}-${serviceSlug}-faq`} />
             </div>
           </section>
 
