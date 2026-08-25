@@ -441,13 +441,13 @@ function FaqAccordion({
   const isGrid = layout === 'grid';
 
   return (
-    <div className={isGrid ? 'grid grid-cols-1 border-l border-t border-border sm:grid-cols-2 lg:grid-cols-4' : 'border-t border-border'}>
+    <div className={isGrid ? 'grid grid-cols-1 items-start border-l border-t border-border sm:grid-cols-2 lg:grid-cols-4' : 'border-t border-border'}>
       {items.map((faq, index) => {
         const isOpen = openIndex === index;
         const answerId = `${idPrefix}-answer-${index}`;
 
         return (
-          <article key={faq.question} className={isGrid ? 'border-b border-r border-border px-6 md:px-8' : 'border-b border-border'}>
+          <article key={faq.question} className={isGrid ? 'self-start border-b border-r border-border px-6 md:px-8' : 'border-b border-border'}>
             <button
               type="button"
               className="flex w-full items-center justify-between gap-6 py-6 text-left md:py-8"
