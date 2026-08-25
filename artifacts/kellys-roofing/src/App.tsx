@@ -711,14 +711,14 @@ function LocationPage({ area }: { area: (typeof locationItems)[number] }) {
                 {services.map((service) => (
                   <Link
                     key={service.title}
-                    href={`/services/${serviceSlugs[service.title]}`}
+                    href={`/locations/${area.slug}/${serviceSlugs[service.title]}`}
                     className="group border-b border-r border-border p-6 transition-colors hover:bg-primary hover:text-primary-foreground"
                   >
                     <span className="font-mono text-xs opacity-60">{service.number}</span>
                     <h3 className="mt-6 font-display text-2xl">{service.title}</h3>
                     <p className="mt-3 text-sm leading-relaxed opacity-70">{service.intro}</p>
                     <span className="mt-6 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.16em]">
-                      View service <ArrowRight size={15} className="-rotate-45 transition-transform group-hover:rotate-0" />
+                      View in {area.name} <ArrowRight size={15} className="-rotate-45 transition-transform group-hover:rotate-0" />
                     </span>
                   </Link>
                 ))}
@@ -744,6 +744,106 @@ function LocationPage({ area }: { area: (typeof locationItems)[number] }) {
   );
 }
 
+function LocationServicePage({ area, service }: { area: (typeof locationItems)[number]; service: Service }) {
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [area, service]);
+
+  return (
+    <main className="texture-overlay min-h-[100dvh] bg-background text-foreground selection:bg-primary selection:text-primary-foreground">
+      <Header isLocationPage />
+
+      <article className="pt-40 md:pt-52">
+        <div className="mx-auto max-w-[1600px] px-6 md:px-12">
+          <div className="mb-12 flex flex-wrap items-center gap-x-3 gap-y-2 text-sm text-muted-foreground">
+            <Link href="/locations" className="transition-colors hover:text-foreground">Dublin service areas</Link>
+            <span>/</span>
+            <Link href={`/locations/${area.slug}`} className="transition-colors hover:text-foreground">{area.name}</Link>
+            <span>/</span>
+            <span className="text-foreground">{service.title}</span>
+          </div>
+
+          <div className="grid grid-cols-1 gap-12 border-b border-border pb-20 lg:grid-cols-12 lg:gap-24 lg:pb-32">
+            <div className="lg:col-span-7">
+              <span className="kicker mb-8">{service.title} / {area.name}</span>
+              <h1 className="heading-hero max-w-[900px] text-primary">{service.title} in {area.name}.</h1>
+              <p className="mt-8 max-w-[680px] text-xl leading-relaxed text-foreground/80">
+                {service.intro} Kellys Roofing & Interiors provides {service.title.toLowerCase()} for homes and properties in {area.name}, Dublin.
+              </p>
+              <Link href="/#contact" className="mt-10 inline-flex items-center gap-4 bg-primary px-8 py-4 text-sm font-bold uppercase tracking-wider text-primary-foreground transition-colors hover:bg-accent">
+                Get a free quote <ArrowRight size={18} />
+              </Link>
+            </div>
+            <div className="lg:col-span-5">
+              <div className="aspect-[4/5] overflow-hidden bg-muted">
+                <img src={service.image} alt={`${service.title} work in ${area.name}`} className="h-full w-full object-cover" />
+              </div>
+            </div>
+          </div>
+
+          <section className="grid grid-cols-1 gap-12 py-20 md:grid-cols-12 md:gap-16 md:py-32">
+            <div className="md:col-span-4">
+              <span className="kicker mb-6">A practical approach</span>
+              <h2 className="heading-section">Clear advice for the job at hand.</h2>
+            </div>
+            <div className="md:col-span-8">
+              <p className="max-w-[700px] text-lg leading-relaxed text-foreground/80">{service.detail}</p>
+              <div className="mt-12 border-t border-border">
+                {[
+                  'A practical first conversation about the property and what needs attention.',
+                  'Straightforward advice on the right materials, sequence and level of work.',
+                  'Careful preparation, clean working habits and a considered handover.',
+                ].map((item, index) => (
+                  <div key={item} className="flex gap-6 border-b border-border py-7 md:gap-12">
+                    <span className="font-mono text-sm text-primary">0{index + 1}</span>
+                    <p className="text-base md:text-lg">{item}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          <section className="border-t border-border py-20 md:py-28" aria-labelledby="related-services-title">
+            <div className="mb-10 flex flex-col items-start justify-between gap-5 md:flex-row md:items-end">
+              <div>
+                <span className="kicker mb-5">More for {area.name}</span>
+                <h2 id="related-services-title" className="heading-section">Other services nearby.</h2>
+              </div>
+              <Link href={`/locations/${area.slug}`} className="inline-flex items-center gap-3 text-sm font-bold uppercase tracking-wider text-primary link-hover">
+                View {area.name} overview <ArrowRight size={17} />
+              </Link>
+            </div>
+            <div className="grid border-l border-t border-border sm:grid-cols-3">
+              {services.filter((item) => item.title !== service.title).map((item) => (
+                <Link key={item.title} href={`/locations/${area.slug}/${serviceSlugs[item.title]}`} className="group border-b border-r border-border p-6 transition-colors hover:bg-primary hover:text-primary-foreground">
+                  <span className="font-mono text-xs opacity-60">{item.number}</span>
+                  <h3 className="mt-6 font-display text-2xl">{item.title}</h3>
+                  <span className="mt-8 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.16em]">
+                    View service <ArrowRight size={15} className="-rotate-45 transition-transform group-hover:rotate-0" />
+                  </span>
+                </Link>
+              ))}
+            </div>
+          </section>
+        </div>
+      </article>
+
+      <section className="bg-primary px-6 py-24 text-primary-foreground md:px-12 md:py-32">
+        <div className="mx-auto flex max-w-[1600px] flex-col items-start justify-between gap-10 md:flex-row md:items-end">
+          <div>
+            <span className="kicker mb-8 text-primary-foreground">Free consultation</span>
+            <h2 className="heading-section max-w-[760px]">Get a free quote for {service.title.toLowerCase()} in {area.name}.</h2>
+          </div>
+          <Link href="/#contact" className="inline-flex shrink-0 items-center gap-4 bg-primary-foreground px-8 py-4 text-sm font-bold uppercase tracking-wider text-primary transition-colors hover:bg-accent hover:text-primary-foreground">
+            Request a quote <ArrowRight size={18} />
+          </Link>
+        </div>
+      </section>
+      <SiteFooter />
+    </main>
+  );
+}
+
 export default function App() {
   const [location] = useLocation();
   const [submitted, setSubmitted] = useState(false);
@@ -758,6 +858,13 @@ export default function App() {
   const isBlogPage = location === '/blog';
   const isLocationsHub = location === '/locations';
   const activeLocation = locationItems.find((area) => `/locations/${area.slug}` === location);
+  const activeLocationService = (() => {
+    const match = location.match(/^\/locations\/([^/]+)\/([^/]+)$/);
+    if (!match) return undefined;
+    const area = locationItems.find((item) => item.slug === match[1]);
+    const service = services.find((item) => serviceSlugs[item.title] === match[2]);
+    return area && service ? { area, service } : undefined;
+  })();
 
   useEffect(() => {
     const pageTitle = activeService
@@ -766,10 +873,12 @@ export default function App() {
         ? 'Our Work | Kellys Roofing & Interiors | Dublin'
         : isBlogPage
           ? 'Blog | Kellys Roofing & Interiors | Dublin'
-          : activeLocation
-            ? `Roofing Services in ${activeLocation.name} | Kellys Roofing Dublin`
-            : isLocationsHub
-              ? 'Dublin Service Areas | Kellys Roofing & Interiors'
+          : activeLocationService
+            ? `${activeLocationService.service.title} in ${activeLocationService.area.name} | Kellys Roofing Dublin`
+            : activeLocation
+              ? `Roofing Services in ${activeLocation.name} | Kellys Roofing Dublin`
+              : isLocationsHub
+                ? 'Dublin Service Areas | Kellys Roofing & Interiors'
         : 'Kellys Roofing & Interiors | Dublin';
     document.title = pageTitle;
     const description = activeService
@@ -778,10 +887,12 @@ export default function App() {
         ? 'Explore selected roofing, building and interior work from Kellys Roofing & Interiors in Dublin.'
         : isBlogPage
           ? 'Read practical notes about roof repairs, replacement and flat roofing from Kellys Roofing & Interiors in Dublin.'
-          : activeLocation
-            ? `Roof repairs, replacement, flat roofing and interiors for properties in ${activeLocation.name}, Dublin.`
-            : isLocationsHub
-              ? 'Explore all County Dublin service areas covered by Kellys Roofing & Interiors.'
+          : activeLocationService
+            ? `${activeLocationService.service.title} for homes and properties in ${activeLocationService.area.name}, Dublin.`
+            : activeLocation
+              ? `Roof repairs, replacement, flat roofing and interiors for properties in ${activeLocation.name}, Dublin.`
+              : isLocationsHub
+                ? 'Explore all County Dublin service areas covered by Kellys Roofing & Interiors.'
         : 'Kellys Roofing & Interiors provides roofing, building and interior work across Dublin.';
     let meta = document.querySelector('meta[name="description"]');
     if (!meta) {
@@ -790,12 +901,13 @@ export default function App() {
       document.head.appendChild(meta);
     }
     meta.setAttribute('content', description);
-  }, [activeService, activeLocation, isBlogPage, isGalleryPage, isLocationsHub]);
+  }, [location, activeService, activeLocation, activeLocationService, isBlogPage, isGalleryPage, isLocationsHub]);
 
   if (activeService) return <ServicePage service={activeService} />;
   if (isGalleryPage) return <GalleryPage />;
   if (isBlogPage) return <BlogPage />;
   if (isLocationsHub) return <LocationsHubPage />;
+  if (activeLocationService) return <LocationServicePage area={activeLocationService.area} service={activeLocationService.service} />;
   if (activeLocation) return <LocationPage area={activeLocation} />;
 
   return (
