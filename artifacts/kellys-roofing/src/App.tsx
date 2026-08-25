@@ -23,14 +23,29 @@ import {
   type ServiceSlug,
 } from './content';
 import { locationProfiles } from './locationProfiles';
-import logoPath from '@assets/kellys_roofing_logo_transparent.png';
-import rooflinePath from '@assets/generated_images/kellys-roofline.jpg';
-import roofTilesPath from '@assets/unsplash/roof-tiles.jpg';
-import roofFramingPath from '@assets/unsplash/roof-framing.jpg';
-import rooferFixingRoofHeroPath from '@assets/unsplash/roofer-fixing-roof-hero.jpg';
-import interiorRenovationPath from '@assets/unsplash/interior-renovation.jpg';
-import homeRenovationStandardPath from '@assets/unsplash/home-renovation-standard.jpg';
-import heroVideoPath from '@assets/kellys_roofing_video_(1)_1787649902452.mp4';
+import logoPath from '@assets/optimized/kellys-logo-640.webp';
+import rooflinePath from '@assets/optimized/roofline-1600.webp';
+import rooflineMobilePath from '@assets/optimized/roofline-800.webp';
+import roofTilesPath from '@assets/optimized/roof-tiles-1600.webp';
+import roofTilesMobilePath from '@assets/optimized/roof-tiles-800.webp';
+import roofFramingPath from '@assets/optimized/roof-framing-1600.webp';
+import roofFramingMobilePath from '@assets/optimized/roof-framing-800.webp';
+import rooferFixingRoofHeroPath from '@assets/optimized/roofer-fixing-1600.webp';
+import rooferFixingRoofHeroMobilePath from '@assets/optimized/roofer-fixing-800.webp';
+import interiorRenovationPath from '@assets/optimized/interior-renovation-1600.webp';
+import interiorRenovationMobilePath from '@assets/optimized/interior-renovation-800.webp';
+import homeRenovationStandardPath from '@assets/optimized/home-renovation-1600.webp';
+import homeRenovationStandardMobilePath from '@assets/optimized/home-renovation-800.webp';
+import heroVideoPath from '@assets/optimized/kellys-roofing-hero-720.mp4';
+
+const mobileImageSources = new Map<string, string>([
+  [rooflinePath, rooflineMobilePath],
+  [roofTilesPath, roofTilesMobilePath],
+  [roofFramingPath, roofFramingMobilePath],
+  [rooferFixingRoofHeroPath, rooferFixingRoofHeroMobilePath],
+  [interiorRenovationPath, interiorRenovationMobilePath],
+  [homeRenovationStandardPath, homeRenovationStandardMobilePath],
+]);
 
 type Service = {
   number: string;
@@ -288,10 +303,31 @@ function scrollToContact() {
   document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' });
 }
 
-function OverlayImage({ src, alt, className = '', wrapperClassName = '' }: { src: string; alt: string; className?: string; wrapperClassName?: string }) {
+function ResponsiveImage({
+  src,
+  alt,
+  className = '',
+  loading = 'lazy',
+}: {
+  src: string;
+  alt: string;
+  className?: string;
+  loading?: 'eager' | 'lazy';
+}) {
+  const mobileSrc = mobileImageSources.get(src);
+
+  return (
+    <picture className="contents">
+      {mobileSrc && <source media="(max-width: 767px)" srcSet={mobileSrc} />}
+      <img src={src} alt={alt} loading={loading} decoding="async" className={className} />
+    </picture>
+  );
+}
+
+function OverlayImage({ src, alt, className = '', wrapperClassName = '', loading = 'lazy' }: { src: string; alt: string; className?: string; wrapperClassName?: string; loading?: 'eager' | 'lazy' }) {
   return (
     <div className={`relative overflow-hidden ${wrapperClassName}`}>
-      <img src={src} alt={alt} className={`h-full w-full object-cover opacity-[55%] ${className}`} />
+      <ResponsiveImage src={src} alt={alt} loading={loading} className={`h-full w-full object-cover opacity-[55%] ${className}`} />
       <div className="pointer-events-none absolute inset-0 bg-primary/15" aria-hidden="true" />
     </div>
   );
@@ -306,7 +342,7 @@ function HeroVideo({ wrapperClassName = '', className = '' }: { wrapperClassName
         loop
         playsInline
         preload="metadata"
-        poster={rooflinePath}
+        poster={rooflineMobilePath}
         className={`h-full w-full object-cover opacity-[55%] ${className}`}
         aria-hidden="true"
       >
@@ -327,11 +363,11 @@ function Header({ isServicePage = false, isGalleryPage = false, isBlogPage = fal
       <div className="mx-auto flex max-w-[1600px] items-center justify-between px-6 py-3 md:px-12">
         {isInnerPage ? (
           <Link href="/" onClick={closeMenu} className="relative z-[110] mix-blend-multiply" data-testid="link-logo">
-            <img src={logoPath} alt="Kellys Roofing and Interiors" className="h-24 w-auto object-contain md:h-32" />
+            <img src={logoPath} alt="Kellys Roofing and Interiors" width="640" height="368" decoding="async" className="h-24 w-auto object-contain md:h-32" />
           </Link>
         ) : (
           <a href="#top" onClick={closeMenu} className="relative z-[110] mix-blend-multiply" data-testid="link-logo">
-            <img src={logoPath} alt="Kellys Roofing and Interiors" className="h-24 w-auto object-contain md:h-32" />
+            <img src={logoPath} alt="Kellys Roofing and Interiors" width="640" height="368" decoding="async" className="h-24 w-auto object-contain md:h-32" />
           </a>
         )}
         
@@ -371,11 +407,11 @@ function Header({ isServicePage = false, isGalleryPage = false, isBlogPage = fal
            <div className="flex items-center justify-between border-b border-border pb-4">
              {isInnerPage ? (
                <Link href="/" onClick={closeMenu} className="mix-blend-multiply" data-testid="link-mobile-logo">
-                  <img src={logoPath} alt="Kellys Roofing and Interiors" className="h-20 w-auto object-contain" />
+                  <img src={logoPath} alt="Kellys Roofing and Interiors" width="640" height="368" decoding="async" className="h-20 w-auto object-contain" />
                </Link>
              ) : (
                <a href="#top" onClick={closeMenu} className="mix-blend-multiply" data-testid="link-mobile-logo">
-                  <img src={logoPath} alt="Kellys Roofing and Interiors" className="h-20 w-auto object-contain" />
+                  <img src={logoPath} alt="Kellys Roofing and Interiors" width="640" height="368" decoding="async" className="h-20 w-auto object-contain" />
                </a>
              )}
              <button onClick={closeMenu} className="p-2 text-primary" aria-label="Close menu">
@@ -520,7 +556,7 @@ function SiteFooter() {
       <footer className="border-t border-border bg-white px-6 py-16 text-foreground md:px-12 md:py-20">
       <div className="mx-auto grid max-w-[1600px] gap-12 md:grid-cols-[repeat(14,minmax(0,1fr))] md:gap-8">
         <div className="md:col-span-4">
-          <img src={logoPath} alt="Kellys Roofing and Interiors" className="h-28 w-auto object-contain md:h-32" />
+          <img src={logoPath} alt="Kellys Roofing and Interiors" width="640" height="368" loading="lazy" decoding="async" className="h-28 w-auto object-contain md:h-32" />
           <p className="mt-6 max-w-[460px] text-sm leading-relaxed text-foreground/70">
             Professional roof repairs Dublin, slate and tile roofing, guttering, chimney repairs, flat roofs, and emergency roofing services since 2009. Serving all areas of Dublin County.
           </p>
@@ -1574,7 +1610,7 @@ export default function App() {
                  key={service.number}
                  className={`absolute inset-0 transition-all duration-[1.2s] ease-[cubic-bezier(0.16,1,0.3,1)] ${isActive ? 'opacity-100 scale-100' : 'opacity-0 scale-105'}`}
                >
-                  <img src={service.image} alt="" className="h-full w-full object-cover opacity-[55%] grayscale-[10%]" />
+                  <ResponsiveImage src={service.image} alt="" className="h-full w-full object-cover opacity-[55%] grayscale-[10%]" />
                   <div className="absolute inset-0 bg-primary/15" />
                </div>
              );
@@ -1673,11 +1709,11 @@ export default function App() {
       {/* Approach Section */}
       <section id="approach" className="relative overflow-hidden border-b border-border bg-primary text-primary-foreground md:px-12 md:py-24">
         <div className="absolute inset-0 hidden md:block" aria-hidden="true">
-          <img src={roofFramingPath} alt="" className="h-full w-full object-cover object-right opacity-[55%]" />
+          <ResponsiveImage src={roofFramingPath} alt="" className="h-full w-full object-cover object-right opacity-[55%]" />
           <div className="absolute inset-0 bg-primary/15" />
         </div>
         <div className="relative h-72 md:hidden" aria-hidden="true">
-          <img src={roofFramingPath} alt="" className="h-full w-full object-cover object-right opacity-[55%]" />
+          <ResponsiveImage src={roofFramingPath} alt="" className="h-full w-full object-cover object-right opacity-[55%]" />
           <div className="absolute inset-0 bg-primary/15" />
         </div>
         <div className="relative z-10 mx-auto max-w-[1600px] px-6 py-16 md:px-0 md:py-0">
