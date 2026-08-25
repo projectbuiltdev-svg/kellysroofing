@@ -10,7 +10,8 @@ import {
   MessageCircle,
   Mail,
   MapPin,
-  Clock3
+  Clock3,
+  ChevronDown,
 } from 'lucide-react';
 import { Link, useLocation } from 'wouter';
 
@@ -21,6 +22,7 @@ import {
   type BlogPost,
   type ServiceSlug,
 } from './content';
+import { locationProfiles } from './locationProfiles';
 import logoPath from '@assets/kellys_roofing_logo_transparent.png';
 import rooflinePath from '@assets/generated_images/kellys-roofline.jpg';
 import roofTilesPath from '@assets/unsplash/roof-tiles.jpg';
@@ -207,35 +209,6 @@ const slugify = (value: string) => value
 
 const locationItems = locationNames.map((name) => ({ name, slug: slugify(name) }));
 
-type LocationProfile = {
-  coordinates: {
-    latitude: number;
-    longitude: number;
-    label: string;
-  };
-  introduction: string[];
-  attractions: string[];
-};
-
-const locationProfiles: Partial<Record<string, LocationProfile>> = {
-  adamstown: {
-    coordinates: {
-      latitude: 53.3353,
-      longitude: -6.4689,
-      label: '53.3353°N, 6.4689°W',
-    },
-    introduction: [
-      'Adamstown has a varied mix of modern housing developments, apartment buildings, terraces and family homes. Even relatively recent properties can develop roofing issues around exposed edges, roof junctions, gutters, flashing and flat-roof sections, particularly after prolonged rain or strong Dublin winds.',
-      'Our starting point is a careful look at the condition of the roof and the signs visible inside the property. We explain whether the issue appears suited to a focused repair, requires further opening-up, or points towards more extensive renewal. The aim is to give Adamstown property owners a practical recommendation based on the building in front of us—not a one-size-fits-all answer.',
-    ],
-    attractions: [
-      'Airlie Park',
-      "Tandy's Lane Park",
-      'Griffeen Valley Park',
-    ],
-  },
-};
-
 export const prerenderRoutes = [
   '/',
   '/work',
@@ -415,9 +388,118 @@ function Header({ isServicePage = false, isGalleryPage = false, isBlogPage = fal
   );
 }
 
+const siteFaqs = [
+  {
+    question: 'Do you provide free roofing quotes?',
+    answer: 'Yes. Contact us to discuss the property and arrange a free, no-obligation quotation for the work that can be assessed.',
+  },
+  {
+    question: 'Which parts of Dublin do you cover?',
+    answer: 'We serve homes, landlords and commercial clients throughout Dublin County, including all 93 areas listed on this website.',
+  },
+  {
+    question: 'Can you help with an active roof leak?',
+    answer: 'Yes. We inspect the visible signs and accessible roof details to identify the likely source before recommending a proportionate repair.',
+  },
+  {
+    question: 'Do you repair slate and tiled roofs?',
+    answer: 'Yes. Our roofing work includes slipped or damaged slates and tiles, flashing, valleys, ridges, verges and related weatherproofing details.',
+  },
+  {
+    question: 'When might a roof need replacement?',
+    answer: 'Replacement may be worth considering when deterioration is widespread, several unrelated leaks recur or the existing covering is no longer economical to repair.',
+  },
+  {
+    question: 'Do you install and repair flat roofs?',
+    answer: 'Yes. We work on flat roofs over extensions, garages and commercial spaces, with attention to the deck, falls, outlets, edges and waterproofing system.',
+  },
+  {
+    question: 'Can you repair gutters and chimneys?',
+    answer: 'Yes. Guttering, rainwater outlets, chimney repairs and adjoining flashing can be assessed as part of the wider roofing work.',
+  },
+  {
+    question: 'Can you complete interior repairs after a leak?',
+    answer: 'Yes. Ceilings, plastering, drylining, carpentry and interior finishing can be coordinated once the roof is secure and affected materials are ready.',
+  },
+] as const;
+
+type FaqItem = {
+  question: string;
+  answer: string;
+};
+
+function FaqAccordion({
+  items,
+  idPrefix,
+}: {
+  items: readonly FaqItem[];
+  idPrefix: string;
+}) {
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
+
+  return (
+    <div className="border-t border-border">
+      {items.map((faq, index) => {
+        const isOpen = openIndex === index;
+        const answerId = `${idPrefix}-answer-${index}`;
+
+        return (
+          <article key={faq.question} className="border-b border-border">
+            <button
+              type="button"
+              className="flex w-full items-center justify-between gap-6 py-6 text-left md:py-8"
+              aria-expanded={isOpen}
+              aria-controls={answerId}
+              onClick={() => setOpenIndex(isOpen ? null : index)}
+            >
+              <span className="font-display text-2xl leading-tight text-primary md:text-3xl">
+                {faq.question}
+              </span>
+              <ChevronDown
+                size={24}
+                className={`shrink-0 text-primary transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`}
+                aria-hidden="true"
+              />
+            </button>
+            <div
+              id={answerId}
+              className={`grid transition-[grid-template-rows] duration-300 ease-out ${
+                isOpen ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'
+              }`}
+              aria-hidden={!isOpen}
+            >
+              <div className="overflow-hidden">
+                <p className="max-w-[860px] pb-7 leading-7 text-foreground/75 md:pb-8">
+                  {faq.answer}
+                </p>
+              </div>
+            </div>
+          </article>
+        );
+      })}
+    </div>
+  );
+}
+
+function SiteFaq() {
+  return (
+    <section className="border-t border-border bg-background px-6 py-16 md:px-12 md:py-20" aria-labelledby="site-faq-title">
+      <div className="mx-auto max-w-[1600px]">
+        <div className="mb-10 max-w-[760px] md:mb-14">
+          <span className="kicker mb-6">Frequently asked questions</span>
+          <h2 id="site-faq-title" className="heading-section text-primary">Clear answers before work begins.</h2>
+        </div>
+        <FaqAccordion items={siteFaqs} idPrefix="site-faq" />
+      </div>
+    </section>
+  );
+}
+
 function SiteFooter() {
   return (
-    <footer className="border-t border-border bg-white px-6 py-16 text-foreground md:px-12 md:py-20">
+    <>
+      <SiteFaq />
+      <footer className="border-t border-border bg-white px-6 py-16 text-foreground md:px-12 md:py-20">
       <div className="mx-auto grid max-w-[1600px] gap-12 md:grid-cols-[repeat(14,minmax(0,1fr))] md:gap-8">
         <div className="md:col-span-4">
           <img src={logoPath} alt="Kellys Roofing and Interiors" className="h-28 w-auto object-contain md:h-32" />
@@ -509,7 +591,8 @@ function SiteFooter() {
           Powered by websites4tradesmen.ie
         </a>
       </div>
-    </footer>
+      </footer>
+    </>
   );
 }
 
@@ -536,9 +619,28 @@ function ServicePage({ service }: { service: Service }) {
             <div className="lg:col-span-7">
                <span className="kicker mb-8">{service.number} / Dublin</span>
               <h1 className="heading-hero text-primary mb-8">{service.title}</h1>
-              <p className="text-xl md:text-2xl leading-relaxed text-foreground/80 mb-12 max-w-[800px]">
-                {service.intro}
-              </p>
+              <div className="max-w-[800px] space-y-5">
+                <p className="text-xl leading-relaxed text-foreground/80 md:text-2xl">
+                  {service.intro}
+                </p>
+                <p className="text-base leading-8 text-foreground/70">
+                  Serving Dublin since 2009, our insured team approaches every {service.title.toLowerCase()} project with careful assessment, straightforward advice and a clearly explained scope of work.
+                </p>
+                <p className="text-base leading-8 text-foreground/70">
+                  Where the work continues below the roof, we can also coordinate ceilings, plastering, drylining, carpentry and interior finishing as one joined-up project.
+                </p>
+                <p className="text-base font-semibold leading-8 text-foreground">
+                  Contact us today for a free, no-obligation quote and practical advice on the right next step for your property.
+                </p>
+                <div className="flex flex-col gap-3 pt-3 sm:flex-row">
+                  <Link href="/#contact" className="inline-flex min-h-12 items-center justify-center gap-3 bg-primary px-6 py-3 text-sm font-bold uppercase tracking-wider text-primary-foreground transition-colors hover:bg-accent">
+                    <Mail size={18} aria-hidden="true" /> Contact us
+                  </Link>
+                  <a href="https://wa.me/353863395381" target="_blank" rel="noreferrer" className="inline-flex min-h-12 items-center justify-center gap-3 border border-primary px-6 py-3 text-sm font-bold uppercase tracking-wider text-primary transition-colors hover:bg-primary hover:text-primary-foreground" aria-label={`Discuss ${service.title.toLowerCase()} with Kellys Roofing on WhatsApp`}>
+                    <MessageCircle size={18} aria-hidden="true" /> WhatsApp us
+                  </a>
+                </div>
+              </div>
             </div>
             
             <div className="lg:col-span-5 w-full">
@@ -602,13 +704,8 @@ function ServicePage({ service }: { service: Service }) {
                <span className="kicker mb-6">Practical answers</span>
                <h2 className="heading-section">Questions about {service.title.toLowerCase()}.</h2>
              </div>
-             <div className="divide-y divide-border border-y border-border lg:col-span-8">
-               {content.faqs.map((faq) => (
-                 <div key={faq.question} className="py-8">
-                   <h3 className="font-display text-2xl text-primary md:text-3xl">{faq.question}</h3>
-                   <p className="mt-4 max-w-[760px] leading-relaxed text-foreground/75">{faq.answer}</p>
-                 </div>
-               ))}
+              <div className="lg:col-span-8">
+                <FaqAccordion items={content.faqs} idPrefix={`${serviceSlugs[service.title]}-faq`} />
              </div>
            </section>
 
@@ -971,15 +1068,22 @@ function LocationPage({ area }: { area: (typeof locationItems)[number] }) {
           <div className="grid grid-cols-1 gap-10 border-b border-border pb-14 lg:grid-cols-12 lg:gap-20 lg:pb-20">
             <div className="lg:col-span-7">
               <span className="kicker mb-8">Roofing services / {area.name}</span>
-              <h1 className="heading-hero max-w-[860px] text-primary">Roofing work in {area.name}.</h1>
-              <p className="mt-8 max-w-[680px] text-xl leading-relaxed text-foreground/80">
-                From roof repairs and replacement to flat roofing and interiors, Kellys Roofing & Interiors helps property owners in {area.name} make a clear, practical next move.
-              </p>
-               {locationProfile?.introduction.map((paragraph) => (
-                 <p key={paragraph} className="mt-6 max-w-[680px] text-base leading-8 text-foreground/70">
+              <h1 className="heading-hero max-w-[860px] break-words text-primary">{locationProfile.header}</h1>
+              <div className="mt-8 max-w-[680px] space-y-5">
+                {locationProfile.introduction.map((paragraph, index) => (
+                  <p key={paragraph} className={index === 0 ? 'text-xl leading-relaxed text-foreground/80' : index === locationProfile.introduction.length - 1 ? 'text-base font-semibold leading-8 text-foreground' : 'text-base leading-8 text-foreground/70'}>
                    {paragraph}
                  </p>
-               ))}
+                ))}
+                <div className="flex flex-col gap-3 pt-3 sm:flex-row">
+                  <Link href="/#contact" className="inline-flex min-h-12 items-center justify-center gap-3 bg-primary px-6 py-3 text-sm font-bold uppercase tracking-wider text-primary-foreground transition-colors hover:bg-accent">
+                    <Mail size={18} aria-hidden="true" /> Contact us
+                  </Link>
+                  <a href="https://wa.me/353863395381" target="_blank" rel="noreferrer" className="inline-flex min-h-12 items-center justify-center gap-3 border border-primary px-6 py-3 text-sm font-bold uppercase tracking-wider text-primary transition-colors hover:bg-primary hover:text-primary-foreground" aria-label={`Contact Kellys Roofing in ${area.name} on WhatsApp`}>
+                    <MessageCircle size={18} aria-hidden="true" /> WhatsApp us
+                  </a>
+                </div>
+              </div>
             </div>
             <div className="lg:col-span-5">
               <HeroVideo wrapperClassName="aspect-[4/5] bg-muted" />
@@ -1318,16 +1422,50 @@ export default function App() {
       <section id="top" className="relative border-b border-border px-6 pb-16 pt-36 md:px-12 md:pb-20 md:pt-44">
         <div className="mx-auto max-w-[1600px]">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-end">
-            <div className="lg:col-span-8 relative z-10">
+            <div className="lg:col-span-7 relative z-10">
               <span className="kicker reveal mb-8">Roofing & Interiors / Dublin</span>
               <h1 className="heading-hero text-primary reveal delay-1 mb-8 max-w-[900px]">
                 Proper work. <br />Solidly done.
               </h1>
-              <p className="text-lg md:text-xl text-foreground/80 reveal delay-2 max-w-[540px] leading-relaxed mb-10 md:mb-0">
-                 Kellys Roofing & Interiors looks after the spaces that matter — from a leaking roof in a family home to the final detail of a property ready for its next chapter.
-              </p>
+              <div className="reveal delay-2 max-w-[680px] space-y-5 mb-10 md:mb-0">
+                <p className="text-lg md:text-xl text-foreground/80 leading-relaxed">
+                  Kellys Roofing & Interiors looks after the spaces that matter — from a leaking roof in a family home to the final detail of a property ready for its next chapter.
+                </p>
+                <p className="text-base leading-8 text-foreground/70">
+                  Serving Dublin since 2009, our insured team provides roof repairs, slate and tile roofing, roof replacement, flat roofing, guttering, chimney repairs and emergency roofing services.
+                </p>
+                <p className="text-base leading-8 text-foreground/70">
+                  We also carry out ceilings, plastering, drylining, carpentry and interior finishing, allowing the roof and the rooms beneath it to be considered as one joined-up project.
+                </p>
+                <p className="text-base leading-8 text-foreground/70">
+                  Our mission is to help property owners make a clear, practical decision about the work their building needs. Our professional team is ready to help.
+                </p>
+                <p className="text-base font-semibold leading-8 text-foreground">
+                  Contact us today for a free, no-obligation quote and practical advice on the right next step for your property.
+                </p>
+                <div className="flex flex-col gap-3 pt-3 sm:flex-row">
+                  <button
+                    type="button"
+                    onClick={scrollToContact}
+                    className="inline-flex min-h-12 items-center justify-center gap-3 bg-primary px-6 py-3 text-sm font-bold uppercase tracking-wider text-primary-foreground transition-colors hover:bg-accent"
+                  >
+                    <Mail size={18} aria-hidden="true" />
+                    Contact us
+                  </button>
+                  <a
+                    href="https://wa.me/353863395381"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex min-h-12 items-center justify-center gap-3 border border-primary px-6 py-3 text-sm font-bold uppercase tracking-wider text-primary transition-colors hover:bg-primary hover:text-primary-foreground"
+                    aria-label="Contact Kellys Roofing on WhatsApp"
+                  >
+                    <MessageCircle size={18} aria-hidden="true" />
+                    WhatsApp us
+                  </a>
+                </div>
+              </div>
             </div>
-            <div className="lg:col-span-4 w-full reveal delay-3">
+            <div className="lg:col-span-5 w-full reveal delay-3">
               <HeroVideo
                 wrapperClassName="aspect-[4/5] w-full bg-muted"
                 className="grayscale-[20%] contrast-125"
