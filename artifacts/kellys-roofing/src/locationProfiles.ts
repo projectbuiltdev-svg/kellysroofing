@@ -1,5 +1,7 @@
 export type LocationProfile = {
+  name: string;
   header: string;
+  setting: string;
   metaDescription: string;
   coordinates: {
     latitude: number;
@@ -171,7 +173,9 @@ export const locationProfiles: Record<string, LocationProfile> = Object.fromEntr
     ];
 
     return [slug, {
+      name: seed.name,
       header: `${seed.name}: ${headerEndings[index % headerEndings.length]}`,
+      setting: seed.setting,
       metaDescription: metaDescriptionBuilders[index % metaDescriptionBuilders.length](seed.name),
       coordinates: {
         latitude: seed.latitude,

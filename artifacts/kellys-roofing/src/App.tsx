@@ -23,6 +23,7 @@ import {
   type ServiceSlug,
 } from './content';
 import { locationProfiles } from './locationProfiles';
+import { locationPageModel } from './locationSeo';
 import logoPath from '@assets/optimized/kellys-logo-640.webp';
 import logoSmallPath from '@assets/optimized/kellys-logo-320.webp';
 import rooflinePath from '@assets/optimized/roofline-1600.webp';
@@ -306,12 +307,13 @@ export const prerenderRoutes = [
   ...services.map((service) => `/services/${serviceSlugs[service.title]}`),
   ...blogPosts.map((post) => `/blog/${post.slug}`),
   ...locationItems.map((area) => `/locations/${area.slug}`),
-  ...locationItems.flatMap((area) =>
-    services.map((service) => `/locations/${area.slug}/${serviceSlugs[service.title]}`),
-  ),
 ];
 
-export function getPageMetadata(location: string) {
+export function getPageMetadata(requestedLocation: string) {
+  const childLocation = requestedLocation.match(/^\/locations\/([^/]+)\/[^/]+$/);
+  const location = childLocation && locationItems.some((item) => item.slug === childLocation[1])
+    ? `/locations/${childLocation[1]}`
+    : requestedLocation;
   const activeService = services.find((service) => `/services/${serviceSlugs[service.title]}` === location);
   const activeBlogPost = blogPosts.find((post) => `/blog/${post.slug}` === location);
   const activeLocation = locationItems.find((area) => `/locations/${area.slug}` === location);
@@ -337,7 +339,7 @@ export function getPageMetadata(location: string) {
   const title = activeService && activeServiceSlug
     ? serviceSeo[activeServiceSlug].title
     : activeBlogPost
-      ? blogSeo[activeBlogPost.slug].title
+      ? (blogSeo[activeBlogPost.slug]?.title ?? activeBlogPost.seoTitle ?? activeBlogPost.title)
     : location === '/work'
       ? 'Our Work | Kellys Roofing & Interiors | Dublin'
       : location === '/blog'
@@ -361,7 +363,7 @@ export function getPageMetadata(location: string) {
         : activeLocationService?.area && activeLocationService.service
           ? getLocationServiceDescription(activeLocationService.area, activeLocationService.service)
           : activeLocation
-            ? `Looking for roofers in ${activeLocation.name}? Kellys provides roof repairs, replacement, flat roofing and interior restoration across Dublin.`
+            ? locationProfiles[activeLocation.slug].metaDescription
             : location === '/locations'
               ? 'Explore all County Dublin service areas covered by Kellys Roofing & Interiors.'
               : 'Looking for trusted roofers in Dublin? Kellys Roofing & Interiors provides roof repairs, replacements and interior restoration across County Dublin.';
@@ -369,7 +371,7 @@ export function getPageMetadata(location: string) {
   const keywords = activeServiceSlug
     ? [...serviceSeo[activeServiceSlug].keywords]
     : activeBlogPost
-      ? [...blogSeo[activeBlogPost.slug].keywords]
+      ? [...(blogSeo[activeBlogPost.slug]?.keywords ?? activeBlogPost.keywords ?? [])]
       : activeLocationService?.area && activeLocationServiceSlug
         ? [
             `${activeLocationService.service!.title.toLowerCase()} ${activeLocationService.area.name}`,
@@ -484,7 +486,15 @@ export function getPageMetadata(location: string) {
         name: `Roofing Services in ${activeLocation.name}`,
         serviceType: 'Roofing Contractor',
         provider: { '@id': 'https://kellysroofing.ie/#business' },
-        areaServed: { '@type': 'Place', name: `${activeLocation.name}, Dublin` },
+        areaServed: {
+          '@type': 'Place',
+          name: `${activeLocation.name}, Co. Dublin`,
+          geo: {
+            '@type': 'GeoCoordinates',
+            latitude: locationProfiles[activeLocation.slug].coordinates.latitude,
+            longitude: locationProfiles[activeLocation.slug].coordinates.longitude,
+          },
+        },
         description,
         url: `https://kellysroofing.ie${location}/`,
       }] : []),
@@ -492,14 +502,32 @@ export function getPageMetadata(location: string) {
         '@type': 'BlogPosting',
         headline: activeBlogPost.title,
         description: activeBlogPost.metaDescription,
-        image: 'https://kellysroofing.ie/kellys-roofing-dublin-social-2026.jpg',
+        image: activeBlogPost.heroImage
+          ? `https://kellysroofing.ie${activeBlogPost.heroImage}`
+          : 'https://kellysroofing.ie/kellys-roofing-dublin-social-2026.jpg',
         mainEntityOfPage: `https://kellysroofing.ie/blog/${activeBlogPost.slug}/`,
         author: { '@id': 'https://kellysroofing.ie/#business' },
         publisher: { '@id': 'https://kellysroofing.ie/#business' },
         datePublished: activeBlogPost.publishedDate,
         dateModified: activeBlogPost.modifiedDate,
         articleSection: activeBlogPost.category,
-        keywords: blogSeo[activeBlogPost.slug].keywords.join(', '),
+        keywords: (blogSeo[activeBlogPost.slug]?.keywords ?? activeBlogPost.keywords ?? []).join(', '),
+      }] : []),
+      ...(activeLocation && !activeLocationService ? [{
+        '@type': 'FAQPage',
+        mainEntity: locationPageModel(activeLocation.slug).faqs.map((faq) => ({
+          '@type': 'Question',
+          name: faq.question,
+          acceptedAnswer: { '@type': 'Answer', text: faq.answer },
+        })),
+      }] : []),
+      ...(activeBlogPost?.faqs ? [{
+        '@type': 'FAQPage',
+        mainEntity: activeBlogPost.faqs.map((faq) => ({
+          '@type': 'Question',
+          name: faq.question,
+          acceptedAnswer: { '@type': 'Answer', text: faq.answer },
+        })),
       }] : []),
       ...(location !== '/' ? [{
         '@type': 'BreadcrumbList',
@@ -1129,18 +1157,17 @@ function BlogPage() {
               <section key={category} className="border-b border-border py-12 md:py-16" aria-labelledby={`blog-category-${category}`}>
                 <div className="mb-10 flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
                   <h2 id={`blog-category-${category}`} className="heading-section text-4xl md:text-5xl">{category}</h2>
-                   <span className="font-mono text-xs uppercase tracking-[0.18em] text-muted-foreground">01 article</span>
+                   <span className="font-mono text-xs uppercase tracking-[0.18em] text-muted-foreground">{String(blogPosts.filter((post) => post.category === category).length).padStart(2, '0')} articles</span>
                 </div>
 
                  <div className="grid grid-cols-1 gap-12">
                   {blogPosts.filter((post) => post.category === category).map((post, index) => (
                      <article key={post.title} className="group grid grid-cols-1 gap-8 md:grid-cols-12 md:items-end">
                        <Link href={`/blog/${post.slug}`} className="block md:col-span-6" aria-label={`Read ${post.title}`}>
-                         <OverlayImage
-                           src={blogImages[post.imageKey]}
-                           alt=""
-                           wrapperClassName="aspect-[16/10] bg-muted"
-                           className="transition-transform duration-700 group-hover:scale-105"
+                         <img
+                           src={post.heroImage ?? blogImages[post.imageKey]}
+                           alt={post.heroAlt ?? ''}
+                           className="aspect-[16/10] w-full object-cover transition-transform duration-700 group-hover:scale-105"
                          />
                        </Link>
                        <div className="border-t border-border pt-4 md:col-span-6 md:pb-2">
@@ -1215,10 +1242,10 @@ function BlogArticlePage({ post }: { post: BlogPost }) {
               </p>
             </div>
             <div className="md:col-span-4">
-              <OverlayImage
-                src={blogImages[post.imageKey]}
-                alt=""
-                wrapperClassName="aspect-[4/5] w-full bg-muted"
+              <img
+                src={post.heroImage ?? blogImages[post.imageKey]}
+                alt={post.heroAlt ?? ''}
+                className="aspect-[4/5] w-full object-cover"
               />
               <div className="mt-5 flex items-center justify-between border-t border-border pt-4 font-mono text-xs uppercase tracking-[0.14em] text-muted-foreground">
                 <span>Dublin</span>
@@ -1255,9 +1282,18 @@ function BlogArticlePage({ post }: { post: BlogPost }) {
                         {section.bullets.map((bullet) => <li key={bullet}>{bullet}</li>)}
                       </ul>
                     )}
+                    {section.image && (
+                      <img src={section.image} alt={section.imageAlt ?? ''} className="aspect-[16/9] w-full object-cover" />
+                    )}
                   </div>
                 </section>
               ))}
+              {post.faqs && (
+                <section className="border-t border-border py-10">
+                  <h2 className="font-display text-4xl text-primary">Questions about this guide</h2>
+                  <FaqAccordion items={post.faqs} idPrefix={`${post.slug}-faq`} />
+                </section>
+              )}
             </div>
           </div>
 
@@ -1287,10 +1323,10 @@ function BlogArticlePage({ post }: { post: BlogPost }) {
                   {featuredLocations.map((area) => (
                     <Link
                       key={area.slug}
-                      href={`/locations/${area.slug}/${post.serviceSlug}`}
+                      href={`/locations/${area.slug}`}
                       className="inline-flex items-center justify-between gap-2 border-b border-border pb-3 font-medium text-primary link-hover"
                     >
-                      {area.name} <ArrowRight size={14} />
+                      Roof repairs in {area.name} <ArrowRight size={14} />
                     </Link>
                   ))}
                 </div>
@@ -1395,11 +1431,15 @@ function LocationPage({ area }: { area: (typeof locationItems)[number] }) {
 
           <div className="grid grid-cols-1 gap-10 border-b border-border pb-14 lg:grid-cols-12 lg:gap-20 lg:pb-20">
             <div className="lg:col-span-7">
-              <span className="kicker mb-8">Roofing services / {area.name}</span>
-              <h1 className="heading-hero max-w-[860px] break-words text-primary">{locationProfile.header}</h1>
+              <span className="kicker mb-8">{area.name}, Co. Dublin</span>
+              <h1 className="heading-hero max-w-[860px] break-words text-primary">Roofers in {area.name}.</h1>
               <div className="mt-8 max-w-[680px] space-y-5">
-                {locationProfile.introduction.map((paragraph, index) => (
-                  <p key={paragraph} className={index === 0 ? 'text-xl leading-relaxed text-foreground/80' : index === locationProfile.introduction.length - 1 ? 'text-base font-semibold leading-8 text-foreground' : 'text-base leading-8 text-foreground/70'}>
+                <p className="text-xl leading-relaxed text-foreground/80">{locationPageModel(area.slug).sentence}</p>
+                <p className="text-base leading-8 text-foreground/70">{locationPageModel(area.slug).base}</p>
+                <h2 className="font-display text-3xl text-primary md:text-4xl">{locationPageModel(area.slug).localHeading}</h2>
+                <p className="text-base leading-8 text-foreground/70">{locationPageModel(area.slug).localBody}</p>
+                {locationProfile.introduction.slice(1).map((paragraph) => (
+                  <p key={paragraph} className="text-base leading-8 text-foreground/70">
                    {paragraph}
                  </p>
                 ))}
@@ -1419,9 +1459,10 @@ function LocationPage({ area }: { area: (typeof locationItems)[number] }) {
           </div>
 
           {locationProfile && (
+            <>
             <section
               className="grid grid-cols-1 border-b border-border py-14 md:grid-cols-2 md:py-20"
-              aria-labelledby={`${area.slug}-discover-title`}
+              aria-labelledby={`${area.slug}-nearby-title`}
             >
               <div className="min-h-[360px] overflow-hidden bg-muted md:min-h-[520px]">
                 <iframe
@@ -1435,6 +1476,32 @@ function LocationPage({ area }: { area: (typeof locationItems)[number] }) {
               </div>
 
               <div className="flex flex-col justify-center border-l-0 border-border pt-10 md:border-l md:px-12 md:pt-0 lg:px-20">
+                <span className="kicker mb-7">Nearby areas</span>
+                <h2 id={`${area.slug}-nearby-title`} className="heading-section max-w-[620px]">Roof repairs near {area.name}.</h2>
+                <nav className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2" aria-label={`Roof repairs near ${area.name}`}>
+                  {locationPageModel(area.slug).neighbours.map((neighbour) => (
+                    <Link key={neighbour.slug} href={`/locations/${neighbour.slug}`} className="border-b border-border pb-3 text-sm font-medium text-primary link-hover">
+                      Roof repairs in {neighbour.name}
+                    </Link>
+                  ))}
+                </nav>
+                <p className="mt-6 text-sm leading-6 text-foreground/70">
+                  <Link href={locationPageModel(area.slug).serviceHref} className="link-hover font-semibold text-primary">{locationPageModel(area.slug).serviceLabel}</Link>
+                  {locationPageModel(area.slug).serviceHref !== locationPageModel(area.slug).repairsHref && (
+                    <>
+                      {' '}·{' '}
+                      <Link href={locationPageModel(area.slug).repairsHref} className="link-hover font-semibold text-primary">{locationPageModel(area.slug).repairsLabel}</Link>
+                    </>
+                  )}
+                </p>
+              </div>
+            </section>
+            <section className="border-b border-border py-14 md:py-16" aria-labelledby={`${area.slug}-faq-title`}>
+              <h2 id={`${area.slug}-faq-title`} className="heading-section mb-8 max-w-[760px]">Questions about roofing in {area.name}.</h2>
+              <FaqAccordion items={locationPageModel(area.slug).faqs} idPrefix={`${area.slug}-hub-faq`} />
+            </section>
+            <section className="border-b border-border py-14 md:py-20" aria-labelledby={`${area.slug}-discover-title`}>
+              <div className="max-w-[760px]">
                 <span className="kicker mb-7">Discover {area.name}</span>
                 <h2 id={`${area.slug}-discover-title`} className="heading-section max-w-[620px]">
                   Local attractions near {area.name}.
@@ -1461,6 +1528,7 @@ function LocationPage({ area }: { area: (typeof locationItems)[number] }) {
                 </ul>
               </div>
             </section>
+            </>
           )}
 
           <section className="grid grid-cols-1 gap-10 py-14 md:grid-cols-12 md:gap-14 md:py-20">
@@ -1479,14 +1547,14 @@ function LocationPage({ area }: { area: (typeof locationItems)[number] }) {
                 {services.map((service) => (
                   <Link
                     key={service.title}
-                    href={`/locations/${area.slug}/${serviceSlugs[service.title]}`}
+                    href={`/services/${serviceSlugs[service.title]}`}
                     className="group border-b border-r border-border p-6 transition-colors hover:bg-primary hover:text-primary-foreground"
                   >
                     <span className="font-mono text-xs opacity-60">{service.number}</span>
                     <h3 className="mt-6 font-display text-2xl">{service.title}</h3>
                     <p className="mt-3 text-sm leading-relaxed opacity-70">{service.intro}</p>
                     <span className="mt-6 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.16em]">
-                      View in {area.name} <ArrowRight size={15} className="-rotate-45 transition-transform group-hover:rotate-0" />
+                      {service.title} in Dublin <ArrowRight size={15} className="-rotate-45 transition-transform group-hover:rotate-0" />
                     </span>
                   </Link>
                 ))}
@@ -1515,13 +1583,13 @@ function LocationPage({ area }: { area: (typeof locationItems)[number] }) {
                     {services.map((service, index) => (
                       <Link
                         key={service.title}
-                        href={`/locations/${area.slug}/${serviceSlugs[service.title]}`}
+                        href={`/services/${serviceSlugs[service.title]}`}
                         className="group flex items-center gap-4 border-b border-border py-5"
                       >
                         <span className="font-mono text-xs text-primary/55">
                           {String(index + 1).padStart(2, '0')}
                         </span>
-                        <span className="flex-1 text-lg font-medium">{service.title} in {area.name}</span>
+                        <span className="flex-1 text-lg font-medium">{serviceSlugs[service.title] === 'roof-repairs' ? locationPageModel(area.slug).repairsLabel : `${service.title} in Dublin`}</span>
                         <ArrowRight size={17} className="-rotate-45 text-primary transition-transform group-hover:rotate-0" />
                       </Link>
                     ))}
@@ -1730,7 +1798,7 @@ function LocationServicePage({ area, service }: { area: (typeof locationItems)[n
             </div>
             <div className="grid border-l border-t border-border sm:grid-cols-3">
               {services.filter((item) => item.title !== service.title).map((item) => (
-                <Link key={item.title} href={`/locations/${area.slug}/${serviceSlugs[item.title]}`} className="group border-b border-r border-border p-6 transition-colors hover:bg-primary hover:text-primary-foreground">
+                <Link key={item.title} href={`/services/${serviceSlugs[item.title]}`} className="group border-b border-r border-border p-6 transition-colors hover:bg-primary hover:text-primary-foreground">
                   <span className="font-mono text-xs opacity-60">{item.number}</span>
                   <h3 className="mt-6 font-display text-2xl">{item.title}</h3>
                   <span className="mt-8 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.16em]">
@@ -1760,12 +1828,33 @@ function LocationServicePage({ area, service }: { area: (typeof locationItems)[n
 }
 
 export default function App() {
-  const [location] = useLocation();
+  const [location, setLocation] = useLocation();
   const [submitted, setSubmitted] = useState(false);
+  const [formError, setFormError] = useState("");
   const [hoveredServiceCard, setHoveredServiceCard] = useState<number | null>(null);
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    const data = new FormData(event.currentTarget);
+    const text = [
+      "Hi Kellys Roofing, I would like a quote.",
+      "",
+      `Name: ${String(data.get("name") ?? "").trim()}`,
+      `Email: ${String(data.get("email") ?? "").trim()}`,
+      `Phone: ${String(data.get("phone") ?? "").trim()}`,
+      `Service: ${String(data.get("service") ?? "").trim()}`,
+      `Details: ${String(data.get("message") ?? "").trim()}`,
+    ].join("\n");
+    const opened = window.open(
+      `https://wa.me/353863395381?text=${encodeURIComponent(text)}`,
+      "_blank",
+      "noopener,noreferrer",
+    );
+    if (!opened) {
+      setFormError("WhatsApp did not open. Call 086 339 5381 or email akroofing@Outlook.com.");
+      return;
+    }
+    setFormError("");
     setSubmitted(true);
   };
 
@@ -1782,6 +1871,11 @@ export default function App() {
     const service = services.find((item) => serviceSlugs[item.title] === match[2]);
     return area && service ? { area, service } : undefined;
   })();
+
+  useEffect(() => {
+    const child = location.match(/^\/locations\/([^/]+)\/[^/]+$/);
+    if (child) setLocation(`/locations/${child[1]}`);
+  }, [location, setLocation]);
 
   useEffect(() => {
     const { title, description, keywords } = getPageMetadata(location);
@@ -1807,7 +1901,7 @@ export default function App() {
   if (isBlogPage) return <BlogPage />;
   if (activeBlogPost) return <BlogArticlePage post={activeBlogPost} />;
   if (isLocationsHub) return <LocationsHubPage />;
-  if (activeLocationService) return <LocationServicePage area={activeLocationService.area} service={activeLocationService.service} />;
+  if (activeLocationService) return <LocationPage area={activeLocationService.area} />;
   if (activeLocation) return <LocationPage area={activeLocation} />;
 
   return (
@@ -1821,11 +1915,11 @@ export default function App() {
             <div className="lg:col-span-7 relative z-10">
               <span className="kicker reveal mb-8">Roofing & Interiors / Dublin</span>
               <h1 className="heading-hero text-primary reveal delay-1 mb-8 max-w-[900px]">
-                Proper work. <br />Solidly done.
+                Roofers in Dublin for leaks, slate and tile.
               </h1>
               <div className="reveal delay-2 max-w-[680px] space-y-5 mb-10 md:mb-0">
                 <p className="text-lg md:text-xl text-foreground/80 leading-relaxed">
-                  Kellys Roofing & Interiors looks after the spaces that matter — from a leaking roof in a family home to the final detail of a property ready for its next chapter.
+                  Kellys Roofing & Interiors are Dublin roofers for leaking roofs, slate and tile repairs, roof replacement and flat roofing. Ask for a free quote and a clear next step.
                 </p>
                 <p className="text-base leading-8 text-foreground/70">
                   Serving Dublin since 2009, our insured team provides roof repairs, slate and tile roofing, roof replacement, flat roofing, guttering, chimney repairs and emergency roofing services.
@@ -2074,9 +2168,9 @@ export default function App() {
             {submitted ? (
               <div className="flex min-h-[540px] flex-col items-center justify-center text-center animate-in fade-in zoom-in duration-500" data-testid="status-form-success">
                 <CircleCheck size={48} className="mb-6 text-primary" />
-                <h3 className="mb-4 font-display text-3xl">Quote Request Received</h3>
+                <h3 className="mb-4 font-display text-3xl">Quote opened in WhatsApp</h3>
                 <p className="mb-8 max-w-[340px] text-foreground/70">
-                  Your details are ready for review. We will be in touch to understand the property and agree the best next step.
+                  Send the message that opened in WhatsApp. We will come back to you about the property and the next step.
                 </p>
                 <button
                   onClick={() => setSubmitted(false)}
@@ -2128,6 +2222,7 @@ export default function App() {
                     data-testid="textarea-message"
                   />
                 </div>
+                {formError ? <p className="text-sm text-primary">{formError}</p> : null}
                 <button type="submit" className="w-full bg-primary py-4 text-sm font-bold uppercase tracking-wider text-primary-foreground transition-colors hover:bg-accent" data-testid="button-submit-quote">
                   Send Quote Request
                 </button>

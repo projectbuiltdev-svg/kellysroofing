@@ -1,3 +1,5 @@
+import { guidePosts } from './blogGuides';
+
 export type ServiceSlug =
   | 'roof-repairs'
   | 'roof-replacement'
@@ -258,6 +260,8 @@ export type BlogSection = {
   heading: string;
   paragraphs: readonly string[];
   bullets?: readonly string[];
+  image?: string;
+  imageAlt?: string;
 };
 
 export type BlogPost = {
@@ -273,10 +277,16 @@ export type BlogPost = {
   modifiedDate: string;
   metaDescription: string;
   dek: string;
+  seoTitle?: string;
+  keywords?: readonly string[];
+  heroImage?: string;
+  heroAlt?: string;
+  faqs?: ReadonlyArray<{ question: string; answer: string }>;
+  relatedSlugs?: readonly string[];
   sections: readonly BlogSection[];
 };
 
-export const blogPosts: readonly BlogPost[] = [
+const coreBlogPosts = [
   {
     slug: 'how-to-handle-a-roof-leak-in-dublin',
     serviceSlug: 'roof-repairs',
@@ -582,3 +592,5 @@ export const blogPosts: readonly BlogPost[] = [
     ],
   },
 ] as const;
+
+export const blogPosts: readonly BlogPost[] = [...coreBlogPosts, ...guidePosts];
