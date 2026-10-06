@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom';
 import {
   ArrowDownRight,
   ArrowRight,
+  ArrowUp,
   Menu,
   X,
   Phone,
@@ -824,9 +825,34 @@ function SiteFaq() {
   );
 }
 
+function BackToTop() {
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setVisible(window.scrollY > 400);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+  if (!visible) return null;
+
+  return (
+    <button
+      type="button"
+      onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+      className="fixed bottom-6 right-6 z-[90] inline-flex min-h-12 items-center gap-2 bg-primary px-5 text-xs font-bold uppercase tracking-[0.16em] text-primary-foreground transition-colors hover:bg-accent"
+      aria-label="Back to top"
+    >
+      Back to top <ArrowUp size={16} aria-hidden="true" />
+    </button>
+  );
+}
+
 function SiteFooter() {
   return (
     <>
+      <BackToTop />
       <SiteFaq />
       <footer className="border-t border-border bg-white px-6 py-16 text-foreground md:px-12 md:py-20">
       <div className="mx-auto grid max-w-[1600px] gap-12 md:grid-cols-[repeat(14,minmax(0,1fr))] md:gap-8">
