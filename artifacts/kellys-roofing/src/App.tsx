@@ -1153,6 +1153,7 @@ function BlogPage() {
           <header className="grid grid-cols-1 gap-10 border-b border-border pb-14 md:grid-cols-12 md:gap-14 md:pb-20">
             <div className="md:col-span-8">
               <span className="kicker mb-8">The Kellys journal / Dublin</span>
+              <p className="mb-8 font-mono text-xs uppercase tracking-[0.18em] text-muted-foreground">{String(blogPosts.length).padStart(2, '0')} articles</p>
               <h1 className="heading-hero max-w-[900px] text-primary">Useful things to know about your roof.</h1>
             </div>
             <div className="md:col-span-4">
@@ -1168,7 +1169,7 @@ function BlogPage() {
               <section key={category} className="border-b border-border py-12 md:py-16" aria-labelledby={`blog-category-${category}`}>
                 <div className="mb-10 flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
                   <h2 id={`blog-category-${category}`} className="heading-section text-4xl md:text-5xl">{category}</h2>
-                   <span className="font-mono text-xs uppercase tracking-[0.18em] text-muted-foreground">{String(blogPosts.filter((post) => post.category === category).length).padStart(2, '0')} articles</span>
+                   <span className="font-mono text-xs uppercase tracking-[0.18em] text-muted-foreground">{String(blogPosts.filter((post) => post.category === category).length).padStart(2, '0')}</span>
                 </div>
 
                  <div className="grid grid-cols-1 gap-12">
