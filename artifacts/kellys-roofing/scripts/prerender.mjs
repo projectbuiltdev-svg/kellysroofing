@@ -22,6 +22,8 @@ for (const route of prerenderRoutes) {
   const keywords = escapeAttribute(metadata.keywords.join(', '));
   const structuredData = JSON.stringify(metadata.structuredData).replaceAll('<', '\\u003c');
   const canonicalUrl = route === '/' ? `${siteOrigin}/` : `${siteOrigin}${route}/`;
+  const ogType = escapeAttribute(metadata.ogType ?? 'website');
+  const updatedTime = escapeAttribute(metadata.updatedTime ?? '2026-10-06T15:20:00+01:00');
   const page = template
     .replace(/<title>.*?<\/title>/s, `<title>${title}</title>`)
     .replace(/<meta name="description" content="[^"]*"\s*\/?>/, `<meta name="description" content="${description}" />`)
@@ -29,6 +31,8 @@ for (const route of prerenderRoutes) {
     .replace(/<link rel="canonical" href="[^"]*"\s*\/?>/, `<link rel="canonical" href="${canonicalUrl}" />`)
     .replace(/<meta property="og:title" content="[^"]*"\s*\/?>/, `<meta property="og:title" content="${title}" />`)
     .replace(/<meta property="og:description" content="[^"]*"\s*\/?>/, `<meta property="og:description" content="${description}" />`)
+    .replace(/<meta property="og:type" content="[^"]*"\s*\/?>/, `<meta property="og:type" content="${ogType}" />`)
+    .replace(/<meta property="og:updated_time" content="[^"]*"\s*\/?>/, `<meta property="og:updated_time" content="${updatedTime}" />`)
     .replace(/<meta property="og:url" content="[^"]*"\s*\/?>/, `<meta property="og:url" content="${canonicalUrl}" />`)
     .replace(/<meta name="twitter:title" content="[^"]*"\s*\/?>/, `<meta name="twitter:title" content="${title}" />`)
     .replace(/<meta name="twitter:description" content="[^"]*"\s*\/?>/, `<meta name="twitter:description" content="${description}" />`)

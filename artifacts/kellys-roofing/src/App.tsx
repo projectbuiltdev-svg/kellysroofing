@@ -246,7 +246,7 @@ const serviceSeo: Record<ServiceSlug, {
     keywords: ['roof repairs dublin', 'emergency roof repairs dublin', 'leaking roof repair', 'storm damage roof repair', 'slate roof repairs', 'roof flashing repair'],
   },
   'roof-replacement': {
-    title: 'New Roof Cost Dublin | Full Roof Replacement Contractors',
+    title: 'Roof Replacement Dublin | New Roof Contractors | Kellys',
     description: 'Roof replacement and reroofing across County Dublin for ageing slate and tile roofs. Get clear advice, a defined scope and a free quote.',
     schemaName: 'Full Roof Replacement and Reroofing',
     serviceType: 'Roof Installation Service',
@@ -357,15 +357,15 @@ export function getPageMetadata(requestedLocation: string) {
     : activeBlogPost
       ? activeBlogPost.metaDescription
     : location === '/work'
-      ? 'Explore selected roofing, building and interior work from Kellys Roofing & Interiors in Dublin.'
+      ? 'Selected roof repairs, replacements, flat roofing and interior repairs by Kellys Roofing & Interiors in Dublin. See the work and ask for a free quote.'
       : location === '/blog'
-        ? 'Read practical notes about roof repairs, replacement and flat roofing from Kellys Roofing & Interiors in Dublin.'
+        ? 'Read practical Dublin roofing guides from Kellys Roofing & Interiors on leaks, slate and tile, gutters, chimneys, flat roofs, storms and ceiling drying.'
         : activeLocationService?.area && activeLocationService.service
           ? getLocationServiceDescription(activeLocationService.area, activeLocationService.service)
           : activeLocation
             ? locationProfiles[activeLocation.slug].metaDescription
             : location === '/locations'
-              ? 'Explore all County Dublin service areas covered by Kellys Roofing & Interiors.'
+              ? 'Roofers for 93 areas across County Dublin. Kellys Roofing & Interiors, based in Dublin 8, repairs slate, tile and flat roofs and gives a free quote.'
               : 'Looking for trusted roofers in Dublin? Kellys Roofing & Interiors provides roof repairs, replacements and interior restoration across County Dublin.';
 
   const keywords = activeServiceSlug
@@ -529,6 +529,14 @@ export function getPageMetadata(requestedLocation: string) {
           acceptedAnswer: { '@type': 'Answer', text: faq.answer },
         })),
       }] : []),
+      ...(location === '/' ? [{
+        '@type': 'FAQPage',
+        mainEntity: siteFaqs.map((faq) => ({
+          '@type': 'Question',
+          name: faq.question,
+          acceptedAnswer: { '@type': 'Answer', text: faq.answer },
+        })),
+      }] : []),
       ...(location !== '/' ? [{
         '@type': 'BreadcrumbList',
         '@id': `${canonicalUrl}#breadcrumb`,
@@ -550,7 +558,10 @@ export function getPageMetadata(requestedLocation: string) {
     ],
   };
 
-  return { title, description, keywords, structuredData };
+  const ogType = activeBlogPost ? 'article' : 'website';
+  const updatedTime = `${activeBlogPost?.modifiedDate ?? '2026-10-06'}T15:20:00+01:00`;
+
+  return { title, description, keywords, structuredData, ogType, updatedTime };
 }
 
 function scrollToContact() {
