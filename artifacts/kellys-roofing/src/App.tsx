@@ -863,7 +863,7 @@ function SiteFooter() {
         <div className="md:col-span-2">
           <p className="kicker mb-5">Follow along</p>
           <a
-            href="https://www.facebook.com/"
+            href="https://www.facebook.com/profile.php?id=61594391292093"
             target="_blank"
             rel="noreferrer"
             className="group flex h-36 w-full flex-col justify-between bg-[#0B5FCC] p-4 text-white transition-colors hover:bg-[#084B9F]"
